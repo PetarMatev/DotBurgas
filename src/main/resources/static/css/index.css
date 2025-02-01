@@ -1,0 +1,41 @@
+/* Ensure the page fills the screen */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Main body container */
+body {
+    display: flex;
+    flex-direction: column;
+    background-image: url('/img/cover-photo.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-color: #464646;
+}
+
+/* Content area should expand to take available space */
+.container-fluid {
+    flex-grow: 1;
+}
+
+/* Move the "Welcome to DOT Burgas!" text higher */
+.container-fluid h5.text-center {
+    margin-top: 3.5rem !important; /* Adjust this value as needed */
+    font-size: 3rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Footer styling */
+footer {
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
+    position: relative;
+    margin-top: auto; /* Ensure it stays at the bottom of the page */
+}

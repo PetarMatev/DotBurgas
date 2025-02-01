@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Wallet Dashboard</title>
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">-->
+    <link rel="stylesheet" href="/css/sidebar.css"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+
+        .logout-btn {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #ff4d4d;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .profile-form {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        .profile-form h2 {
+            margin-bottom: 20px;
+        }
+
+        .profile-form img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .profile-form div {
+            margin-bottom: 15px;
+        }
+
+        .profile-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .profile-form input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .profile-form button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .alert-warning {
+            color: red;
+            font-weight: bold;
+        }
+
+        .form-fields {
+            margin-top: 55px; /* Add space above the form fields */
+        }
+
+        .profile-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+<th:block th:insert="fragments/header :: header"></th:block>
+<th:block th:insert="fragments/sidebar :: sidebar"></th:block>
+<div class="container">
+    <div class="content">
+        <div class="profile-form">
+            <h2>Profile Form</h2>
+
+            <div>
+                <img th:src="${#strings.isEmpty(user.profilePicture) ?  'resources/static/img/avatar.jpg' : user.profilePicture}"
+                     alt="Profile Picture">
+            </div>
+
+            <div>
+                <h1><span th:text="${user.username}"></span></h1>
+                <p><strong>User id:</strong> <span th:text="${user.id}"></span></p>
+                <p><strong>Last profile update:</strong> <span
+                        th:text="${#temporals.format(user.createdOn, 'dd MMM YYYY HH:mm')}"></span></p>
+            </div>
+
+            <form class="form" th:action="@{'/users/' + ${user.id} + '/profile'}" th:method="PUT"
+                  th:object="${userEditRequest}">
+
+                <div class="form-fields">
+                    <div>
+                        <label for="first-name">First Name</label>
+                        <input type="text"
+                               id="first-name"
+                               name="first-name"
+                               placeholder="Enter your first name"
+                               required
+                               th:field="*{firstName}">
+                        <p class="alert-warning" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
+                        >
+                    </div>
+
+                    <div>
+                        <label for="last-name">Last Name</label>
+                        <input type="text"
+                               id="last-name"
+                               name="last-name"
+                               placeholder="Enter your last name"
+                               required
+                               th:field="*{lastName}">
+                        <p class="alert-warning" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
+                    </div>
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               placeholder="Enter your email address"
+                               required
+                               th:field="*{email}">
+                        <p class="alert-warning" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                    </div>
+                    <div>
+                        <label for="profile_picture">Profile Picture URL</label>
+                        <input type="text"
+                               id="profile_picture"
+                               name="profile_picture"
+                               placeholder="Enter your profile picture url"
+                               required
+                               th:field="*{profilePicture}">
+                        <p class="alert-warning" th:if="${#fields.hasErrors('profilePicture')}"
+                           th:errors="*{profilePicture}"></p>
+                    </div>
+                </div>
+
+                <div>
+                    <button class="profile-action-button">
+                        <p>Save</p>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                  stroke-linejoin="round"></path>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <th:block th:insert="fragments/footer :: footer"></th:block>
+</footer>
+
+</body>
+</html>

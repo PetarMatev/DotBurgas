@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>footer</title>
+</head>
+<body>
+
+<div class="sidebar" th:fragment="sidebar">
+    <h1>Menu</h1>
+    <ul>
+        <li><a th:href="@{/home}"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a th:href="@{/wallets}"><i class="fas fa-wallet"></i> Wallet</a></li>
+        <li><a th:href="@{/transfers}"><i class="fas fa-transfers"></i> Transfer</a></li>
+        <li><a th:href="@{/transactions}"><i class="fas fa-list"></i> Transactions</a></li>
+        <li><a th:href="@{/loyalties/history}"><i class="fas fa-history"></i> Loyalty History</a></li>
+        <li><a th:href="@{/users}"><i class="fas fa-users"></i> Users</a></li>
+        <li><a href="#"><i class="fas fa-chart-line"></i> Reservation History</a></li>
+        <li><a class="logout-btn" th:href="@{/logout}"> <i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    </ul>
+</div>
+
+</body>
+</html>

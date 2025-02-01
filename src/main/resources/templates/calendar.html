@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Availability Calendar</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 60px;
+        }
+
+        .calendar-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-controls button {
+            font-size: 1.2rem;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .calendar-controls button:hover {
+            background-color: #0056b3;
+        }
+
+        .calendar-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background-color: #343a40;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-gap: 10px;
+            text-align: center;
+        }
+
+        .calendar-day {
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        .taken {
+            background-color: #d9534f; /* Red for taken dates */
+            color: white;
+        }
+
+        .available {
+            background-color: #5bc0de; /* Blue for available dates */
+            color: white;
+        }
+
+        .calendar-day:hover {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+
+
+        /* Dropdown Menu */
+        .dropdown-menu {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+<th:block th:insert="fragments/header :: header"></th:block>
+
+<div class="container">
+    <h1>Apartment Availability Calendar</h1>
+
+    <!-- Calendar Header with Month and Year -->
+    <div class="calendar-header-container">
+        <div class="calendar-controls">
+            <button id="prevMonthBtn">&#60;</button>
+        </div>
+
+
+        <!-- Month-Year Button with Dropdown -->
+        <div class="dropdown">
+            <button class="calendar-header" id="calendarHeader" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">January 2025</button>
+            <div class="dropdown-menu" aria-labelledby="calendarHeader" id="monthYearDropdown">
+                <!-- Dynamically filled with months and years -->
+            </div   >
+        </div>
+
+        <div class="calendar-controls">
+            <button id="nextMonthBtn">&#62;</button>
+        </div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="calendar" id="calendar"></div>
+</div>
+
+<script>
+    // Function to generate the calendar for the given month and year
+    function generateCalendar(month, year) {
+        const calendarElement = document.getElementById('calendar');
+        const calendarHeader = document.getElementById('calendarHeader');
+        calendarElement.innerHTML = '';
+
+        // Days of the week
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        // Display header with days of the week
+        daysOfWeek.forEach(day => {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-header';
+            dayElement.innerText = day;
+            calendarElement.appendChild(dayElement);
+        });
+
+        // Get the first day of the month (0 = Sunday, 1 = Monday, etc.)
+        const firstDay = new Date(year, month, 1).getDay();
+
+        // Get the total number of days in the month
+        const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+        // Update the calendar header to show the current month and year
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        calendarHeader.innerText = `${monthNames[month]} ${year}`;
+
+        // Fill the calendar with empty divs for the days before the first day
+        for (let i = 0; i < firstDay; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day';
+            calendarElement.appendChild(emptyDay);
+        }
+
+        // Create the actual days
+        for (let day = 1; day <= totalDaysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day available'; // Default to available
+
+            // Mark some dates as taken for demonstration (you can replace this with your actual data)
+            if (day === 6 || day === 10 || day === 15) {
+                dayElement.classList.remove('available');
+                dayElement.classList.add('taken');
+            }
+
+            // Add the day number to the day element
+            dayElement.innerText = day;
+            calendarElement.appendChild(dayElement);
+        }
+    }
+
+    // Function to populate the month-year dropdown with options
+    function populateMonthYearDropdown() {
+        const dropdownMenu = document.getElementById('monthYearDropdown');
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const totalYears = 5; // Display years for the next 5 years
+
+        // Populate months for the current year
+        for (let i = 0; i < monthNames.length; i++) {
+            const monthItem = document.createElement('a');
+            monthItem.classList.add('dropdown-item');
+            monthItem.href = "#";
+            monthItem.innerText = `${monthNames[i]} ${currentYear}`;
+
+            // Add event listener to select month and year
+            monthItem.addEventListener('click', function () {
+                generateCalendar(i, currentYear);
+                document.getElementById('calendarHeader').innerText = monthNames[i] + ' ' + currentYear;
+            });
+            dropdownMenu.appendChild(monthItem);
+        }
+
+        // Populate next 5 years
+        for (let j = 1; j < totalYears; j++) {
+            for (let i = 0; i < monthNames.length; i++) {
+                const monthItem = document.createElement('a');
+                monthItem.classList.add('dropdown-item');
+                monthItem.href = "#";
+                monthItem.innerText = `${monthNames[i]} ${currentYear + j}`;
+
+                // Add event listener to select month and year
+                monthItem.addEventListener('click', function () {
+                    generateCalendar(i, currentYear + j);
+                    document.getElementById('calendarHeader').innerText = monthNames[i] + ' ' + (currentYear + j);
+                });
+                dropdownMenu.appendChild(monthItem);
+            }
+        }
+    }
+
+    // Initialize the calendar with the current month and year
+    const now = new Date();
+    let currentMonth = now.getMonth(); // 0 = January, 1 = February, ...
+    let currentYear = now.getFullYear();
+
+    generateCalendar(currentMonth, currentYear);
+    populateMonthYearDropdown();
+
+    // Add event listeners to the navigation buttons
+    document.getElementById('prevMonthBtn').addEventListener('click', () => {
+        if (currentMonth === 0) {
+            currentMonth = 11;
+            currentYear--;
+        } else {
+            currentMonth--;
+        }
+        generateCalendar(currentMonth, currentYear);
+    });
+
+    document.getElementById('nextMonthBtn').addEventListener('click', () => {
+        if (currentMonth === 11) {
+            currentMonth = 0;
+            currentYear++;
+        } else {
+            currentMonth++;
+        }
+        generateCalendar(currentMonth, currentYear);
+    });
+</script>
+
+<th:block th:insert="fragments/footer :: footer"></th:block>
+
+</body>
+</html>

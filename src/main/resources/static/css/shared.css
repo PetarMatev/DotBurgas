@@ -1,0 +1,39 @@
+/* Common styles for all pages */
+body {
+    background-color: #d3d3d3; /* Light grey background */
+    min-height: 100vh; /* Ensures the body fills the entire viewport */
+    display: flex;
+    flex-direction: column; /* So that the content doesn’t overlap with the footer */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    background-color: white; /* White background for content */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 100px; /* Space below the fixed navbar */
+    margin-bottom: 70px; /* Space for the footer */
+    flex-grow: 1; /* Ensures the container expands to fill available space */
+}
+
+footer {
+    background-color: #343a40; /* Dark footer background */
+    color: white;
+    text-align: center;
+    padding: 15px 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}

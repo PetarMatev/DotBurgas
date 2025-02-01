@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyalty Subscription</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/sidebar.css" />
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .loyalty-form {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .loyalty-form h2 {
+            margin-top: 0;
+        }
+
+        .loyalty-form label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .loyalty-form input,
+        .loyalty-form select,
+        .loyalty-form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .loyalty-form button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .loyalty-form button:hover {
+            background-color: #0056b3;
+        }
+
+        .loyalty-form p {
+            text-align: center;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            height: 70px; /* Fixed header height */
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+<th:block th:insert="fragments/header :: header"></th:block>
+<th:block th:insert="fragments/sidebar :: sidebar"></th:block>
+
+<div class="wrapper">
+    <div class="loyalty-form">
+        <h2>Change Loyalty Subscription</h2>
+        <form action="/submit-loyalty" method="POST">
+            <div>
+                <label for="loyalty-level">Loyalty Level</label>
+                <select id="loyalty-level" name="loyalty-level" required>
+                    <option value="silver">Silver</option>
+                    <option value="gold">Gold</option>
+                    <option value="platinum">Platinum</option>
+                </select>
+            </div>
+            <div>
+                <label for="subscription-status">Subscription Status</label>
+                <select id="subscription-status" name="subscription-status" required>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="pending">Pending</option>
+                </select>
+            </div>
+            <div>
+                <label for="subscription-renewal">Renewal Date</label>
+                <input type="date" id="subscription-renewal" name="subscription-renewal" required>
+            </div>
+            <div>
+                <button type="submit">Update Loyalty</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<th:block th:insert="fragments/footer :: footer"></th:block>
+
+</body>
+
+</html>

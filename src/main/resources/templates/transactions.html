@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/sidebar.css" />
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1; /* Pushes the footer to the bottom */
+            padding: 20px 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .no-transactions {
+            text-align: center;
+            font-size: 1.1em;
+            color: #666;
+            margin-top: 20px;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .status.terminated {
+            color: red;
+        }
+
+        .status.active {
+            color: green;
+        }
+
+        .crosslined {
+            text-decoration: line-through;
+            color: red;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<th:block th:insert="fragments/header :: header"></th:block>
+<th:block th:insert="fragments/sidebar :: sidebar"></th:block>
+
+<div class="wrapper">
+    <div class="container">
+        <h2>Transaction History</h2>
+
+        <!-- Table for displaying transaction history -->
+        <table>
+            <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Balance</th>
+                <th>Note</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody th:each="transaction : ${transactions}">
+            <tr>
+                <td th:text="${transaction.id}"></td>
+                <td>
+                    <p th:if="${transaction.status.name() == 'FAILED'}" class="status terminated">FAILED</p>
+                    <p th:if="${transaction.status.name() == 'SUCCEEDED'}" class="status active">SUCCEEDED</p>
+                </td>
+                <td>
+                    <p th:text="${transaction.type.name() == 'DEPOSIT' ? '+' + transaction.amount + ' ' + transaction.currency : '-' + transaction.amount + ' ' + transaction.currency}"
+                       th:classappend="${transaction.status.name() == 'FAILED'} ? 'crosslined'">
+                    </p>
+                </td>
+                <td th:text="${transaction.balanceLeft + ' ' + transaction.currency}"></td>
+                <td th:text="${transaction.status.name() == 'FAILED' ? transaction.failureReason : transaction.description}"></td>
+                <td th:text="${#temporals.format(transaction.createdOn, 'dd MMM yyyy HH:mm')}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Message when no transactions exist -->
+        <div class="no-transactions" th:if="${#lists.isEmpty(transactions)}">
+            No transactions found.
+        </div>
+    </div>
+</div>
+
+<th:block th:insert="fragments/footer :: footer"></th:block>
+</body>
+</html>

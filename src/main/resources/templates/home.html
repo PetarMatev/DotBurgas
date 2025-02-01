@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DOTBurgas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/sidebar.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: #24243e;
+            color: #fff;
+            padding: 15px 10px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1001; /* Ensure it stays above the sidebar */
+        }
+
+        header h1 {
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            margin-top: 5px; /* Space for the fixed header */
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center the content */
+        }
+
+        .logout-btn {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #ff4d4d;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .content {
+            margin-left: 250px; /* Space for the fixed sidebar */
+            margin-top: 1px;
+            padding: 30px;
+            flex: 1;
+            padding-top: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .profile, .wallet, .loyalty {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .profile img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profile h2, .profile p {
+            margin: 10px 0;
+        }
+
+        .wallet button, .loyalty button {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #24243e;
+            color: #fff;
+            padding: 15px 30px;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .row-content {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .wallet, .loyalty {
+            flex: 1 1 45%; /* Allow them to take up 45% of the width */
+            margin: 0 10px; /* Add spacing between them */
+        }
+
+        @media (max-width: 768px) {
+            .wallet, .loyalty {
+                flex: 1 1 100%; /* Stack them on smaller screens */
+                margin: 10px 0; /* Add spacing between them */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<th:block th:insert="fragments/header :: header"></th:block>
+<th:block th:insert="fragments/sidebar :: sidebar"></th:block>
+
+<div class="container">
+    <div class="content">
+         <div class="card profile">
+            <img th:src="${#strings.isEmpty(user.profilePicture) ? 'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg' : user.profilePicture}"
+                 alt="Profile Picture">
+            <h2 th:text="${user.getUsername()}"></h2>
+
+            <div class="details">
+                <p><strong>User ID:</strong> <span th:text="${user.id}"></span></p>
+                <p><strong>Email:</strong> <span
+                        th:text="${#strings.isEmpty(user.email) ? 'Edit your profile and email!': user.email}"></span>
+                </p>
+                <p><strong>Joined:</strong> <span
+                        th:text="${#temporals.format(user.createdOn, 'dd MMM YYYY HH:mm')}"></span></p>
+                <p><strong>Country:</strong> <span th:text="${#strings.capitalize(#strings.toLowerCase(user.country))}">Unknown</span>
+                </p>
+            </div>
+            <a th:href="@{'users/' + ${user.id} + '/profile'}" class="action-btn">Edit Profile</a>
+        </div>
+
+        <div class="row-content">
+            <div class="wallet">
+                <div class="details">
+                    <h3>Wallet</h3>
+                    <p><strong>Available Balance:</strong> <span
+                            th:text="${user.wallet.balance + ' ' + user.wallet.currency}"></span></p>
+                    <p><strong>Wallet ID:</strong> <span th:text="${user.wallet.id}"></span></p>
+                    <p><strong>Last Transaction:</strong> <span
+                            th:text="${#temporals.format(user.wallet.updatedOn, 'dd MMM YYYY HH:mm')}"></span></p>
+                </div>
+                <a class="profile-action-button" th:href="@{/wallets}">
+                    <button>Open Wallet</button>
+                </a>
+            </div>
+
+            <div class="loyalty">
+                <div class="details">
+                    <h3>Loyalty Program</h3>
+                    <p><strong>Loyalty id:</strong> <span th:text="${user.loyalty.id}"></span></p>
+                    <p><strong>Loyalty Level:</strong> <span th:text="${user.loyalty.loyaltyTier}"></span></p>
+                    <p><strong>Created On:</strong> <span
+                            th:text="${#temporals.format(user.loyalty.createdOn, 'dd MMM YYYY HH:mm')}"></span></p>
+                    <p><strong>Updated On:</strong> <span
+                            th:text="${#temporals.format(user.loyalty.updatedOn, 'dd MMM YYYY HH:mm')}"></span></p>
+                </div>
+                <a class="profile-action-button" th:href="@{/loyalties}">
+                    <button>See Loyalty</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <th:block th:insert="fragments/footer :: footer"></th:block>
+</footer>
+</body>
+</html>

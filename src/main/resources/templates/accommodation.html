@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Accommodation</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/shared.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <style>
+        /* Custom styles for the Accommodation page */
+        .photos {
+            display: flex;
+            gap: 10px; /* Space between images */
+            margin-bottom: 10px;
+            overflow-x: auto; /* Allow horizontal scrolling if needed */
+            flex-wrap: nowrap; /* Prevent wrapping to the next line */
+        }
+
+        .photos img {
+            width: 342px; /* Fixed width for each image */
+            height: 300px; /* Fixed height for each image */
+            object-fit: cover; /* Ensure images fill the container without distortion */
+            border-radius: 5px;
+            flex-shrink: 0; /* Prevent images from shrinking */
+        }
+
+        .apartment {
+            border: 1px solid #ddd;
+            margin-bottom: 75px;
+            border-radius: 5px;
+            padding: 15px;
+        }
+
+        .apartment h2 {
+            margin-top: 0;
+        }
+
+        .info {
+            margin-bottom: 3px;
+        }
+
+        .location {
+            font-style: italic;
+        }
+
+        .calendar-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .calendar-link:hover {
+            background-color: #0056b3;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<th:block th:insert="fragments/header :: header"></th:block>
+
+<div class="container">
+    <div class="apartment">
+        <div class="photos">
+            <img src="/img/ap30/1.jpg" alt="Apartment 30 Photo 1">
+            <img src="/img/ap30/2.jpg" alt="Apartment 30 Photo 2">
+            <img src="/img/ap30/3.jpg" alt="Apartment 30 Photo 3">
+        </div>
+        <div class="info">
+            <p>Apartment 1 offers a cozy environment with modern amenities, perfect for a relaxing stay.</p>
+        </div>
+        <div class="location">
+            <p>Location: Downtown, City of Burgas</p>
+        </div>
+        <a href="/calendar" class="calendar-link">View Availability Calendar</a>
+    </div>
+
+    <div class="apartment">
+        <div class="photos">
+            <img src="/img/ap25/1.jpg" alt="Apartment 25 Photo 1">
+            <img src="/img/ap25/2.jpg" alt="Apartment 25 Photo 2">
+            <img src="/img/ap25/3.jpg" alt="Apartment 25 Photo 3">
+        </div>
+        <div class="info">
+            <p>Apartment 2 is spacious and features a stunning view of the city skyline.</p>
+        </div>
+        <div class="location">
+            <p>Location: Near the Central Park, City of Burgas</p>
+        </div>
+        <a href="/calendar" class="calendar-link">View Availability Calendar</a>
+    </div>
+
+    <div class="apartment">
+        <div class="photos">
+            <img src="/img/ap4/1.jpg" alt="Apartment 4 Photo 1">
+            <img src="/img/ap4/2.jpg" alt="Apartment 4 Photo 2">
+            <img src="/img/ap4/3.jpg" alt="Apartment 4 Photo 3">
+        </div>
+        <div class="info">
+            <p>Apartment 3 is a luxurious suite with top-notch facilities and breathtaking views.</p>
+        </div>
+        <div class="location">
+            <p>Location: Beachside, City of Burgas</p>
+        </div>
+        <a href="/calendar" class="calendar-link">View Availability Calendar</a>
+    </div>
+</div>
+
+<th:block th:insert="fragments/footer :: footer"></th:block>
+
+</body>
+
+</html>

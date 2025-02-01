@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DOTBurgas</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+<th:block th:insert="fragments/header :: header"></th:block>
+
+<div class="container">
+    <h2 class="text-center text-black">Register User</h2>
+
+    <form class="main-form mx-auto col-md-8 d-flex flex-column justify-content-center"
+          th:action="@{/register}"
+          th:method="POST"
+          th:object="${registerRequest}">
+
+        <div class="row">
+            <div class="form-group col-md-6 mb-3 d-flex flex-column justify-content-center">
+                <label for="username" class="text-white font-weight-bold">Username</label>
+                <input id="username"
+                       type="text"
+                       name="username"
+                       class="form-control"
+                       placeholder="Username"
+                       aria-required="true"
+                       th:field="*{username}"
+                />
+                <p class="alert-warning" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="form-group col-md-6 mb-3">
+                <label for="password" class="text-white font-weight-bold">Password</label>
+                <input id="password"
+                       type="password"
+                       name="password"
+                       class="form-control"
+                       placeholder="Password"
+                       aria-required="true"
+                       th:field="*{password}"
+                />
+                <p class="alert-warning" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-6 mb-3">
+                <label for="country" class="text-white font-weight-bold">Country</label>
+                <select id="country"
+                        name="country"
+                        class="form-control"
+                        aria-required="true"
+                        th:field="*{country}">
+                    <option th:each="country : ${T(dotburgas.user.model.Country).values()}"
+                            th:value="${country}"
+                            th:text="${#strings.capitalize(#strings.toLowerCase(country))}">
+                        Select a country
+                    </option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col col-md-4">
+                <div class="button-holder d-flex">
+                    <input type="submit"
+                           class="btn btn-info btn-lg"
+                           value="Create User"/>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+</body>
+
+<th:block th:insert="fragments/footer :: footer"></th:block>
+
+</html>

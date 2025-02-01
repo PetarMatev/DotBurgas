@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>header</title>
+</head>
+
+<body>
+<div>
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark fixed-top" th:fragment="header">
+        <a class="navbar-brand" href="/">
+            <img alt="car picture" src="/img/dotBurgas.jpg" class="logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto col-12 justify-content-between">
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/login}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/accommodation}">Accommodation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/discover-burgas}">Discover Burgas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/about}">About us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/contact}">Contact us</a>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+</div>
+</body>
+</html>
