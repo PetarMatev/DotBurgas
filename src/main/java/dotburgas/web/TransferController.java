@@ -5,6 +5,7 @@ import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import dotburgas.wallet.service.WalletService;
 import dotburgas.web.dto.TransferRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -26,9 +27,11 @@ public class TransferController {
     }
 
     @GetMapping("/transfers")
-    public ModelAndView getTransferPage() {
+    public ModelAndView getTransferPage(HttpSession session) {
 
-        User user = userService.getById(UUID.fromString("a56528be-12e7-4599-9c7a-75b81c4d7f77"));
+        UUID userId = (UUID) session.getAttribute("user_id");
+        User user = userService.getById(userId);
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("transfer");
         modelAndView.addObject("user", user);
@@ -38,8 +41,11 @@ public class TransferController {
     }
 
     @PostMapping("/transfers")
-    public ModelAndView initiateTransfer(@Valid TransferRequest transferRequest, BindingResult bindingResult) {
-        User user = userService.getById(UUID.fromString("a56528be-12e7-4599-9c7a-75b81c4d7f77"));
+    public ModelAndView initiateTransfer(@Valid TransferRequest transferRequest, BindingResult bindingResult, HttpSession session) {
+
+        UUID userId = (UUID) session.getAttribute("user_id");
+        User user = userService.getById(userId);
+
 
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView();

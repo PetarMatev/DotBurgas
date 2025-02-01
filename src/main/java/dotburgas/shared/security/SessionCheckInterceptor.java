@@ -15,7 +15,15 @@ public class SessionCheckInterceptor implements HandlerInterceptor {
     // postHandle
     // afterCompletion
 
-    private final Set<String> UNAUTHENTICATED_ENDPOINTS = Set.of("/", "/login", "/register", "/about", "/contact", "/burgas", "/privacy");
+    private final Set<String> UNAUTHENTICATED_ENDPOINTS = Set
+            .of("/",
+                    "/login",
+                    "/register",
+                    "/discover-burgas",
+                    "/accommodation",
+                    "/about",
+                    "/contact",
+                    "/privacy");
 
     // This method will proceed without any request
     // HttpServletRequest request - the request that is sent to our application.
