@@ -20,9 +20,16 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto col-12 justify-content-between">
 
-                <li class="nav-item">
+                <!-- Show Dashboard link ONLY if user is logged in -->
+                <li class="nav-item" th:if="${session.user_id != null}">
+                    <a class="nav-link" th:href="@{/home}">Dashboard</a>
+                </li>
+
+                <!-- Show Login link ONLY if user is NOT logged in -->
+                <li class="nav-item" th:unless="${session.user_id != null}">
                     <a class="nav-link" th:href="@{/login}">Login</a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/accommodation}">Accommodation</a>
                 </li>

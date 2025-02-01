@@ -59,13 +59,14 @@ public class IndexController {
     }
 
     @PostMapping("/register")
-    public ModelAndView registerNewUser(@Valid RegisterRequest registerRequest, BindingResult bindingResult) {
+    public ModelAndView registerNewUser(@Valid RegisterRequest registerRequest, BindingResult bindingResult, HttpSession session) {
 
         if (bindingResult.hasErrors()) {
             return new ModelAndView("register");
         }
 
         User registeredUser = userService.register(registerRequest);
+        session.setAttribute("user_id", registeredUser.getId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:/home");
@@ -86,6 +87,7 @@ public class IndexController {
 
         return modelAndView;
     }
+
 
     @GetMapping("about")
     public String getAboutPage() {
