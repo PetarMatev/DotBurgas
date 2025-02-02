@@ -44,6 +44,7 @@ public class IndexController {
 
         User loggedInUser = userService.login(loginRequest);
         session.setAttribute("user_id", loggedInUser.getId());
+        session.setAttribute("role", loggedInUser.getRole().toString());
 
         return "redirect:/home";
     }
@@ -67,6 +68,7 @@ public class IndexController {
 
         User registeredUser = userService.register(registerRequest);
         session.setAttribute("user_id", registeredUser.getId());
+        session.setAttribute("role", registeredUser.getRole());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:/home");

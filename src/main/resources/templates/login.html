@@ -74,6 +74,23 @@
         .register-container a:hover {
             text-decoration: underline;
         }
+
+        .message-alert {
+            color: #dc3545;
+            font-weight: 600;
+            font-size: 15px;
+            padding: 21px 22px 1px;
+            background-color: #f8d7da;
+            border: 2px solid #f5c6cb;
+            border-radius: 6px;
+            margin: 15px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease-in;
+            line-height: 1.3;
+        }
     </style>
 </head>
 
@@ -91,6 +108,10 @@
           th:object="${loginRequest}">
 
         <h3>Login</h3>
+
+        <div th:if="${#strings.isEmpty(message) == false}" class="alert alert-warning message-alert">
+            <p th:text="${message}"></p>
+        </div>
 
         <div class="form-group">
             <input id="username"

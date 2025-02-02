@@ -2,6 +2,7 @@ package dotburgas.web;
 
 import dotburgas.transaction.model.Transaction;
 import dotburgas.transaction.service.TransactionService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +25,10 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ModelAndView getAllTransactions() {
+    public ModelAndView getAllTransactions(HttpSession session) {
 
-        List<Transaction> transactions = transactionService.getAllByOwnerId(UUID.fromString("8fe451d4-4370-49b8-ac6e-c90bf266ad94"));
+        UUID userId = (UUID) session.getAttribute("user_id");
+        List<Transaction> transactions = transactionService.getAllByOwnerId(userId);
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("transactions");
