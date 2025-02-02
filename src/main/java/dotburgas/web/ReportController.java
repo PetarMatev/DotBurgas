@@ -1,6 +1,7 @@
 package dotburgas.web;
 
 import dotburgas.reservation.service.ReservationService;
+import dotburgas.shared.security.SecurityUtils;
 import dotburgas.transaction.service.TransactionService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +23,14 @@ public class ReportController {
     }
 
     @GetMapping("/reports")
-    public String getReportsPage(HttpSession session, RedirectAttributes redirectAttributes) {
+    public ModelAndView getReportsPage(HttpSession session, RedirectAttributes redirectAttributes) {
 
-        // Step 1: get the Role from the session
-        String userRole = (String) session.getAttribute("role");
-
-        // Step 2: check if the User has Admin role.
-        if (userRole != null && userRole.equals("ADMIN")) {
-            return "reports";
+        if (SecurityUtils.isAdmin(session)) {
+            return new ModelAndView("reports");
         }
 
-        // Step 3. Invalidate the session
         session.invalidate();
-
-        // Step 4. Add a flash message
         redirectAttributes.addFlashAttribute("message", "You need to log in as an Admin.");
-
-        // Step 5. Redirect to return page with flash message presented
-        return "redirect:/login";
+        return new ModelAndView("redirect:/login");
     }
 }
