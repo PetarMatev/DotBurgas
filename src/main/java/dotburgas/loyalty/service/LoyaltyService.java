@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -39,6 +40,16 @@ public class LoyaltyService {
                 .createdOn(now)
                 .updatedOn(now)
                 .build();
+    }
+
+    public void updatedLoyaltySubscription(UUID loyaltyIdOfUser, LoyaltyTier updatedLoyaltyTier) {
+        Loyalty loyalty = loyaltyRepository.findById(loyaltyIdOfUser).orElseThrow(
+                () -> new IllegalArgumentException("Loyalty not found for ID: " + loyaltyIdOfUser));
+
+        loyalty.setLoyaltyTier(updatedLoyaltyTier);
+        loyaltyRepository.save(loyalty);
+
+        log.info("Successfully updated LoyaltySubscription with id [%s] to loyaltyTier [%s]".formatted(loyalty.getId(), loyalty.getLoyaltyTier()));
     }
 }
 

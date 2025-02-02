@@ -1,0 +1,118 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f3f3f3;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Header */
+header {
+    background-color: #24243e;
+    color: #fff;
+    padding: 15px 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1001; /* Ensure it stays above the sidebar */
+}
+
+header h1 {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    margin-top: 5px; /* Space for the fixed header */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center the content */
+}
+
+.content {
+    margin-left: 250px; /* Space for the fixed sidebar */
+    margin-top: 1px;
+    padding: 30px;
+    flex: 1;
+    padding-top: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.profile, .wallet, .loyalty {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.profile img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.profile h2, .profile p {
+    margin: 10px 0;
+}
+
+.wallet button, .loyalty button, .profile button {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Footer */
+footer {
+    background-color: #24243e;
+    color: #fff;
+    padding: 15px 30px;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.row-content {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.wallet, .loyalty {
+    flex: 1 1 45%; /* Allow them to take up 45% of the width */
+    margin: 0 10px; /* Add spacing between them */
+}
+
+@media (max-width: 768px) {
+    .wallet, .loyalty {
+        flex: 1 1 100%; /* Stack them on smaller screens */
+        margin: 10px 0; /* Add spacing between them */
+    }
+}
+
+.role-user {
+    color: blue;
+    font-weight: bold;
+}
+
+.role-admin {
+    color: red;
+    font-weight: bold;
+}

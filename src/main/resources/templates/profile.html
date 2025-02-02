@@ -3,40 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Wallet Dashboard</title>
-    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">-->
+    <title>Personal Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/sidebar.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f3f3f3;
             margin: 0;
             display: flex;
+            flex-direction: column;
             height: 100vh;
         }
 
         .container {
             display: flex;
-            width: 100%;
-        }
-
-
-        .logout-btn {
-            margin-top: 30px;
-            padding: 10px 20px;
-            background-color: #ff4d4d;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            display: inline-block;
+            flex: 1;
+            margin-top: 5px;
+            flex-direction: column;
+            align-items: center;
         }
 
         .content {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin-left: 250px; /* Space for the fixed sidebar */
             padding: 30px;
+            flex: 1;
+            padding-top: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
         }
 
         .profile-form {
@@ -86,17 +88,17 @@
             width: 100%;
         }
 
+        .profile-form button:hover {
+            background-color: #0056b3;
+        }
+
         .alert-warning {
             color: red;
             font-weight: bold;
         }
 
         .form-fields {
-            margin-top: 55px; /* Add space above the form fields */
-        }
-
-        .profile-form button:hover {
-            background-color: #0056b3;
+            margin-top: 55px;
         }
     </style>
 </head>
@@ -105,6 +107,7 @@
 
 <th:block th:insert="fragments/header :: header"></th:block>
 <th:block th:insert="fragments/sidebar :: sidebar"></th:block>
+
 <div class="container">
     <div class="content">
         <div class="profile-form">
@@ -135,7 +138,6 @@
                                required
                                th:field="*{firstName}">
                         <p class="alert-warning" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
-                        >
                     </div>
 
                     <div>
