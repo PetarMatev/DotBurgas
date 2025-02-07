@@ -93,13 +93,8 @@
         }
     </style>
 </head>
-
 <body>
-<div>
-    <th:block th:insert="fragments/header :: header"></th:block>
-</div>
-
-
+<header th:replace="~{fragments/header :: header}"></header>
 
 <div class="login-container">
     <form class="login-form"
@@ -142,7 +137,6 @@
         </div>
     </form>
 </div>
-
-<th:block th:insert="fragments/footer :: footer"></th:block>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

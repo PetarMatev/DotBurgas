@@ -1,0 +1,86 @@
+/* Center the calendar view on the page */
+.calendar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the content */
+    justify-content: center; /* Centers vertically */
+    width: 90%; /* Adjusts width while keeping a balanced margin */
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Reduce the height of calendar cells */
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    width: 100%;
+}
+
+.calendar-header {
+    background: #343a40;
+    color: #fff;
+    text-align: center;
+    padding: 8px 0;
+    font-weight: bold;
+}
+
+.calendar-day {
+    border: 1px solid #ddd;
+    min-height: 60px; /* Reduced height */
+    text-align: center;
+    padding: 8px;
+    font-size: 14px; /* Slightly smaller text */
+    position: relative;
+}
+
+/* Available and Taken Days Styling */
+.calendar-day.available {
+    background-color: #e9f7fd;
+    cursor: pointer;
+}
+
+.calendar-day.taken {
+    background-color: #f8d7da;
+    cursor: not-allowed;
+}
+
+/* Style for the Reserve Button */
+.reserve-btn {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 3px 6px;
+    font-size: 12px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Adjustments to fit footer without scrolling */
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+}
+
+.container {
+    flex: 1; /* Takes up all available space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #343a40;
+    color: white;
+}

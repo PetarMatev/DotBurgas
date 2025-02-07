@@ -1,7 +1,7 @@
 package dotburgas.web;
 
 import dotburgas.reservation.service.ReservationService;
-import dotburgas.shared.security.SecurityUtils;
+import dotburgas.shared.security.RequireAdminRole;
 import dotburgas.transaction.service.TransactionService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +22,9 @@ public class ReportController {
         this.reservationService = reservationService;
     }
 
+    @RequireAdminRole
     @GetMapping("/reports")
     public ModelAndView getReportsPage(HttpSession session, RedirectAttributes redirectAttributes) {
-
-        if (SecurityUtils.isAdmin(session)) {
             return new ModelAndView("reports");
-        }
-
-        session.invalidate();
-        redirectAttributes.addFlashAttribute("message", "You need to log in as an Admin.");
-        return new ModelAndView("redirect:/login");
     }
 }

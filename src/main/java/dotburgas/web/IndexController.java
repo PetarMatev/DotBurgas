@@ -60,21 +60,14 @@ public class IndexController {
     }
 
     @PostMapping("/register")
-    public ModelAndView registerNewUser(@Valid RegisterRequest registerRequest, BindingResult bindingResult, HttpSession session) {
+    public ModelAndView registerNewUser(@Valid RegisterRequest registerRequest, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return new ModelAndView("register");
         }
 
-        User registeredUser = userService.register(registerRequest);
-        session.setAttribute("user_id", registeredUser.getId());
-        session.setAttribute("role", registeredUser.getRole());
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/home");
-        modelAndView.addObject("user", registeredUser);
-
-        return modelAndView;
+        userService.register(registerRequest);
+        return new ModelAndView("redirect:/login");
     }
 
     @GetMapping("/home")
@@ -83,9 +76,8 @@ public class IndexController {
         UUID userId = (UUID) session.getAttribute("user_id");
         User user = userService.getById(userId);
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("home");
-        modelAndView.addObject(user);
+        ModelAndView modelAndView = new ModelAndView("home");
+        modelAndView.addObject("user", user);
 
         return modelAndView;
     }

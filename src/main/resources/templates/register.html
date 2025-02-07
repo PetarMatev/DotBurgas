@@ -13,7 +13,7 @@
 
 <body>
 
-<th:block th:insert="fragments/header :: header"></th:block>
+<header th:replace="~{fragments/header :: header}"></header>
 
 <div class="container">
     <h2 class="text-center text-black">Register User</h2>
@@ -85,6 +85,6 @@
 
 </body>
 
-<th:block th:insert="fragments/footer :: footer"></th:block>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </html>

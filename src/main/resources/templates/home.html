@@ -14,9 +14,8 @@
     <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
-
-<th:block th:insert="fragments/header :: header"></th:block>
-<th:block th:insert="fragments/sidebar :: sidebar"></th:block>
+<header th:replace="~{fragments/header :: header}"></header>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
 <div class="container">
     <div class="content">
@@ -82,8 +81,6 @@
     </div>
 </div>
 
-<footer>
-    <th:block th:insert="fragments/footer :: footer"></th:block>
-</footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

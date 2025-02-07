@@ -1,6 +1,8 @@
 package dotburgas.wallet.service;
 
+import dotburgas.email.service.EmailService;
 import dotburgas.shared.exception.DomainException;
+import dotburgas.tracking.service.TrackingService;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.transaction.model.TransactionStatus;
 import dotburgas.transaction.model.TransactionType;
@@ -8,10 +10,12 @@ import dotburgas.transaction.service.TransactionService;
 import dotburgas.user.model.User;
 import dotburgas.wallet.model.Wallet;
 import dotburgas.wallet.repository.WalletRepository;
+import dotburgas.web.dto.PaymentNotificationEvent;
 import dotburgas.web.dto.TransferRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +33,14 @@ public class WalletService {
 
     private final WalletRepository walletRepository;
     private final TransactionService transactionService;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     @Autowired
-    public WalletService(WalletRepository walletRepository, TransactionService transactionService) {
+    public WalletService(WalletRepository walletRepository, TransactionService transactionService, EmailService emailService, TrackingService trackingService, ApplicationEventPublisher eventPublisher) {
         this.walletRepository = walletRepository;
         this.transactionService = transactionService;
+        this.eventPublisher = eventPublisher;
     }
 
     public Wallet createNewWallet(User user) {
@@ -156,6 +163,18 @@ public class WalletService {
         wallet.setUpdatedOn(LocalDateTime.now());
 
         walletRepository.save(wallet);
+
+        // Successful payment.
+
+        // creating event using the builder of the DTO
+        PaymentNotificationEvent event = PaymentNotificationEvent.builder()
+                .userId(user.getId())
+                .paymentTime(LocalDateTime.now())
+                .email(user.getEmail())
+                .amount(amount)
+                .build();
+
+        eventPublisher.publishEvent(event);
 
         return transactionService.createNewTransaction(user,
                 wallet.getId().toString(),

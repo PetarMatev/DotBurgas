@@ -69,8 +69,7 @@
 </head>
 
 <body>
-
-<th:block th:insert="fragments/header :: header"></th:block>
+<header th:replace="~{fragments/header :: header}"></header>
 
 <div class="container">
     <h1>Privacy Policy</h1>
@@ -145,7 +144,7 @@
     <p>.</p>
 </div>
 
-<th:block th:insert="fragments/footer :: footer"></th:block>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <script>
     // Get the current date

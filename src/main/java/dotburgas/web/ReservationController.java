@@ -2,7 +2,7 @@ package dotburgas.web;
 
 import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.service.ReservationService;
-import dotburgas.shared.security.SecurityUtils;
+import dotburgas.shared.security.RequireAdminRole;
 import dotburgas.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +23,13 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
+    @RequireAdminRole
     @GetMapping("/reservation-history")
     public ModelAndView getReservationHistoryPage(HttpSession session, RedirectAttributes redirectAttributes) {
 
         List<Reservation> reservations = reservationService.getAllReservations();
-
-        if (SecurityUtils.isAdmin(session)) {
-            ModelAndView modelAndView = new ModelAndView();
-            modelAndView.setViewName("reservation-history");
-            modelAndView.addObject("reservations", reservations);
-            return modelAndView;
-        }
-        session.invalidate();
-        redirectAttributes.addFlashAttribute("message", "You need to log in as an Admin.");
-        return new ModelAndView("reservation-history");
+        ModelAndView modelAndView = new ModelAndView("reservation-history");
+        modelAndView.addObject("reservations", reservations);
+        return modelAndView;
     }
 }

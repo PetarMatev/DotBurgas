@@ -4,122 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction History</title>
+    <title>Users List</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="/css/reset-css.css"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/sidebar.css" />
-    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <link rel="stylesheet" href="/css/users.css"/>
+    <link rel="stylesheet" href="/css/main.css"/>
     <script src="/js/jquery-3.5.1.slim.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
 
-        .wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 1; /* Pushes the footer to the bottom */
-            padding: 20px 0;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .status {
-            font-weight: bold;
-        }
-
-        .status.terminated {
-            color: red;
-        }
-
-        .status.active {
-            color: green;
-        }
-
-        .action-btn {
-            padding: 8px 15px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 0.9em;
-            cursor: pointer;
-        }
-
-        .action-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .no-transactions {
-            text-align: center;
-            font-size: 1.1em;
-            color: #666;
-            margin-top: 20px;
-        }
-
-        footer {
-            background-color: #343a40;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-            position: sticky;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
 </head>
 
 <body>
-<th:block th:insert="fragments/header :: header"></th:block>
-<th:block th:insert="fragments/sidebar :: sidebar"></th:block>
+<header th:replace="~{fragments/header :: header}"></header>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
 <div class="wrapper">
     <div class="container">
-        <h2>Transaction History</h2>
+        <h2>Users List</h2>
 
-        <!-- Dynamic Table for Users -->
         <table class="table table-hover table-striped">
             <thead class="thead-dark">
             <tr>
@@ -131,6 +35,7 @@
                 <th>Role</th>
                 <th>Country</th>
                 <th>Created On</th>
+                <th>Switch Role</th>
             </tr>
             </thead>
             <tbody>
@@ -138,24 +43,30 @@
                 <td th:text="${user.id}"></td>
                 <td th:text="${user.username}"></td>
                 <td th:text="${user.firstName + ' ' + user.lastName}"></td>
-                <td th:text="${user.age}"></td>
-                <td th:text="${user.email}"></td>
-                <td th:text="${user.role}"></td>
-                <td th:text="${user.country}"></td>
+                <td th:text="${#strings.isEmpty(user.age) ? 'no age' : user.age}"></td>
+                <td th:text="${#strings.isEmpty(user.email) ? 'no email' : user.email}"></td>
+                <td th:text="${#strings.capitalize(#strings.toLowerCase(user.role.name()))}"></td>
+                <td th:text="${#strings.capitalize(#strings.toLowerCase(user.country.name()))}"></td>
                 <td th:text="${#temporals.format(user.createdOn, 'dd MMM yyyy HH:mm')}"></td>
+
+                <td>
+                    <!-- /users/{id}/role -->
+                    <form th:action="@{'/users/' + ${user.id} + '/role'}" th:method="PUT">
+                        <button class="role-toggle-btn">
+                            <span>Switch</span>
+                            <i class="fas fa-exchange-alt"></i>
+                        </button>
+                    </form>
+                </td>
+
             </tr>
             </tbody>
         </table>
-
-        <!-- No transactions message -->
         <div class="no-transactions" th:if="${#lists.isEmpty(users)}">
             No transactions found.
         </div>
     </div>
 </div>
-
-<th:block th:insert="fragments/footer :: footer"></th:block>
-
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
-
 </html>

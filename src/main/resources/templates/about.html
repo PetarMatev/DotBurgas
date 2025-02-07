@@ -13,8 +13,7 @@
 </head>
 
 <body>
-
-<th:block th:insert="fragments/header :: header"></th:block>
+<header th:replace="~{fragments/header :: header}"></header>
 
 <div class="container">
     <h2>Welcome to Dot Burgas</h2>
@@ -44,8 +43,6 @@
         and ensuring the success of your property investments.</p>
 </div>
 
-<th:block th:insert="fragments/footer :: footer"></th:block>
-
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
-
 </html>

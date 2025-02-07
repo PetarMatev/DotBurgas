@@ -84,8 +84,8 @@
 </head>
 
 <body>
-<th:block th:insert="fragments/header :: header"></th:block>
-<th:block th:insert="fragments/sidebar :: sidebar"></th:block>
+<header th:replace="~{fragments/header :: header}"></header>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
 <div class="wrapper">
     <div class="container">
@@ -108,7 +108,6 @@
         </form>
     </div>
 </div>
-
-<th:block th:insert="fragments/footer :: footer"></th:block>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

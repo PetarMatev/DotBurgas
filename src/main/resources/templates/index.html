@@ -10,19 +10,13 @@
     <link rel="stylesheet" type="text/css" href="/css/index.css"/>
     <script src="/js/jquery-3.5.1.slim.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-
 </head>
-
 <body>
-
-<th:block th:insert="fragments/header :: header"></th:block>
-
+<header th:replace="~{fragments/header :: header}"></header>
 <div class="container-fluid">
     <h5 class="text-center text-black">Welcome to DOT Burgas</h5>
 </div>
 
-<th:block th:insert="fragments/footer :: footer"></th:block>
-
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
-
 </html>
