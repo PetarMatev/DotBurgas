@@ -1,15 +1,18 @@
 package dotburgas.reservation.service;
 
+import dotburgas.apartment.service.ApartmentService;
 import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.repository.ReservationRepository;
 import dotburgas.transaction.service.TransactionService;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
+import dotburgas.web.dto.ReservationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,10 +21,12 @@ import java.util.UUID;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final ApartmentService apartmentService;
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository, TransactionService transactionService, UserService userService) {
+    public ReservationService(ReservationRepository reservationRepository, TransactionService transactionService, UserService userService, ApartmentService apartmentService) {
         this.reservationRepository = reservationRepository;
+        this.apartmentService = apartmentService;
     }
 
     public List<Reservation> getAllReservationsByApartment(UUID apartmentId) {
@@ -33,14 +38,25 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
-    public void createReservation(UUID apartmentId, LocalDate checkInDate, LocalDate checkOutDate, User user) {
-
+    public void createReservation(User user, UUID apartmentId, ReservationRequest reservationRequest) {
         Reservation reservation = Reservation.builder()
-                .checkInDate(checkInDate)
-                .checkOutDate(checkOutDate)
                 .user(user)
-//                .transaction(transaction)
+                .apartment(apartmentService.getById(apartmentId))
+                .checkInDate(reservationRequest.getCheckInDate())
+                .checkOutDate(reservationRequest.getCheckOutDate())
+                .guests(reservationRequest.getGuests())
+                .reservationLength(calculateDaysBetween(reservationRequest.getCheckInDate(), reservationRequest.getCheckOutDate()))
                 .build();
+
         reservationRepository.save(reservation);
+    }
+
+    private long calculateDaysBetween(LocalDate checkInDate, LocalDate checkOutDate) {
+        return ChronoUnit.DAYS.between(checkInDate, checkOutDate);
+    }
+
+    public List<Reservation> getReservationsByUser(User user) {
+
+        return reservationRepository.findByUser(user);
     }
 }

@@ -30,7 +30,6 @@
                 <th>User ID</th>
                 <th>Username</th>
                 <th>Full Name</th>
-                <th>Age</th>
                 <th>Email</th>
                 <th>Role</th>
                 <th>Country</th>
@@ -43,11 +42,10 @@
                 <td th:text="${user.id}"></td>
                 <td th:text="${user.username}"></td>
                 <td th:text="${user.firstName + ' ' + user.lastName}"></td>
-                <td th:text="${#strings.isEmpty(user.age) ? 'no age' : user.age}"></td>
                 <td th:text="${#strings.isEmpty(user.email) ? 'no email' : user.email}"></td>
                 <td th:text="${#strings.capitalize(#strings.toLowerCase(user.role.name()))}"></td>
                 <td th:text="${#strings.capitalize(#strings.toLowerCase(user.country.name()))}"></td>
-                <td th:text="${#temporals.format(user.createdOn, 'dd MMM yyyy HH:mm')}"></td>
+                <td th:text="${#temporals.format(user.createdOn, 'dd MMM yyyy')}"></td>
 
                 <td>
                     <!-- /users/{id}/role -->

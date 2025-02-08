@@ -10,7 +10,7 @@ public class HelloWorldScheduler {
 
     // Scheduled Job
     // Cron Job - at least one for the project
-    @Scheduled(fixedDelay = 10000)
+    // @Scheduled(fixedDelay = 10000)
     public void sayHelloEvery10Seconds() {
 
         System.out.println(LocalDateTime.now() + "Hello World");

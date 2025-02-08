@@ -37,8 +37,6 @@ public class User {
 
     private String lastName;
 
-    private int age;
-
     @Column(unique = true)
     private String email;
 

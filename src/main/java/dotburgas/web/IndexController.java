@@ -1,5 +1,6 @@
 package dotburgas.web;
 
+import dotburgas.apartment.service.ApartmentService;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import dotburgas.web.dto.LoginRequest;
@@ -18,9 +19,11 @@ import java.util.UUID;
 public class IndexController {
 
     private final UserService userService;
+    private final ApartmentService apartmentService;
 
-    public IndexController(UserService userService) {
+    public IndexController(UserService userService, ApartmentService apartmentService) {
         this.userService = userService;
+        this.apartmentService = apartmentService;
     }
 
     @GetMapping("/login")
@@ -89,8 +92,10 @@ public class IndexController {
     }
 
     @GetMapping("accommodation")
-    public String getAccommodationPage() {
-        return "accommodation";
+    public ModelAndView getAccommodationPage() {
+        ModelAndView modelAndView = new ModelAndView("accommodation");
+        modelAndView.addObject("apartments", apartmentService.getApartments());
+        return modelAndView;
     }
 
 
@@ -98,7 +103,6 @@ public class IndexController {
     public String getDiscoverBurgas() {
         return "discover-burgas";
     }
-
 
     @GetMapping("contact")
     public String getContactPage() {

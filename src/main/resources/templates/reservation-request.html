@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accommodation</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="/css/reservation-request.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<div class="container">
+    <div class="reservation-request">
+        <h2>Accommodation Booking</h2>
+
+        <form action="/accommodation/reservation-request" method="POST" th:object="${reservationRequest}">
+
+            <!-- This hidden field is used to send the apartmentId when the form is submitted -->
+            <input type="hidden" name="apartmentId" th:value="${apartmentId}">
+
+            <div class="field">
+                <label for="apartmentName">Apartment Name</label>
+                <input type="text" id="apartmentName" th:value="${apartmentName}" readonly>
+            </div>
+
+            <div class="field">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" th:value="${first_name}" readonly>
+            </div>
+
+            <div class="field">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" th:value="${last_name}" readonly>
+            </div>
+
+            <div class="field">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" th:value="${email}" readonly>
+            </div>
+
+            <div class="field">
+                <label for="checkinDate">Check-in Date</label>
+                <input type="date" id="checkinDate" th:field="*{checkInDate}" required>
+                <div th:if="${#fields.hasErrors('checkInDate')}" class="error">
+                    <span th:errors="*{checkInDate}"></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="checkoutDate">Check-out Date</label>
+                <input type="date" id="checkoutDate" th:field="*{checkOutDate}" required>
+                <div th:if="${#fields.hasErrors('checkOutDate')}" class="error">
+                    <span th:errors="*{checkOutDate}"></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="guests">Guests</label>
+                <select id="guests" th:field="*{guests}" required>
+                    <option value="1">1 Guest</option>
+                    <option value="2">2 Guests</option>
+                    <option value="3">3 Guests</option>
+                    <option value="4">4 Guests</option>
+                </select>
+                <div th:if="${#fields.hasErrors('guests')}" class="error">
+                    <span th:errors="*{guests}"></span>
+                </div>
+            </div>
+
+
+            <div th:if="${#fields.hasErrors()}">
+                <ul>
+                    <li th:each="err : ${errors}">
+                        <span th:text="${err.defaultMessage}"></span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="submit-btn">
+                <button type="submit">
+                    Request Booking
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

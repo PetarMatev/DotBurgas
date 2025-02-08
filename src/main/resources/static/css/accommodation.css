@@ -1,0 +1,49 @@
+.photos {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+}
+
+.photos img {
+    width: 342px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
+.apartment {
+    border: 1px solid #ddd;
+    margin-bottom: 75px;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.apartment h2 {
+    margin-top: 0;
+}
+
+.info {
+    margin-bottom: 3px;
+}
+
+.location {
+    font-style: italic;
+}
+
+.calendar-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.calendar-link:hover {
+    background-color: #0056b3;
+    text-decoration: underline;
+}

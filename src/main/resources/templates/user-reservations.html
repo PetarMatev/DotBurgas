@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation History</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="/css/user-reservation.css"/>
+    <link rel="stylesheet" href="/css/sidebar.css"/>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="container">
+    <h2>Reservation History</h2>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Apartment Name</th>
+            <th>Apartment Description</th>
+            <th>Apartment Location</th>
+            <th>Check-in Date</th>
+            <th>Check-out Date</th>
+            <th>Length</th>
+            <th>Guests</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="reservation : ${reservations}">
+            <td th:text="${reservation.apartment.name}"></td>
+            <td th:text="${reservation.apartment.description}"></td>
+            <td th:text="${reservation.apartment.location}"></td>
+            <td th:text="${reservation.checkInDate}"></td>
+            <td th:text="${reservation.checkOutDate}"></td>
+            <td th:text="${reservation.reservationLength}"></td>
+            <td th:text="${reservation.guests}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

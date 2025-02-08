@@ -8,6 +8,4 @@ import java.util.UUID;
 
 @Repository
 public interface ApartmentRepository extends JpaRepository<Apartment, UUID> {
-
-
 }
