@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Reservations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/sidebar.css"/>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="/css/pending-reservations.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="wrapper">
+    <div class="container">
+        <h2>Pending Reservations</h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Apartment</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th>Guests</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="reservation : ${pendingReservations}">
+                <td th:text="${reservation.apartment.name}"></td>
+                <td th:text="${reservation.checkInDate}"></td>
+                <td th:text="${reservation.checkOutDate}"></td>
+                <td th:text="${reservation.guests}"></td>
+                <td>
+                    <form th:action="@{/admin/reservations/approve}" method="post" style="display:inline;">
+                        <input type="hidden" name="reservationId" th:value="${reservation.id}">
+                        <button type="submit" class="btn btn-success">Approve</button>
+                    </form>
+                    <form th:action="@{/admin/reservations/reject}" method="post" style="display:inline;">
+                        <input type="hidden" name="reservationId" th:value="${reservation.id}">
+                        <button type="submit" class="btn btn-danger">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

@@ -33,6 +33,14 @@ public class Reservation {
     @Column(nullable = false)
     private long reservationLength;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ConfirmationStatus confirmationStatus;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;

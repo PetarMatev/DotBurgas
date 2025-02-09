@@ -15,7 +15,6 @@
 
 <div class="container">
     <h2>Reservation History</h2>
-
     <table class="table table-bordered">
         <thead>
         <tr>
@@ -26,6 +25,8 @@
             <th>Check-out Date</th>
             <th>Length</th>
             <th>Guests</th>
+            <th>Confirmation Status</th>
+            <th>Payment Status</th>
         </tr>
         </thead>
         <tbody>
@@ -37,6 +38,24 @@
             <td th:text="${reservation.checkOutDate}"></td>
             <td th:text="${reservation.reservationLength}"></td>
             <td th:text="${reservation.guests}"></td>
+
+            <td>
+                <span th:classappend="${reservation.confirmationStatus == T(dotburgas.reservation.model.ConfirmationStatus).PENDING ? 'status-pending' :
+                                      (reservation.confirmationStatus == T(dotburgas.reservation.model.ConfirmationStatus).CONFIRMED ? 'status-confirmed' :
+                                      'status-rejected')}"
+                      th:text="${reservation.confirmationStatus}">
+                </span>
+            </td>
+
+            <td>
+                <span th:classappend="${reservation.paymentStatus == T(dotburgas.reservation.model.PaymentStatus).VOID ? 'status-void' :
+                                      (reservation.paymentStatus == T(dotburgas.reservation.model.PaymentStatus).PAID ? 'status-paid' :
+                                      'status-pending')}"
+                      th:text="${reservation.paymentStatus}">
+                </span>
+            </td>
+
+
         </tr>
         </tbody>
     </table>

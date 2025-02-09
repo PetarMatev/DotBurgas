@@ -1,12 +1,16 @@
 package dotburgas.reservation.service;
 
 import dotburgas.apartment.service.ApartmentService;
+import dotburgas.reservation.model.ConfirmationStatus;
+import dotburgas.reservation.model.PaymentStatus;
 import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.repository.ReservationRepository;
 import dotburgas.transaction.service.TransactionService;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import dotburgas.web.dto.ReservationRequest;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,17 +50,42 @@ public class ReservationService {
                 .checkOutDate(reservationRequest.getCheckOutDate())
                 .guests(reservationRequest.getGuests())
                 .reservationLength(calculateDaysBetween(reservationRequest.getCheckInDate(), reservationRequest.getCheckOutDate()))
+                .confirmationStatus(ConfirmationStatus.PENDING)
+                .paymentStatus(PaymentStatus.PENDING)
                 .build();
 
         reservationRepository.save(reservation);
+
+        // ✅ Send notification to Admin for approval
+        notifyAdminForApproval(reservation);
     }
+
+    @Transactional
+    public void updateReservationStatus(UUID reservationId, ConfirmationStatus status) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
+        reservation.setConfirmationStatus(status);
+
+        if (status == ConfirmationStatus.REJECTED) {
+            reservation.setPaymentStatus(PaymentStatus.VOID);
+        }
+        reservationRepository.save(reservation);
+    }
+
+
 
     private long calculateDaysBetween(LocalDate checkInDate, LocalDate checkOutDate) {
         return ChronoUnit.DAYS.between(checkInDate, checkOutDate);
     }
 
     public List<Reservation> getReservationsByUser(User user) {
-
         return reservationRepository.findByUser(user);
+    }
+
+    public List<Reservation> getPendingReservations() {
+        return reservationRepository.findByConfirmationStatus(ConfirmationStatus.PENDING);
+    }
+
+    private void notifyAdminForApproval(Reservation reservation) {
+        // adminNotificationService.sendReservationApprovalRequest(reservation);
     }
 }

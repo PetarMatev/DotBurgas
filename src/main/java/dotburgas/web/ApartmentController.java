@@ -1,8 +1,6 @@
 package dotburgas.web;
 
-import dotburgas.apartment.model.Apartment;
 import dotburgas.apartment.service.ApartmentService;
-import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.service.ReservationService;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
@@ -14,11 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -56,9 +52,7 @@ public class ApartmentController {
 
 
     @PostMapping("accommodation/reservation-request")
-    public ModelAndView submitReservationRequest(@Valid ReservationRequest reservationRequest,
-                                                 BindingResult bindingResult,
-                                                 @RequestParam UUID apartmentId,
+    public ModelAndView submitReservationRequest(@Valid ReservationRequest reservationRequest, BindingResult bindingResult, @RequestParam UUID apartmentId,
                                                  HttpSession session) {
 
         if (bindingResult.hasErrors()) {
@@ -68,10 +62,6 @@ public class ApartmentController {
         }
 
         UUID userId = (UUID) session.getAttribute("user_id");
-        if (userId == null) {
-            return new ModelAndView("redirect:/login");
-        }
-
         User user = userService.getById(userId);
 
         reservationService.createReservation(user, apartmentId, reservationRequest);
