@@ -1,3 +1,4 @@
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f3f3f3;
@@ -7,87 +8,72 @@ body {
     min-height: 100vh;
 }
 
+/* Centering and Framing */
 .wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 1; /* Pushes the footer to the bottom */
+    flex: 1;
     padding: 20px 0;
 }
 
+/* Improved Table Container */
 .container {
-    width: 90%; /* Adjust width */
-    max-width: 1200px; /* Increased max width */
-    padding: 20px;
+    width: 80%; /* Adjust width */
+    max-width: 1400px; /* Keep it reasonable */
+    margin: 20px auto; /* Center it properly */
+    padding-top: 10px;
     background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    overflow: hidden; /* Ensures no overflow outside the container */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd; /* Gives a subtle frame */
+
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
+/* Table Styling */
 table {
     width: 100%;
-    table-layout: auto; /* Ensures table adjusts well */
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #fff; /* Added background color to the table itself */
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Adds space between rows */
+    background-color: #fff;
 }
 
 th, td {
-    padding: 12px;
+    padding: 15px;
     text-align: left;
     border-bottom: 1px solid #ddd;
-    word-wrap: break-word;
-    white-space: nowrap; /* Prevents breaking of text */
 }
 
+/* Header Styling */
 th {
     background-color: #007bff;
     color: white;
+    font-size: 1rem;
+    text-align: center;
 }
 
-th:last-child,
-td:last-child {
-    width: 14%; /* Adjust width for the last column */
-    text-align: center;
+/* Row and Cell Styling */
+tr {
+    background-color: #f9f9f9;
+    border-radius: 10px;
 }
 
 tr:hover {
     background-color: #f1f1f1;
 }
 
-.status {
-    font-weight: bold;
+td {
+    white-space: nowrap;
+    text-align: center;
 }
 
-.status.terminated {
-    color: red;
+/* Adjust Width for Role Column */
+th:last-child,
+td:last-child {
+    width: 16%; /* Adjusted for better spacing */
 }
 
-.status.active {
-    color: green;
-}
-
-.action-btn {
-    padding: 8px 15px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 0.9em;
-    cursor: pointer;
-}
-
-.action-btn:hover {
-    background-color: #0056b3;
-}
-
+/* No Transactions Message */
 .no-transactions {
     text-align: center;
     font-size: 1.1em;
@@ -95,6 +81,7 @@ tr:hover {
     margin-top: 20px;
 }
 
+/* Footer */
 footer {
     background-color: #343a40;
     color: white;
@@ -105,25 +92,31 @@ footer {
     width: 100%;
 }
 
-/* Switch Role Button */
+/* Ensure Table Cell Centers Content */
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Ensure Button is Centered Inside the Cell */
 .role-toggle-btn {
-    display: flex;
+    display: inline-flex; /* Keeps it inline but flexible */
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 8px 12px; /* Reduced padding to fit */
+    padding: 8px 12px;
     background: linear-gradient(45deg, #007bff, #00d4ff);
     color: white;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: bold;
     border: none;
-    border-radius: 25px;
+    border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    white-space: nowrap; /* Prevents breaking */
+    white-space: nowrap;
+    margin: 0 auto; /* Centers when used in a flex/inline-flex container */
 }
-
 .role-toggle-btn:hover {
     background: linear-gradient(45deg, #0056b3, #00aaff);
     transform: scale(1.05);

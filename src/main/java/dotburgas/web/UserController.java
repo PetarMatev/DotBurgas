@@ -1,6 +1,8 @@
 package dotburgas.web;
 
-import dotburgas.shared.security.RequireAdminRole;
+import dotburgas.reservation.model.Reservation;
+import dotburgas.reservation.service.ReservationService;
+import dotburgas.shared.security.AuthenticationDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import dotburgas.web.dto.UserEditRequest;
@@ -8,6 +10,7 @@ import dotburgas.web.mapper.DtoMapper;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,10 +27,12 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final ReservationService reservationService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ReservationService reservationService) {
         this.userService = userService;
+        this.reservationService = reservationService;
     }
 
     @GetMapping("/{id}/profile")
@@ -60,15 +64,6 @@ public class UserController {
         return new ModelAndView("redirect:/home");
     }
 
-    @RequireAdminRole
-    @GetMapping
-    public ModelAndView getAllUsers(HttpSession session, RedirectAttributes redirectAttributes) {
-
-        List<User> users = userService.getAllUsers();
-        ModelAndView modelAndView = new ModelAndView("users");
-        modelAndView.addObject("users", users);
-        return modelAndView;
-    }
 
     @PutMapping("/{id}/role") // the Endpoint will be PUT / users / {id} / role
     public String SwitchUserRole(@PathVariable UUID id) {
@@ -76,6 +71,19 @@ public class UserController {
         userService.switchUserRole(id);
 
         return "redirect:/users";
+    }
+
+    @GetMapping("/user-reservations")
+    public ModelAndView getUserReservations(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+
+        User user = userService.getById(authenticationDetails.getUserId());
+
+        List<Reservation> reservations = reservationService.getReservationsByUser(user);
+
+        ModelAndView modelAndView = new ModelAndView("user-reservations");
+        modelAndView.addObject("reservations", reservations);
+
+        return modelAndView;
     }
 
 }

@@ -1,6 +1,6 @@
-package dotburgas.user.model;
+package dotburgas.user.service;
 
-import dotburgas.user.service.UserService;
+import dotburgas.user.model.Country;
 import dotburgas.web.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

@@ -1,5 +1,6 @@
 package dotburgas.web;
 
+import dotburgas.shared.security.AuthenticationDetails;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
@@ -7,6 +8,8 @@ import dotburgas.wallet.service.WalletService;
 import dotburgas.web.dto.TransferRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,16 +24,16 @@ public class TransferController {
     private final UserService userService;
     private final WalletService walletService;
 
+    @Autowired
     public TransferController(UserService userService, WalletService walletService) {
         this.userService = userService;
         this.walletService = walletService;
     }
 
     @GetMapping("/transfers")
-    public ModelAndView getTransferPage(HttpSession session) {
+    public ModelAndView getTransferPage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
 
-        UUID userId = (UUID) session.getAttribute("user_id");
-        User user = userService.getById(userId);
+        User user = userService.getById(authenticationDetails.getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("transfer");
@@ -41,10 +44,9 @@ public class TransferController {
     }
 
     @PostMapping("/transfers")
-    public ModelAndView initiateTransfer(@Valid TransferRequest transferRequest, BindingResult bindingResult, HttpSession session) {
+    public ModelAndView initiateTransfer(@Valid TransferRequest transferRequest, BindingResult bindingResult, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
 
-        UUID userId = (UUID) session.getAttribute("user_id");
-        User user = userService.getById(userId);
+        User user = userService.getById(authenticationDetails.getUserId());
 
 
         if (bindingResult.hasErrors()) {

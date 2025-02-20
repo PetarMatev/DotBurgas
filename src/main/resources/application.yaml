@@ -1,4 +1,19 @@
 spring:
+  security:
+    user:
+      name: Petar123
+      password: 123123
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: petargmatev@gmail.com
+    password: fevnhtxobgxstjdp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   mvc:
     hiddenmethod:
       filter:
@@ -28,7 +43,8 @@ spring:
     active: dev
 server:
   port: 8080
-
 logging:
   level:
     org.springframework.web.filter.HiddenHttpMethodFilter: DEBUG
+
+

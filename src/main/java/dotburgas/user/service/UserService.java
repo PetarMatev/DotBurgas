@@ -3,18 +3,23 @@ package dotburgas.user.service;
 import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.service.LoyaltyService;
 import dotburgas.shared.exception.DomainException;
+import dotburgas.shared.security.AuthenticationDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.model.UserRole;
 import dotburgas.user.repository.UserRepository;
 import dotburgas.wallet.model.Wallet;
 import dotburgas.wallet.service.WalletService;
-import dotburgas.web.dto.LoginRequest;
 import dotburgas.web.dto.RegisterRequest;
 import dotburgas.web.dto.UserEditRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,37 +31,21 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final LoyaltyService loyaltyService;
     private final WalletService walletService;
+    private final JavaMailSender javaMailSender;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, LoyaltyService loyaltyService, WalletService walletService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, LoyaltyService loyaltyService, WalletService walletService, JavaMailSender javaMailSender) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.loyaltyService = loyaltyService;
         this.walletService = walletService;
-    }
-
-    public User login(LoginRequest loginRequest) {
-
-        Optional<User> optionalUser = userRepository.findByUsername(loginRequest.getUsername());
-        // if we don't have user with this username return exception.
-        if (optionalUser.isEmpty()) {
-            throw new DomainException("Username or password are incorrect");
-        }
-
-        User user = optionalUser.get();
-        // we get the clean password from the loginRequest and compare it to the encrypted version using matches.
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new DomainException("Username or password are incorrect");
-        }
-
-        // if everything is okay we return the user
-        return user;
+        this.javaMailSender = javaMailSender;
     }
 
     @CacheEvict(value = "users", allEntries = true)
@@ -97,6 +86,7 @@ public class UserService {
     private User initilizeUser(RegisterRequest registerRequest) {
         return User.builder()
                 .username(registerRequest.getUsername())
+                .password(registerRequest.getPassword())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .country(registerRequest.getCountry())
                 .role(UserRole.USER)
@@ -128,5 +118,24 @@ public class UserService {
             user.setRole(UserRole.ADMIN);
         }
         userRepository.save(user);
+    }
+
+
+    public void sendReservationRequestEmail(String recipientEmail, String reservationDetails) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(recipientEmail);
+        message.setSubject("Reservation Request");
+        message.setText(reservationDetails);
+        javaMailSender.send(message);
+    }
+
+
+    // Everytime user logs in, spring security will call this method to get the details of the user with this username.
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new DomainException("user with this username does not exist"));
+
+        return new AuthenticationDetails(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
     }
 }

@@ -1,23 +1,45 @@
 package dotburgas.shared.config;
 
-import dotburgas.shared.security.SessionCheckInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@EnableMethodSecurity
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
-    @Autowired
-    private SessionCheckInterceptor interceptor;
+    // SecurityFilterChain is a way in which Spring Security understands how to apply to our app.
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        //** - everything after
-        registry.addInterceptor(interceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/img/**", "/js/**", "/static/**", "/webjars/**");
+        // AuthorisedHttpRequests - config for group of endpoints
+        // RequestMatcher - giving us access to specific endpoint
+        // PermitAll() - everyone can access this endpoint
+        // .anyRequests - any requests that have not been requested.
+        // .authenticated() - to gain access you need to be authenticated.
+        httpSecurity
+                .authorizeHttpRequests(matchers -> matchers.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // access to static resources
+                        .requestMatchers("/", "register", "discover-burgas", "accommodation", "about", "contact").permitAll()
+                        .requestMatchers("/css/**", "/img/**", "/js/**", "/static/**", "/webjars/**").permitAll() // Public assets
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+//                        .usernameParameter("username") // could be an email here
+//                        .passwordParameter("password")
+                        .defaultSuccessUrl("/home")
+                        .failureUrl("/login?error")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                        .logoutSuccessUrl("/")
+                );
 
+        return httpSecurity.build();
     }
 }
