@@ -13,9 +13,7 @@
     <link rel="stylesheet" href="/css/main.css"/>
     <script src="/js/jquery-3.5.1.slim.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-
 </head>
-
 <body>
 <header th:replace="~{fragments/header :: header}"></header>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -24,7 +22,6 @@
     <div class="container">
         <h2>Transaction History</h2>
 
-        <!-- Table for displaying transaction history -->
         <table>
             <thead>
             <tr>
@@ -32,7 +29,7 @@
                 <th>Status</th>
                 <th>Amount</th>
                 <th>Balance</th>
-                <th>Note</th>
+                <th>Description</th>
                 <th>Date</th>
             </tr>
             </thead>
@@ -49,8 +46,8 @@
                     </p>
                 </td>
                 <td th:text="${transaction.balanceLeft + ' ' + transaction.currency}"></td>
-                <td th:text="${transaction.status.name() == 'FAILED' ? transaction.failureReason : transaction.description}"></td>
-                <td th:text="${#temporals.format(transaction.createdOn, 'dd MMM yyyy HH:mm')}"></td>
+                <td th:utext="${transaction.status.name() == 'FAILED' ? transaction.failureReason : transaction.description}"></td>
+                <td th:text="${#temporals.format(transaction.createdOn, 'dd MMM yyyy HH:mm:ss')}"></td>
             </tr>
             </tbody>
         </table>

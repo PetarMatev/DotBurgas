@@ -4,19 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>footer</title>
+    <style>
+        footer div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        footer p {
+            margin-right: 20px; /* Add spacing between the text and the links */
+        }
+
+        .footer-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: space-between; /* Distribute space evenly between the links */
+            width: 300px; /* You can adjust this width as needed */
+        }
+
+        .footer-list a {
+            text-decoration: none; /* Optional: Remove underline from links */
+            color: white; /* Make sure links are white */
+            padding-left: 20px;
+        }
+    </style>
 </head>
 <body>
 
 <footer class="bg-dark text-white text-center py-3" th:fragment="footer">
     <div>
         <p>&copy; 2025 DOT Burgas All Rights Reserved.</p>
-        <ul class="list-unstyled">
-            <li><a href="/about" class="text-white">About us</a></li>
-            <li><a href="/contact" class="text-white">Contact us</a></li>
-            <li><a href="/privacy" class="text-white">Privacy Policy</a></li>
+        <ul class="footer-list">
+            <a th:href="@{/about}" class="text-white">About us</a>
+            <a th:href="@{/contact}" class="text-white">Contact us</a>
+            <a th:href="@{/privacy}" class="text-white">Privacy Policy</a>
         </ul>
     </div>
 </footer>
-
 </body>
 </html>

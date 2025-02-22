@@ -2,12 +2,11 @@ package dotburgas.web;
 
 import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.service.ReservationService;
-import dotburgas.shared.security.AuthenticationDetails;
+import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import dotburgas.web.dto.UserEditRequest;
 import dotburgas.web.mapper.DtoMapper;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -74,9 +73,9 @@ public class UserController {
     }
 
     @GetMapping("/user-reservations")
-    public ModelAndView getUserReservations(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+    public ModelAndView getUserReservations(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
-        User user = userService.getById(authenticationDetails.getUserId());
+        User user = userService.getById(authenticationUserDetails.getUserId());
 
         List<Reservation> reservations = reservationService.getReservationsByUser(user);
 

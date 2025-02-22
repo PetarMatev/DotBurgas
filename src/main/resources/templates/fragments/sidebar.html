@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,22 +11,24 @@
 <div class="sidebar" th:fragment="sidebar">
     <h1>Menu</h1>
     <ul>
-        <!-- General views -->
         <li><a th:href="@{/home}"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a th:href="@{/wallets}"><i class="fas fa-wallet"></i> Wallet</a></li>
-        <li><a th:href="@{/transactions}"><i class="fas fa-list"></i> Transactions</a></li>
+        <li><a th:href="@{/wallet}"><i class="fas fa-wallet"></i> Wallet</a></li>
+        <li><a th:href="@{/transactions}"><i class="fas fa-list"></i> Transaction History</a></li>
+        <li><a th:href="@{/transfers}"><i class="fas fa-exchange-alt"></i> Transfer</a></li>
 
-        <th:block th:if="${#strings.equalsIgnoreCase(session.role, 'USER')}">
-            <li><a th:href="@{/transfers}"><i class="fas fa-exchange-alt"></i> Transfers</a></li>
+        <th:block sec:authorize="!hasRole('ROLE_ADMIN')">
             <li><a th:href="@{/users/user-reservations}"><i class="fas fa-users"></i> Reservation History</a></li>
             <li><a th:href="@{/loyalties/history}"><i class="fas fa-history"></i> Loyalty History</a></li>
         </th:block>
 
-        <th:block th:unless="${#strings.equalsIgnoreCase(session.role, 'USER')}">
-            <li><a th:href="@{/admin/users}"><i class="fas fa-users"></i> User Table</a></li>
-            <li><a th:href="@{/admin/reservation-history}"><i class="fas fa-calendar-alt"></i> Reservation History</a></li>
-            <li><a th:href="@{/admin/reports}"><i class="fas fa-file-alt"></i> Reports</a></li>
-            <li><a th:href="@{/admin/reservations/pending}"><i class="fas fa-file-alt"></i> Reservation Requests</a></li>
+        <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+            <ul class="admin-menu">
+                <li><h4>Admin Menu:</h4></li>
+                <li><a th:href="@{/admin/users}"><i class="fas fa-users"></i> User Table</a></li>
+                <li><a th:href="@{/admin/reservation-history}"><i class="fas fa-calendar-alt"></i> Reservation History</a></li>
+                <li><a th:href="@{/admin/reports}"><i class="fas fa-file-alt"></i> Reports</a></li>
+                <li><a th:href="@{/admin/reservations/pending}"><i class="fas fa-file-alt"></i> Reservation Requests</a></li>
+            </ul>
         </th:block>
 
         <li><a class="logout-btn" th:href="@{/logout}"> <i class="fas fa-sign-out-alt"></i> Logout</a></li>

@@ -1,15 +1,18 @@
 package dotburgas.web;
 
-import dotburgas.shared.security.AuthenticationDetails;
+import dotburgas.shared.security.AuthenticationUserDetails;
+import dotburgas.transaction.model.Transaction;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
-import jakarta.servlet.http.HttpSession;
+import dotburgas.wallet.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -17,30 +20,27 @@ import java.util.UUID;
 public class WalletController {
 
     private final UserService userService;
+    private final WalletService walletService;
 
     @Autowired
-    public WalletController(UserService userService) {
+    public WalletController(UserService userService, WalletService walletService) {
         this.userService = userService;
+        this.walletService = walletService;
     }
 
-    @GetMapping("/wallets")
-    public String getWalletsPage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+    @GetMapping("/wallet")
+    public ModelAndView getWalletsPage(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
-        authenticationDetails.getUserId();
+        User user = userService.getById(authenticationUserDetails.getUserId());
+        Map<UUID, List<Transaction>> lastFiveTransactionsPerWallet = walletService.getLastFiveTransactions(user.getWallet());
 
-        return "wallets";
-    }
-
-
-    @GetMapping("/wallets/home")
-    public ModelAndView getHomePage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
-
-        User user = userService.getById(authenticationDetails.getUserId());
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("home");
-        modelAndView.addObject(user);
+        ModelAndView modelAndView = new ModelAndView("wallet");
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("lastFiveTransactions", lastFiveTransactionsPerWallet);
 
         return modelAndView;
     }
+
+
+
 }

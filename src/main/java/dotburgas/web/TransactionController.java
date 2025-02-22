@@ -1,9 +1,8 @@
 package dotburgas.web;
 
-import dotburgas.shared.security.AuthenticationDetails;
+import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.transaction.service.TransactionService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -27,9 +26,9 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ModelAndView getAllTransactions(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+    public ModelAndView getAllTransactions(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
-        List<Transaction> transactions = transactionService.getAllByOwnerId(authenticationDetails.getUserId());
+        List<Transaction> transactions = transactionService.getAllByOwnerId(authenticationUserDetails.getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("transactions");

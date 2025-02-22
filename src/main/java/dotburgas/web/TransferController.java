@@ -1,12 +1,11 @@
 package dotburgas.web;
 
-import dotburgas.shared.security.AuthenticationDetails;
+import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import dotburgas.wallet.service.WalletService;
 import dotburgas.web.dto.TransferRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,8 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.UUID;
 
 @Controller
 public class TransferController {
@@ -31,9 +28,9 @@ public class TransferController {
     }
 
     @GetMapping("/transfers")
-    public ModelAndView getTransferPage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+    public ModelAndView getTransferPage(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
-        User user = userService.getById(authenticationDetails.getUserId());
+        User user = userService.getById(authenticationUserDetails.getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("transfer");
@@ -44,10 +41,9 @@ public class TransferController {
     }
 
     @PostMapping("/transfers")
-    public ModelAndView initiateTransfer(@Valid TransferRequest transferRequest, BindingResult bindingResult, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+    public ModelAndView initiateTransfer(@Valid TransferRequest transferRequest, BindingResult bindingResult, @AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
-        User user = userService.getById(authenticationDetails.getUserId());
-
+        User user = userService.getById(authenticationUserDetails.getUserId());
 
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView();
@@ -59,8 +55,6 @@ public class TransferController {
         }
 
         Transaction transaction = walletService.transferFunds(user, transferRequest);
-
-
         return new ModelAndView("redirect:/transactions/" + transaction.getId());
     }
 }

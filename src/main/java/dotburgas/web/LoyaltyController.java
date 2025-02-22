@@ -1,13 +1,11 @@
 package dotburgas.web;
 
-import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.model.LoyaltyTier;
 import dotburgas.loyalty.service.LoyaltyService;
-import dotburgas.shared.security.AuthenticationDetails;
+import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import dotburgas.web.dto.LoyaltySubscriptionEditRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,7 +39,7 @@ public class LoyaltyController {
 
     @PostMapping("/loyalties")
     public ModelAndView updateLoyaltySubscription(@Valid LoyaltySubscriptionEditRequest loyaltySubscriptionEditRequest,
-                                                  BindingResult bindingResult, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+                                                  BindingResult bindingResult, @AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView();
@@ -51,20 +49,20 @@ public class LoyaltyController {
         }
 
 
-        User user = userService.getById(authenticationDetails.getUserId());
-        UUID loyaltyIdOfUser = user.getLoyalty().getId();
+        User user = userService.getById(authenticationUserDetails.getUserId());
+        UUID loyaltyId = user.getLoyalty().getId();
 
         LoyaltyTier updatedLoyaltyTier = loyaltySubscriptionEditRequest.getLoyaltyTier();
 
-        loyaltyService.updatedLoyaltySubscription(loyaltyIdOfUser, updatedLoyaltyTier);
+        loyaltyService.updatedLoyaltySubscription(loyaltyId, updatedLoyaltyTier);
 
         return new ModelAndView("redirect:/home");
     }
 
     @GetMapping("/loyalties/history")
-    public ModelAndView getLoyaltyHistory(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+    public ModelAndView getLoyaltyHistory(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
-        User user = userService.getById(authenticationDetails.getUserId());
+        User user = userService.getById(authenticationUserDetails.getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("loyalty-history");

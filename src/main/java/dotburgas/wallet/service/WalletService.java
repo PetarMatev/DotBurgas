@@ -21,9 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Currency;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -86,7 +84,7 @@ public class WalletService {
                 .stream()
                 .findFirst();
 
-        String transferDescription = "Transfer from to %s %s for %.2f".formatted(sender.getUsername(), transferRequest.getToUserName(), transferRequest.getAmount());
+        String transferDescription = "Transfer from <b>%s</b> to <b>%s</b> for %.2f EUR.".formatted(sender.getUsername(), transferRequest.getToUserName(), transferRequest.getAmount());
 
         if (receiverWalletOptional.isEmpty()) {
             return transactionService
@@ -190,7 +188,7 @@ public class WalletService {
 
     private Wallet getWalletByID(UUID walletId) {
         return walletRepository.findById(walletId)
-                .orElseThrow(() -> new DomainException("Wallet with id [%s] does not exists".formatted(walletId)));
+                .orElseThrow(() -> new DomainException("Wallet with id [%s] does not exist".formatted(walletId)));
     }
 
     private Wallet initializeWallet(User user) {
@@ -201,5 +199,12 @@ public class WalletService {
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
                 .build();
+    }
+
+    public Map<UUID, List<Transaction>> getLastFiveTransactions(Wallet wallet) {
+        Map<UUID, List<Transaction>> transactionsByWalletId = new LinkedHashMap<>();
+        List<Transaction> lastFiveTransactions = transactionService.getLastFiveTransactionsByWallet(wallet);
+        transactionsByWalletId.put(wallet.getId(), lastFiveTransactions);
+        return transactionsByWalletId;
     }
 }

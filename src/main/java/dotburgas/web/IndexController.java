@@ -1,7 +1,7 @@
 package dotburgas.web;
 
 import dotburgas.apartment.service.ApartmentService;
-import dotburgas.shared.security.AuthenticationDetails;
+import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import dotburgas.web.dto.LoginRequest;
@@ -65,8 +65,8 @@ public class IndexController {
     }
 
     @GetMapping("/home")
-    public ModelAndView getHomePage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
-        User user = userService.getById(authenticationDetails.getUserId());
+    public ModelAndView getHomePage(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
+        User user = userService.getById(authenticationUserDetails.getUserId());
         ModelAndView modelAndView = new ModelAndView("home");
         modelAndView.addObject("user", user);
         return modelAndView;

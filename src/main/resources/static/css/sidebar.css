@@ -36,3 +36,9 @@
 .sidebar ul li a i {
     margin-right: 10px;
 }
+
+.admin-menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}

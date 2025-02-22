@@ -14,7 +14,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 // this class preserves the details of the logged in user.
-public class AuthenticationDetails implements UserDetails {
+public class AuthenticationUserDetails implements UserDetails {
 
     private UUID userId;
     private String username;

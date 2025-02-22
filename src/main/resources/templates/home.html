@@ -33,9 +33,14 @@
                 </p>
             </div>
 
+                <p th:if="${!#strings.isEmpty(user.firstName) || !#strings.isEmpty(user.lastName)}">
+                    <strong>Full Name:</strong>
+                    <span th:text="${user.firstName + ' ' + user.lastName}"></span>
+                </p>
                 <p><strong>User ID:</strong> <span th:text="${user.id}"></span></p>
-                <p><strong>Email:</strong> <span
-                        th:text="${#strings.isEmpty(user.email) ? 'Edit your profile and email!': user.email}"></span>
+                <p th:if="${!#strings.isEmpty(user.email)}">
+                    <strong>Email:</strong>
+                    <span th:text="${user.email}"></span>
                 </p>
                 <p><strong>Joined:</strong> <span
                         th:text="${#temporals.format(user.createdOn, 'dd MMM YYYY HH:mm')}"></span></p>
@@ -58,7 +63,7 @@
                     <p><strong>Last Transaction:</strong> <span
                             th:text="${#temporals.format(user.wallet.updatedOn, 'dd MMM YYYY HH:mm')}"></span></p>
                 </div>
-                <a class="profile-action-button" th:href="@{/wallets}">
+                <a class="profile-action-button" th:href="@{/wallet}">
                     <button>Open Wallet</button>
                 </a>
             </div>

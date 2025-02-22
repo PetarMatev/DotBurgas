@@ -6,6 +6,7 @@ import dotburgas.transaction.model.TransactionStatus;
 import dotburgas.transaction.model.TransactionType;
 import dotburgas.transaction.repository.TransactionRepository;
 import dotburgas.user.model.User;
+import dotburgas.wallet.model.Wallet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -54,6 +56,18 @@ public class TransactionService {
     public Transaction getById(UUID id) {
         return transactionRepository
                 .findById(id)
-                .orElseThrow(() -> new DomainException("Transaction with id [%s] does not exists.".formatted(id)));
+                .orElseThrow(() -> new DomainException("Transaction with id [%s] does not exist.".formatted(id)));
+    }
+
+    public List<Transaction> getLastFiveTransactionsByWallet(Wallet wallet) {
+
+        List<Transaction> lastFiveTransactions = transactionRepository.findAllBySenderOrReceiverOrderByCreatedOnDesc(wallet.getId().toString(), wallet.getId().toString())
+                .stream()
+                .filter(t -> t.getOwner().getId().equals(wallet.getOwner().getId()))
+                .filter(t -> t.getStatus().equals(TransactionStatus.SUCCEEDED))
+                .limit(5)
+                .collect(Collectors.toList());
+
+        return lastFiveTransactions;
     }
 }

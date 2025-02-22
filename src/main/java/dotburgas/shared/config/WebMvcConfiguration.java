@@ -24,7 +24,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         // .authenticated() - to gain access you need to be authenticated.
         httpSecurity
                 .authorizeHttpRequests(matchers -> matchers.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // access to static resources
-                        .requestMatchers("/", "register", "discover-burgas", "accommodation", "about", "contact").permitAll()
+                        .requestMatchers("/", "/register", "/discover-burgas", "/accommodation", "/about", "/contact").permitAll()
                         .requestMatchers("/css/**", "/img/**", "/js/**", "/static/**", "/webjars/**").permitAll() // Public assets
                         .anyRequest().authenticated()
                 )

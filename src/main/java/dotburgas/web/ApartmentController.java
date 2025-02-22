@@ -2,11 +2,10 @@ package dotburgas.web;
 
 import dotburgas.apartment.service.ApartmentService;
 import dotburgas.reservation.service.ReservationService;
-import dotburgas.shared.security.AuthenticationDetails;
+import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import dotburgas.web.dto.ReservationRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,10 +35,10 @@ public class ApartmentController {
     }
 
     @GetMapping("/reservation-request")
-    public ModelAndView getReservationForm(@RequestParam UUID apartmentId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+    public ModelAndView getReservationForm(@RequestParam UUID apartmentId, @AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
         ModelAndView modelAndView = new ModelAndView("reservation-request");
 
-        User user = userService.getById(authenticationDetails.getUserId());
+        User user = userService.getById(authenticationUserDetails.getUserId());
 
         String apartmentName = apartmentService.findApartmentNameByID(apartmentId);
         modelAndView.addObject("first_name", user.getFirstName());
@@ -54,7 +53,7 @@ public class ApartmentController {
 
     @PostMapping("/reservation-request")
     public ModelAndView submitReservationRequest(@Valid ReservationRequest reservationRequest, BindingResult bindingResult, @RequestParam UUID apartmentId,
-                                                 @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+                                                 @AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("reservation-request");
@@ -62,7 +61,7 @@ public class ApartmentController {
             return modelAndView;
         }
 
-        User user = userService.getById(authenticationDetails.getUserId());
+        User user = userService.getById(authenticationUserDetails.getUserId());
 
         reservationService.createReservation(user, apartmentId, reservationRequest);
 

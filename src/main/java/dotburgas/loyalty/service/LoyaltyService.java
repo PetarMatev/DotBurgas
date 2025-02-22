@@ -47,6 +47,7 @@ public class LoyaltyService {
                 () -> new IllegalArgumentException("Loyalty not found for ID: " + loyaltyIdOfUser));
 
         loyalty.setLoyaltyTier(updatedLoyaltyTier);
+        loyalty.setUpdatedOn(LocalDateTime.now());
         loyaltyRepository.save(loyalty);
 
         log.info("Successfully updated LoyaltySubscription with id [%s] to loyaltyTier [%s]".formatted(loyalty.getId(), loyalty.getLoyaltyTier()));

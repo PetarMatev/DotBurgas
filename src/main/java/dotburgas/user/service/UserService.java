@@ -3,7 +3,7 @@ package dotburgas.user.service;
 import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.service.LoyaltyService;
 import dotburgas.shared.exception.DomainException;
-import dotburgas.shared.security.AuthenticationDetails;
+import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.model.UserRole;
 import dotburgas.user.repository.UserRepository;
@@ -136,6 +136,6 @@ public class UserService implements UserDetailsService {
 
         User user = userRepository.findByUsername(username).orElseThrow(() -> new DomainException("user with this username does not exist"));
 
-        return new AuthenticationDetails(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
+        return new AuthenticationUserDetails(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
     }
 }

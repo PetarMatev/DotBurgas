@@ -36,13 +36,9 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
+    max-width: 750px; /* Expand wallet width */
     width: 100%;
     text-align: center;
-}
-
-.wallet h2 {
-    margin-top: 0;
 }
 
 .wallet-balance {
@@ -69,6 +65,60 @@ body {
     color: #777;
 }
 
+/* Wallet Activity Styles */
+.wallet-activity {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: left; /* Align content to the left */
+}
+
+/* Activity Entry Layout */
+.activity-entry {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    justify-content: flex-start; /* Align content to the left */
+}
+
+.activity-entry:last-child {
+    border-bottom: none;
+}
+
+.activity-entry-description-and-date {
+    margin-left: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align description and date to the left */
+}
+
+.activity-entry-description {
+    font-size: 1em;
+    margin: 0;
+}
+
+.activity-entry-date {
+    font-size: 0.8em;
+    color: #777;
+}
+
+.activity-entry-amount {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-left: auto; /* Align amount to the right if needed */
+}
+
+.amount-in {
+    color: green;
+}
+
+.amount-out {
+    color: red;
+}
+
 /* Footer Styling */
 footer {
     text-align: center;
@@ -92,4 +142,22 @@ header {
     z-index: 1000;
     display: flex;
     justify-content: space-between;
+}
+
+/* Add any additional styles for navigation or other elements here */
+.navbar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin-left: 10px;
+}
+
+.navbar a:hover {
+    background-color: #575757;
+    border-radius: 4px;
 }
