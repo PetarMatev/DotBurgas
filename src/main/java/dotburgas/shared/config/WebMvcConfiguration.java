@@ -24,16 +24,16 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         // .authenticated() - to gain access you need to be authenticated.
         httpSecurity
                 .authorizeHttpRequests(matchers -> matchers.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // access to static resources
-                        .requestMatchers("/", "/register", "/discover-burgas", "/accommodation", "/about", "/contact").permitAll()
+                        .requestMatchers("/", "/register", "/discover-burgas", "/accommodation", "/about", "/contact", "/privacy").permitAll()
                         .requestMatchers("/css/**", "/img/**", "/js/**", "/static/**", "/webjars/**").permitAll() // Public assets
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-//                        .usernameParameter("username") // could be an email here
-//                        .passwordParameter("password")
-                        .defaultSuccessUrl("/home")
-                        .failureUrl("/login?error")
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/home", true)
+                        .failureUrl("/login?error=true")
                         .permitAll())
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
