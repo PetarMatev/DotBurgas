@@ -26,6 +26,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 .authorizeHttpRequests(matchers -> matchers.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // access to static resources
                         .requestMatchers("/", "/register", "/discover-burgas", "/accommodation", "/about", "/contact", "/privacy").permitAll()
                         .requestMatchers("/css/**", "/img/**", "/js/**", "/static/**", "/webjars/**").permitAll() // Public assets
+                        .requestMatchers("/reservation-request").hasAuthority("ROLE_USER")
+                        .requestMatchers("/user-reservations").hasAuthority("ROLE_USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

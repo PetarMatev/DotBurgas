@@ -1,6 +1,7 @@
 package dotburgas.web;
 
 import dotburgas.apartment.service.ApartmentService;
+import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.service.ReservationService;
 import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
@@ -17,18 +18,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("accommodation")
-public class ApartmentController {
+public class ReservationController {
 
     private final UserService userService;
     private final ApartmentService apartmentService;
     private final ReservationService reservationService;
 
     @Autowired
-    public ApartmentController(UserService userService, ApartmentService apartmentService, ReservationService reservationService) {
+    public ReservationController(UserService userService, ApartmentService apartmentService, ReservationService reservationService) {
         this.userService = userService;
         this.apartmentService = apartmentService;
         this.reservationService = reservationService;
@@ -39,8 +40,8 @@ public class ApartmentController {
         ModelAndView modelAndView = new ModelAndView("reservation-request");
 
         User user = userService.getById(authenticationUserDetails.getUserId());
-
         String apartmentName = apartmentService.findApartmentNameByID(apartmentId);
+
         modelAndView.addObject("first_name", user.getFirstName());
         modelAndView.addObject("last_name", user.getLastName());
         modelAndView.addObject("email", user.getEmail());
@@ -49,7 +50,6 @@ public class ApartmentController {
         modelAndView.addObject("reservationRequest", new ReservationRequest());
         return modelAndView;
     }
-
 
     @PostMapping("/reservation-request")
     public ModelAndView submitReservationRequest(@Valid ReservationRequest reservationRequest, BindingResult bindingResult, @RequestParam UUID apartmentId,
@@ -79,8 +79,21 @@ public class ApartmentController {
                 "Please review and process the reservation request.\n\n" +
                 "Thank you!";
 
-        userService.sendReservationRequestEmail(emailAddressOfAdmin, reservationDetailsForAdmin);
+//        userService.sendReservationRequestEmail(emailAddressOfAdmin, reservationDetailsForAdmin);
 
-        return new ModelAndView("redirect:/users/user-reservations");
+        return new ModelAndView("redirect:/user-reservations");
+    }
+
+    @GetMapping("/user-reservations")
+    public ModelAndView getUserReservations(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
+
+        User user = userService.getById(authenticationUserDetails.getUserId());
+
+        List<Reservation> reservations = reservationService.getReservationsByUser(user);
+
+        ModelAndView modelAndView = new ModelAndView("user-reservations");
+        modelAndView.addObject("reservations", reservations);
+
+        return modelAndView;
     }
 }

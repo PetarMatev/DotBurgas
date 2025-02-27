@@ -71,18 +71,4 @@ public class UserController {
 
         return "redirect:/users";
     }
-
-    @GetMapping("/user-reservations")
-    public ModelAndView getUserReservations(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
-
-        User user = userService.getById(authenticationUserDetails.getUserId());
-
-        List<Reservation> reservations = reservationService.getReservationsByUser(user);
-
-        ModelAndView modelAndView = new ModelAndView("user-reservations");
-        modelAndView.addObject("reservations", reservations);
-
-        return modelAndView;
-    }
-
 }

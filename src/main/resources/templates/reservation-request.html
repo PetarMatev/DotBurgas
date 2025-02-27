@@ -18,9 +18,8 @@
     <div class="reservation-request">
         <h2>Accommodation Booking</h2>
 
-        <form action="/accommodation/reservation-request" method="POST" th:object="${reservationRequest}">
+        <form th:action="@{/reservation-request}" th:method="POST" th:object="${reservationRequest}">
 
-            <!-- This hidden field is used to send the apartmentId when the form is submitted -->
             <input type="hidden" name="apartmentId" th:value="${apartmentId}">
 
             <div class="field">
