@@ -14,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -39,11 +38,11 @@ public class ReservationController {
     public ModelAndView getReservationForm(@RequestParam UUID apartmentId, @AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
         ModelAndView modelAndView = new ModelAndView("reservation-request");
 
-        User user = userService.getById(authenticationUserDetails.getUserId());
         String apartmentName = apartmentService.findApartmentNameByID(apartmentId);
+        User user = userService.getById(authenticationUserDetails.getUserId());
 
-        modelAndView.addObject("first_name", user.getFirstName());
-        modelAndView.addObject("last_name", user.getLastName());
+        modelAndView.addObject("firstName", user.getFirstName());
+        modelAndView.addObject("lastName", user.getLastName());
         modelAndView.addObject("email", user.getEmail());
         modelAndView.addObject("apartmentName", apartmentName);
         modelAndView.addObject("apartmentId", apartmentId);
@@ -54,7 +53,6 @@ public class ReservationController {
     @PostMapping("/reservation-request")
     public ModelAndView submitReservationRequest(@Valid ReservationRequest reservationRequest, BindingResult bindingResult, @RequestParam UUID apartmentId,
                                                  @AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
-
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("reservation-request");
             modelAndView.addObject("errors", bindingResult.getAllErrors());
@@ -64,22 +62,7 @@ public class ReservationController {
         User user = userService.getById(authenticationUserDetails.getUserId());
 
         reservationService.createReservation(user, apartmentId, reservationRequest);
-
-        String emailAddressOfAdmin = "petargmatev@gmail.com";
-
-        String reservationDetailsForAdmin = "Dear Admin,\n\n" +
-                "A new reservation request has been submitted by " + user.getFirstName() + " " + user.getLastName() + ".\n\n" +
-                "Reservation Details:\n" +
-                "User Email: " + user.getEmail() + "\n" +
-                "User First Name: " + user.getFirstName() + "\n" +
-                "User Last Name: " + user.getLastName() + "\n" +
-                "Apartment Name: " + apartmentService.findApartmentNameByID(apartmentId) + "\n" +
-                "Apartment ID: " + apartmentId + "\n" +
-                "Reservation Dates: " + reservationRequest.getCheckInDate() + " to " + reservationRequest.getCheckOutDate() + "\n" +
-                "Please review and process the reservation request.\n\n" +
-                "Thank you!";
-
-//        userService.sendReservationRequestEmail(emailAddressOfAdmin, reservationDetailsForAdmin);
+        reservationService.sendReservationRequestEmail(user, apartmentId, reservationRequest);
 
         return new ModelAndView("redirect:/user-reservations");
     }

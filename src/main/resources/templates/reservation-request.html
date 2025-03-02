@@ -19,7 +19,6 @@
         <h2>Accommodation Booking</h2>
 
         <form th:action="@{/reservation-request}" th:method="POST" th:object="${reservationRequest}">
-
             <input type="hidden" name="apartmentId" th:value="${apartmentId}">
 
             <div class="field">
@@ -29,55 +28,39 @@
 
             <div class="field">
                 <label for="firstName">First Name</label>
-                <input type="text" id="firstName" th:value="${first_name}" readonly>
+                <input type="text" id="firstName" th:field="*{firstName}" required>
+                <p class="alert-warning" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
             </div>
 
             <div class="field">
                 <label for="lastName">Last Name</label>
-                <input type="text" id="lastName" th:value="${last_name}" readonly>
+                <input type="text" id="lastName" th:field="*{lastName}" required>
+                <p class="alert-warning" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
             </div>
 
             <div class="field">
                 <label for="email">Email Address</label>
-                <input type="email" id="email" th:value="${email}" readonly>
+                <input type="email" id="email" th:field="*{email}" required>
+                <p class="alert-warning" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
             </div>
 
             <div class="field">
                 <label for="checkinDate">Check-in Date</label>
                 <input type="date" id="checkinDate" th:field="*{checkInDate}" required>
-                <div th:if="${#fields.hasErrors('checkInDate')}" class="error">
-                    <span th:errors="*{checkInDate}"></span>
-                </div>
+                <p class="alert-warning" th:if="${#fields.hasErrors('checkInDate')}" th:errors="*{checkInDate}"></p>
             </div>
 
             <div class="field">
                 <label for="checkoutDate">Check-out Date</label>
                 <input type="date" id="checkoutDate" th:field="*{checkOutDate}" required>
-                <div th:if="${#fields.hasErrors('checkOutDate')}" class="error">
-                    <span th:errors="*{checkOutDate}"></span>
-                </div>
+                <p class="alert-warning" th:if="${#fields.hasErrors('checkOutDate')}" th:errors="*{checkOutDate}"></p>
             </div>
 
             <div class="field">
                 <label for="guests">Guests</label>
                 <select id="guests" th:field="*{guests}" required>
-                    <option value="1">1 Guest</option>
-                    <option value="2">2 Guests</option>
-                    <option value="3">3 Guests</option>
-                    <option value="4">4 Guests</option>
+                    <option th:each="i : ${#numbers.sequence(1, 4)}" th:value="${i}" th:text="${i} + ' Guest' + (${i > 1} ? 's' : '')"></option>
                 </select>
-                <div th:if="${#fields.hasErrors('guests')}" class="error">
-                    <span th:errors="*{guests}"></span>
-                </div>
-            </div>
-
-
-            <div th:if="${#fields.hasErrors()}">
-                <ul>
-                    <li th:each="err : ${errors}">
-                        <span th:text="${err.defaultMessage}"></span>
-                    </li>
-                </ul>
             </div>
 
             <div class="submit-btn">

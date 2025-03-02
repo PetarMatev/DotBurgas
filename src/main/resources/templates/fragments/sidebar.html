@@ -17,7 +17,7 @@
         <li><a th:href="@{/transfers}"><i class="fas fa-exchange-alt"></i> Transfer</a></li>
 
         <th:block sec:authorize="!hasRole('ROLE_ADMIN')">
-            <li><a th:href="@{/users/user-reservations}"><i class="fas fa-users"></i> Reservation History</a></li>
+            <li><a th:href="@{/user-reservations}"><i class="fas fa-users"></i> Reservation History</a></li>
             <li><a th:href="@{/loyalties/history}"><i class="fas fa-history"></i> Loyalty History</a></li>
         </th:block>
 

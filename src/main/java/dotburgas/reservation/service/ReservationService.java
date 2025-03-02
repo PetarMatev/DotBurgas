@@ -13,6 +13,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,14 +25,15 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class ReservationService {
-
     private final ReservationRepository reservationRepository;
     private final ApartmentService apartmentService;
+    private final MailSender mailSender;
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository, TransactionService transactionService, UserService userService, ApartmentService apartmentService) {
+    public ReservationService(ReservationRepository reservationRepository, TransactionService transactionService, UserService userService, ApartmentService apartmentService, MailSender mailSender) {
         this.reservationRepository = reservationRepository;
         this.apartmentService = apartmentService;
+        this.mailSender = mailSender;
     }
 
     public List<Reservation> getAllReservationsByApartment(UUID apartmentId) {
@@ -56,7 +59,6 @@ public class ReservationService {
 
         reservationRepository.save(reservation);
 
-        // ✅ Send notification to Admin for approval
         notifyAdminForApproval(reservation);
     }
 
@@ -87,5 +89,44 @@ public class ReservationService {
 
     private void notifyAdminForApproval(Reservation reservation) {
         // adminNotificationService.sendReservationApprovalRequest(reservation);
+    }
+
+    public void sendReservationRequestEmail(User user, UUID apartmentId, ReservationRequest reservationRequest) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setTo(reservationRequest.getEmail());
+        message.setSubject("Reservation Request");
+
+        String emailBody = String.format("""
+                        Dear Admin,
+                        
+                        A new reservation request has been submitted by %s %s.
+                        
+                        Reservation Details:
+                        User Email: %s
+                        User First Name: %s
+                        User Last Name: %s
+                        Apartment Name: %s
+                        Apartment ID: %s
+                        Reservation Dates: %s to %s
+                        
+                        Please review and process the reservation request.
+                        
+                        Thank you!
+                        """,
+                user.getFirstName(), user.getLastName(),
+                user.getEmail(), user.getFirstName(), user.getLastName(),
+                apartmentService.findApartmentNameByID(apartmentId), apartmentId,
+                reservationRequest.getCheckInDate(), reservationRequest.getCheckOutDate()
+        );
+
+        message.setText(emailBody);
+
+        try {
+            mailSender.send(message);
+            log.info("Reservation Details email was successfully processed");
+        } catch (Exception e) {
+            log.warn("There was an issue sending an email to %s due to %s.".formatted(reservationRequest.getEmail(), e.getMessage()));
+        }
     }
 }

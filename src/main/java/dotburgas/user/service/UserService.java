@@ -37,7 +37,6 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final LoyaltyService loyaltyService;
     private final WalletService walletService;
-    private final JavaMailSender javaMailSender;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, LoyaltyService loyaltyService, WalletService walletService, JavaMailSender javaMailSender) {
@@ -45,7 +44,6 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
         this.loyaltyService = loyaltyService;
         this.walletService = walletService;
-        this.javaMailSender = javaMailSender;
     }
 
     @CacheEvict(value = "users", allEntries = true)
@@ -118,15 +116,6 @@ public class UserService implements UserDetailsService {
             user.setRole(UserRole.ADMIN);
         }
         userRepository.save(user);
-    }
-
-
-    public void sendReservationRequestEmail(String recipientEmail, String reservationDetails) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(recipientEmail);
-        message.setSubject("Reservation Request");
-        message.setText(reservationDetails);
-        javaMailSender.send(message);
     }
 
 
