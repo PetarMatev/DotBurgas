@@ -59,6 +59,4 @@ public class NotificationController {
 
         return "redirect:/notifications";
     }
-
-
 }

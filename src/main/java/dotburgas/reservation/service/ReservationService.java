@@ -1,5 +1,6 @@
 package dotburgas.reservation.service;
 
+import dotburgas.Reporting.Service.ReportingService;
 import dotburgas.apartment.service.ApartmentService;
 import dotburgas.reservation.model.ConfirmationStatus;
 import dotburgas.reservation.model.PaymentStatus;
@@ -28,12 +29,15 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ApartmentService apartmentService;
     private final MailSender mailSender;
+    private final ReportingService reportingService;
+
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository, TransactionService transactionService, UserService userService, ApartmentService apartmentService, MailSender mailSender) {
+    public ReservationService(ReservationRepository reservationRepository, TransactionService transactionService, UserService userService, ApartmentService apartmentService, MailSender mailSender, ReportingService reportingService) {
         this.reservationRepository = reservationRepository;
         this.apartmentService = apartmentService;
         this.mailSender = mailSender;
+        this.reportingService = reportingService;
     }
 
     public List<Reservation> getAllReservationsByApartment(UUID apartmentId) {
@@ -71,7 +75,11 @@ public class ReservationService {
         if (status == ConfirmationStatus.REJECTED) {
             reservation.setPaymentStatus(PaymentStatus.VOID);
         }
+
         reservationRepository.save(reservation);
+        // once reservation has been approved by the admin then we can proceed to save the reservation details into reporting-svc.
+        reportingService.saveReservationDetails(reservation.getGuests(), reservation.getReservationLength());
+
         log.info("Reservation id: %s has been %s by the admin.".formatted(reservationId, status));
     }
 

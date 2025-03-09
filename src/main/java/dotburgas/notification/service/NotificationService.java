@@ -25,7 +25,7 @@ public class NotificationService {
 
     public void saveNotificationPreference(UUID userId, boolean isEmailEnabled, String email) {
 
-        UpsertNotificationPreference notificationPreference = UpsertNotificationPreference.builder()
+        UpsertNotificationPreference upsertNotificationPreference = UpsertNotificationPreference.builder()
                 .userId(userId)
                 .contactInfo(email)
                 .type("EMAIL")
@@ -34,7 +34,7 @@ public class NotificationService {
 
 
         // Invoke Feign client and execute HTTP post Request.
-        ResponseEntity<Void> httpResponse = notificationClient.upsertNotificationPreference(notificationPreference);
+        ResponseEntity<Void> httpResponse = notificationClient.upsertNotificationPreference(upsertNotificationPreference);
         if (!httpResponse.getStatusCode().is2xxSuccessful()) {
             log.error("[Feign call to notification-svc failed] Can't save user preference for user with id = [%s]".formatted(userId));
         }
