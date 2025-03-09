@@ -37,28 +37,29 @@
                 <th>Switch Role</th>
             </tr>
             </thead>
+
             <tbody>
             <tr th:each="user : ${users}">
                 <td th:text="${user.id}"></td>
                 <td th:text="${user.username}"></td>
-                <td th:text="${#strings.isEmpty(user.firstName) and #strings.isEmpty(user.lastName) ? 'N/A' : (user.firstName + ' ' + user.lastName)}"></td>                <td th:text="${#strings.isEmpty(user.email) ? 'no email' : user.email}"></td>
+                <td th:text="${#strings.isEmpty(user.firstName) and #strings.isEmpty(user.lastName) ? 'Amend profile and add Full Name' : (user.firstName + ' ' + user.lastName)}"></td>
+                <td th:text="${#strings.isEmpty(user.email) ? 'Amend profile and add Email' : user.email}"></td>
                 <td th:text="${#strings.capitalize(#strings.toLowerCase(user.role.name()))}"></td>
                 <td th:text="${#strings.capitalize(#strings.toLowerCase(user.country.name()))}"></td>
                 <td th:text="${#temporals.format(user.createdOn, 'dd MMM yyyy')}"></td>
 
                 <td>
-                    <!-- /users/{id}/role -->
-                    <form th:action="@{'/admin/' + ${user.id} + '/role'}" method="post">
-                        <input type="hidden" name="_method" value="PUT"/>
+                    <!-- /admin/users/{id}/role -->
+                    <form th:action="@{'/admin/users/' + ${user.id} + '/role'}" th:method="PUT">
                         <button class="role-toggle-btn">
                             <span>Switch</span>
                             <i class="fas fa-exchange-alt"></i>
                         </button>
                     </form>
                 </td>
-
             </tr>
             </tbody>
+
         </table>
         <div class="no-transactions" th:if="${#lists.isEmpty(users)}">
             No user Information found.

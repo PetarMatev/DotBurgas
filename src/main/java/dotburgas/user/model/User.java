@@ -5,6 +5,8 @@ import dotburgas.reservation.model.Reservation;
 import dotburgas.wallet.model.Wallet;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.FetchMode;
+import org.hibernate.annotations.Fetch;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

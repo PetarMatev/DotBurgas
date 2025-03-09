@@ -72,9 +72,11 @@ public class AdminController {
         return modelAndView;
     }
 
-    @PutMapping("/{id}/role") // the Endpoint will be PUT / users / {id} / role
-    public String SwitchUserRole(@PathVariable UUID id) {
-        userService.switchUserRole(id);
-        return "redirect:/users";
+    @PutMapping("/users/{id}/role") // PUT /admin/users/{id}/role
+    public String switchUserRole(@PathVariable UUID id) {
+
+        userService.switchRole(id);
+
+        return "redirect:/admin/users";
     }
 }

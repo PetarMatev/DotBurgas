@@ -117,6 +117,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+
     public User getById(UUID id) {
         return userRepository.findById(id).orElseThrow(() -> new DomainException("User with id [%s] does not exist.".formatted(id)));
     }
@@ -127,17 +128,18 @@ public class UserService implements UserDetailsService {
 
 
     @CacheEvict(value = "users", allEntries = true)
-    public void switchUserRole(UUID userId) {
+    public void switchRole(UUID userId) {
 
-        User user = userRepository.getById(userId);
+        User user = getById(userId);
 
-        if (user.getRole() == UserRole.ADMIN) {
-            user.setRole(UserRole.USER);
-        } else {
+        if (user.getRole() == UserRole.USER) {
             user.setRole(UserRole.ADMIN);
+        } else {
+            user.setRole(UserRole.USER);
         }
+
         userRepository.save(user);
-        log.info("The User Role for User Id: %d has been amended to".formatted(user.getRole()));
+        log.info("The User Role for Username: %s with Id: %s has been amended to %s".formatted(user.getUsername(), user.getId(), user.getRole().name()));
     }
 
 
