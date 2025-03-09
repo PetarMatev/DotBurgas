@@ -1,6 +1,7 @@
 package dotburgas.reservation.service;
 
-import dotburgas.Reporting.Service.ReportingService;
+import dotburgas.apartment.model.Apartment;
+import dotburgas.reporting.Service.ReportingService;
 import dotburgas.apartment.service.ApartmentService;
 import dotburgas.reservation.model.ConfirmationStatus;
 import dotburgas.reservation.model.PaymentStatus;
@@ -18,6 +19,7 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -50,15 +52,23 @@ public class ReservationService {
     }
 
     public void createReservation(User user, UUID apartmentId, ReservationRequest reservationRequest, String firstName, String lastName, String email) {
+
+        Apartment apartment = apartmentService.getById(apartmentId);
+        long lengthOfStay = calculateDaysBetween(reservationRequest.getCheckInDate(), reservationRequest.getCheckOutDate());
+        BigDecimal pricerPerNight = apartment.getPricePerNight();
+        BigDecimal totalReservationPrice = calculateReservationPrice(pricerPerNight, reservationRequest.getGuests(), lengthOfStay);
+
         Reservation reservation = Reservation.builder()
                 .user(user)
                 .apartment(apartmentService.getById(apartmentId))
                 .checkInDate(reservationRequest.getCheckInDate())
                 .checkOutDate(reservationRequest.getCheckOutDate())
                 .guests(reservationRequest.getGuests())
-                .reservationLength(calculateDaysBetween(reservationRequest.getCheckInDate(), reservationRequest.getCheckOutDate()))
+                .reservationLength(lengthOfStay)
                 .confirmationStatus(ConfirmationStatus.PENDING)
                 .paymentStatus(PaymentStatus.PENDING)
+                .pricerPerNight(pricerPerNight)
+                .totalPrice(totalReservationPrice)
                 .build();
 
         sendReservationRequestEmail(user, apartmentId, reservationRequest, firstName, lastName, email);
@@ -91,6 +101,19 @@ public class ReservationService {
 
     public List<Reservation> getReservationsByUser(User user) {
         return reservationRepository.findByUser(user);
+    }
+
+    private BigDecimal calculateReservationPrice(BigDecimal pricePerNight, int guests, long lengthOfStay) {
+        BigDecimal totalPrice;
+        BigDecimal extraCharge = BigDecimal.valueOf(40.00);
+
+        if (guests <= 2) {
+            totalPrice = pricePerNight.multiply(BigDecimal.valueOf(lengthOfStay));
+        } else {
+            totalPrice = pricePerNight.add(extraCharge).multiply(BigDecimal.valueOf(lengthOfStay));
+        }
+
+        return totalPrice;
     }
 
     public List<Reservation> getPendingReservations() {

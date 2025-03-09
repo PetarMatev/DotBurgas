@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +30,9 @@ public class Apartment {
 
     @Column(nullable = false, length = 1000)
     private String description;
+
+    @Column(nullable = false)
+    private BigDecimal pricePerNight;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "apartment_photos", joinColumns = @JoinColumn(name = "apartment_id"))

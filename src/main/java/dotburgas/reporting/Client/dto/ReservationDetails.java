@@ -1,9 +1,7 @@
-package dotburgas.Reporting.Client.dto;
+package dotburgas.reporting.Client.dto;
 
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 @Builder

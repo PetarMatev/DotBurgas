@@ -30,7 +30,10 @@
                 <th>Apartment</th>
                 <th>Check-in</th>
                 <th>Check-out</th>
+                <th>Length</th>
                 <th>Guests</th>
+                <th>Currency</th>
+                <th>Total Price</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -39,7 +42,10 @@
                 <td th:text="${reservation.apartment.name}"></td>
                 <td th:text="${reservation.checkInDate}"></td>
                 <td th:text="${reservation.checkOutDate}"></td>
+                <td th:text="${reservation.reservationLength}"></td>
                 <td th:text="${reservation.guests}"></td>
+                <td>EUR</td>
+                <td th:text="${reservation.totalPrice}"></td>
                 <td>
                     <form th:action="@{/admin/reservations/approve}" method="post" style="display:inline;">
                         <input type="hidden" name="reservationId" th:value="${reservation.id}">

@@ -29,6 +29,8 @@
             <th>Check-out Date</th>
             <th>Length</th>
             <th>Guests</th>
+            <th>Currency</th>
+            <th>Reservation Price</th>
             <th>Confirmation Status</th>
             <th>Payment Status</th>
         </tr>
@@ -42,6 +44,8 @@
             <td th:text="${reservation.checkOutDate}"></td>
             <td th:text="${reservation.reservationLength}"></td>
             <td th:text="${reservation.guests}"></td>
+            <td>EUR</td>
+            <td th:text="${reservation.totalPrice}"></td>
 
             <td>
                 <span th:classappend="${reservation.confirmationStatus == T(dotburgas.reservation.model.ConfirmationStatus).PENDING ? 'status-pending' :

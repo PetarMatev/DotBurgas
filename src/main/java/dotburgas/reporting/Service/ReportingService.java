@@ -1,12 +1,11 @@
-package dotburgas.Reporting.Service;
+package dotburgas.reporting.Service;
 
-import dotburgas.Reporting.Client.ReportingClient;
-import dotburgas.Reporting.Client.dto.ReservationDetails;
+import dotburgas.reporting.Client.ReportingClient;
+import dotburgas.reporting.Client.dto.ReservationDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Slf4j
 @Service

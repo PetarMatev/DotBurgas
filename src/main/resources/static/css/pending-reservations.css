@@ -18,7 +18,7 @@ body {
 
 .container {
     width: 100%;
-    max-width: 800px;
+    max-width: 1300px;
     padding: 30px;
     background: white;
     border-radius: 10px;
@@ -42,7 +42,7 @@ table {
 
 th, td {
     padding: 12px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #ddd;
 }
 

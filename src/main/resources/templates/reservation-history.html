@@ -33,6 +33,8 @@
                 <th>Check-in Date</th>
                 <th>Check-out Date</th>
                 <th>Stay Length</th>
+                <th>Currency</th>
+                <th>Reservation Price</th>
                 <th>Reservation Status</th>
                 <th>Payment Status</th>
             </tr>
@@ -46,6 +48,8 @@
                 <td th:text="${#temporals.format(reservation.checkInDate, 'dd MMM YYYY')}"></td>
                 <td th:text="${#temporals.format(reservation.checkOutDate, 'dd MMM YYYY')}"></td>
                 <td th:text="${reservation.reservationLength}"></td>
+                <td>EUR</td>
+                <td th:text="${reservation.totalPrice}"></td>
                 <td th:text="${reservation.confirmationStatus}" style="font-weight: bold; color: black;"></td>
                 <td th:text="${reservation.paymentStatus}" style="font-weight: bold; color: red;"></td>
             </tr>

@@ -5,6 +5,7 @@ import dotburgas.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -41,6 +42,12 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
+    @Column(nullable = false)
+    private BigDecimal pricerPerNight;
+
+    @Column(nullable = false)
+    private BigDecimal totalPrice;
+
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -48,5 +55,4 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "apartment_id", referencedColumnName = "id")
     private Apartment apartment;
-
 }

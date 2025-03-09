@@ -1,6 +1,6 @@
-package dotburgas.Reporting.Client;
+package dotburgas.reporting.Client;
 
-import dotburgas.Reporting.Client.dto.ReservationDetails;
+import dotburgas.reporting.Client.dto.ReservationDetails;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
