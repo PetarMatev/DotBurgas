@@ -1,15 +1,12 @@
 package dotburgas.web;
 
-import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.service.ReservationService;
-import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import dotburgas.web.dto.UserEditRequest;
-import dotburgas.web.mapper.DtoMapper;
+import dotburgas.web.dto.mapper.DtoMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -61,14 +57,5 @@ public class UserController {
 
         userService.editUserDetails(id, userEditRequest);
         return new ModelAndView("redirect:/home");
-    }
-
-
-    @PutMapping("/{id}/role") // the Endpoint will be PUT / users / {id} / role
-    public String SwitchUserRole(@PathVariable UUID id) {
-
-        userService.switchUserRole(id);
-
-        return "redirect:/users";
     }
 }

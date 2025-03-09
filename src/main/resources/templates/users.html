@@ -41,15 +41,15 @@
             <tr th:each="user : ${users}">
                 <td th:text="${user.id}"></td>
                 <td th:text="${user.username}"></td>
-                <td th:text="${user.firstName + ' ' + user.lastName}"></td>
-                <td th:text="${#strings.isEmpty(user.email) ? 'no email' : user.email}"></td>
+                <td th:text="${#strings.isEmpty(user.firstName) and #strings.isEmpty(user.lastName) ? 'N/A' : (user.firstName + ' ' + user.lastName)}"></td>                <td th:text="${#strings.isEmpty(user.email) ? 'no email' : user.email}"></td>
                 <td th:text="${#strings.capitalize(#strings.toLowerCase(user.role.name()))}"></td>
                 <td th:text="${#strings.capitalize(#strings.toLowerCase(user.country.name()))}"></td>
                 <td th:text="${#temporals.format(user.createdOn, 'dd MMM yyyy')}"></td>
 
                 <td>
                     <!-- /users/{id}/role -->
-                    <form th:action="@{'/users/' + ${user.id} + '/role'}" th:method="PUT">
+                    <form th:action="@{'/admin/' + ${user.id} + '/role'}" method="post">
+                        <input type="hidden" name="_method" value="PUT"/>
                         <button class="role-toggle-btn">
                             <span>Switch</span>
                             <i class="fas fa-exchange-alt"></i>
@@ -61,7 +61,7 @@
             </tbody>
         </table>
         <div class="no-transactions" th:if="${#lists.isEmpty(users)}">
-            No transactions found.
+            No user Information found.
         </div>
     </div>
 </div>

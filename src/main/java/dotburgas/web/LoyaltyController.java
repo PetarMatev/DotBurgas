@@ -42,8 +42,7 @@ public class LoyaltyController {
                                                   BindingResult bindingResult, @AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
         if (bindingResult.hasErrors()) {
-            ModelAndView modelAndView = new ModelAndView();
-            modelAndView.setViewName("loyalties");
+            ModelAndView modelAndView = new ModelAndView("loyalties");
             modelAndView.addObject("loyaltySubscriptionEditRequest", loyaltySubscriptionEditRequest);
             return modelAndView;
         }
@@ -53,7 +52,6 @@ public class LoyaltyController {
         UUID loyaltyId = user.getLoyalty().getId();
 
         LoyaltyTier updatedLoyaltyTier = loyaltySubscriptionEditRequest.getLoyaltyTier();
-
         loyaltyService.updatedLoyaltySubscription(loyaltyId, updatedLoyaltyTier);
 
         return new ModelAndView("redirect:/home");

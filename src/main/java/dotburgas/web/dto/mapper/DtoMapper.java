@@ -1,4 +1,4 @@
-package dotburgas.web.mapper;
+package dotburgas.web.dto.mapper;
 
 import dotburgas.user.model.User;
 import dotburgas.web.dto.UserEditRequest;

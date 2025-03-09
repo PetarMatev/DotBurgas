@@ -1,5 +1,6 @@
 package dotburgas.transaction.service;
 
+import dotburgas.notification.service.NotificationService;
 import dotburgas.shared.exception.DomainException;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.transaction.model.TransactionStatus;
@@ -22,12 +23,13 @@ import java.util.stream.Collectors;
 @Service
 public class TransactionService {
 
-
     private final TransactionRepository transactionRepository;
+    private final NotificationService notificationService;
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(TransactionRepository transactionRepository, NotificationService notificationService) {
         this.transactionRepository = transactionRepository;
+        this.notificationService = notificationService;
     }
 
     public Transaction createNewTransaction(User owner, String sender, String receiver, BigDecimal transactionAmount, BigDecimal balanceLeft, Currency currency, TransactionType type, TransactionStatus status, String transactionDescription, String failureReason) {
@@ -44,6 +46,9 @@ public class TransactionService {
                 .failureReason(failureReason)
                 .createdOn(LocalDateTime.now())
                 .build();
+
+        String emailBody = "%s The Transaction was successfully processed for you with amount %.2f EUR!".formatted(transaction.getType(), transaction.getAmount());
+        notificationService.sendNotification(transaction.getOwner().getId(), "New Transaction", emailBody);
 
         return transactionRepository.save(transaction);
     }

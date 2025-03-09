@@ -15,6 +15,7 @@
         <li><a th:href="@{/wallet}"><i class="fas fa-wallet"></i> Wallet</a></li>
         <li><a th:href="@{/transactions}"><i class="fas fa-list"></i> Transaction History</a></li>
         <li><a th:href="@{/transfers}"><i class="fas fa-exchange-alt"></i> Transfer</a></li>
+        <li><a th:href="@{/notifications}"><i class="fas fa-exchange-alt"></i> Notifications</a></li>
 
         <th:block sec:authorize="!hasRole('ROLE_ADMIN')">
             <li><a th:href="@{/user-reservations}"><i class="fas fa-users"></i> Reservation History</a></li>

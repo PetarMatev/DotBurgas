@@ -3,6 +3,7 @@ package dotburgas.loyalty.service;
 import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.model.LoyaltyTier;
 import dotburgas.loyalty.repository.LoyaltyRepository;
+import dotburgas.notification.service.NotificationService;
 import dotburgas.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class LoyaltyService {
     private final LoyaltyRepository loyaltyRepository;
 
     @Autowired
-    public LoyaltyService(LoyaltyRepository loyaltyRepository) {
+    public LoyaltyService(LoyaltyRepository loyaltyRepository, NotificationService notificationService) {
         this.loyaltyRepository = loyaltyRepository;
     }
 

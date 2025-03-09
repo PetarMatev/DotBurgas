@@ -68,7 +68,7 @@
                                id="email"
                                name="email"
                                placeholder="Enter your email address"
-                               required
+
                                th:field="*{email}">
                         <p class="alert-warning" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
                     </div>

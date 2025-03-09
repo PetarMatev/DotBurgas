@@ -2,6 +2,7 @@ package dotburgas.user.service;
 
 import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.service.LoyaltyService;
+import dotburgas.notification.service.NotificationService;
 import dotburgas.shared.exception.DomainException;
 import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
@@ -15,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,13 +37,15 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final LoyaltyService loyaltyService;
     private final WalletService walletService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, LoyaltyService loyaltyService, WalletService walletService, JavaMailSender javaMailSender) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, LoyaltyService loyaltyService, WalletService walletService, JavaMailSender javaMailSender, NotificationService notificationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.loyaltyService = loyaltyService;
         this.walletService = walletService;
+        this.notificationService = notificationService;
     }
 
     @CacheEvict(value = "users", allEntries = true)
@@ -63,6 +65,9 @@ public class UserService implements UserDetailsService {
         Wallet defaultWallet = walletService.createNewWallet(user);
         user.setWallet(defaultWallet);
 
+        // Persist new notification preference with isEnabled = false
+        notificationService.saveNotificationPreference(user.getId(), false, null);
+
         log.info("Successfully create new user account for username [%s] and id [%s]".formatted(user.getUsername(), user.getId()));
 
         return user;
@@ -71,11 +76,23 @@ public class UserService implements UserDetailsService {
 
     @CacheEvict(value = "users", allEntries = true)
     public void editUserDetails(UUID userId, UserEditRequest userEditRequest) {
+
         User user = getById(userId);
+
+        // if user has so far had email and decided to remove it, then we disable notifications
+        if (userEditRequest.getEmail().isBlank()) {
+            notificationService.saveNotificationPreference(userId, false, null);
+        }
+
         user.setFirstName(userEditRequest.getFirstName());
         user.setLastName(userEditRequest.getLastName());
         user.setEmail(userEditRequest.getEmail());
         user.setProfilePicture(userEditRequest.getProfilePicture());
+
+        // if the user has added his email, we automatically enable notifications.
+        if (!userEditRequest.getEmail().isBlank()) {
+            notificationService.saveNotificationPreference(userId, true, userEditRequest.getEmail());
+        }
 
         userRepository.save(user);
     }
@@ -104,6 +121,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id).orElseThrow(() -> new DomainException("User with id [%s] does not exist.".formatted(id)));
     }
 
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new DomainException("User with username [%d] does not exist.".formatted(username)));
+    }
+
 
     @CacheEvict(value = "users", allEntries = true)
     public void switchUserRole(UUID userId) {
@@ -116,6 +137,7 @@ public class UserService implements UserDetailsService {
             user.setRole(UserRole.ADMIN);
         }
         userRepository.save(user);
+        log.info("The User Role for User Id: %d has been amended to".formatted(user.getRole()));
     }
 
 

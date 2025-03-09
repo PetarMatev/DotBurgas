@@ -45,7 +45,7 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
-    public void createReservation(User user, UUID apartmentId, ReservationRequest reservationRequest) {
+    public void createReservation(User user, UUID apartmentId, ReservationRequest reservationRequest, String firstName, String lastName, String email) {
         Reservation reservation = Reservation.builder()
                 .user(user)
                 .apartment(apartmentService.getById(apartmentId))
@@ -57,6 +57,7 @@ public class ReservationService {
                 .paymentStatus(PaymentStatus.PENDING)
                 .build();
 
+        sendReservationRequestEmail(user, apartmentId, reservationRequest, firstName, lastName, email);
         reservationRepository.save(reservation);
 
         notifyAdminForApproval(reservation);
@@ -71,6 +72,7 @@ public class ReservationService {
             reservation.setPaymentStatus(PaymentStatus.VOID);
         }
         reservationRepository.save(reservation);
+        log.info("Reservation id: %s has been %s by the admin.".formatted(reservationId, status));
     }
 
 
@@ -91,10 +93,11 @@ public class ReservationService {
         // adminNotificationService.sendReservationApprovalRequest(reservation);
     }
 
-    public void sendReservationRequestEmail(User user, UUID apartmentId, ReservationRequest reservationRequest) {
+    public void sendReservationRequestEmail(User user, UUID apartmentId, ReservationRequest reservationRequest, String firstName, String lastName, String email) {
         SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setTo(reservationRequest.getEmail());
+        String adminEmail = "petar_matev@yahoo.co.uk";
+        message.setTo(adminEmail);
         message.setSubject("Reservation Request");
 
         String emailBody = String.format("""
@@ -114,8 +117,8 @@ public class ReservationService {
                         
                         Thank you!
                         """,
-                user.getFirstName(), user.getLastName(),
-                user.getEmail(), user.getFirstName(), user.getLastName(),
+                firstName, lastName,
+                email, firstName, lastName,
                 apartmentService.findApartmentNameByID(apartmentId), apartmentId,
                 reservationRequest.getCheckInDate(), reservationRequest.getCheckOutDate()
         );
@@ -124,7 +127,7 @@ public class ReservationService {
 
         try {
             mailSender.send(message);
-            log.info("Reservation Details email was successfully processed");
+            log.info("Reservation confirmation email sent successfully.");
         } catch (Exception e) {
             log.warn("There was an issue sending an email to %s due to %s.".formatted(reservationRequest.getEmail(), e.getMessage()));
         }

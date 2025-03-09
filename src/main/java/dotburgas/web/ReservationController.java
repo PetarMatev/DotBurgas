@@ -41,17 +41,26 @@ public class ReservationController {
         String apartmentName = apartmentService.findApartmentNameByID(apartmentId);
         User user = userService.getById(authenticationUserDetails.getUserId());
 
-        modelAndView.addObject("firstName", user.getFirstName());
-        modelAndView.addObject("lastName", user.getLastName());
-        modelAndView.addObject("email", user.getEmail());
+        ReservationRequest reservationRequest = new ReservationRequest();
+        reservationRequest.setFirstName(user.getFirstName());
+        reservationRequest.setLastName(user.getLastName());
+        reservationRequest.setEmail(user.getEmail());
+
+        modelAndView.addObject("user", user);
         modelAndView.addObject("apartmentName", apartmentName);
         modelAndView.addObject("apartmentId", apartmentId);
-        modelAndView.addObject("reservationRequest", new ReservationRequest());
+        modelAndView.addObject("reservationRequest", reservationRequest);
         return modelAndView;
     }
 
+
     @PostMapping("/reservation-request")
-    public ModelAndView submitReservationRequest(@Valid ReservationRequest reservationRequest, BindingResult bindingResult, @RequestParam UUID apartmentId,
+    public ModelAndView submitReservationRequest(@Valid ReservationRequest reservationRequest,
+                                                 BindingResult bindingResult,
+                                                 @RequestParam UUID apartmentId,
+                                                 @RequestParam String firstName,
+                                                 @RequestParam String lastName,
+                                                 @RequestParam String email,
                                                  @AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("reservation-request");
@@ -61,8 +70,7 @@ public class ReservationController {
 
         User user = userService.getById(authenticationUserDetails.getUserId());
 
-        reservationService.createReservation(user, apartmentId, reservationRequest);
-        reservationService.sendReservationRequestEmail(user, apartmentId, reservationRequest);
+        reservationService.createReservation(user, apartmentId, reservationRequest, firstName, lastName, email);
 
         return new ModelAndView("redirect:/user-reservations");
     }

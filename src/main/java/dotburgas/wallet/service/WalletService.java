@@ -1,6 +1,7 @@
 package dotburgas.wallet.service;
 
 import dotburgas.email.service.EmailService;
+import dotburgas.notification.service.NotificationService;
 import dotburgas.shared.exception.DomainException;
 import dotburgas.tracking.service.TrackingService;
 import dotburgas.transaction.model.Transaction;
@@ -35,7 +36,7 @@ public class WalletService {
 
 
     @Autowired
-    public WalletService(WalletRepository walletRepository, TransactionService transactionService, EmailService emailService, TrackingService trackingService, ApplicationEventPublisher eventPublisher) {
+    public WalletService(WalletRepository walletRepository, TransactionService transactionService, EmailService emailService, TrackingService trackingService, ApplicationEventPublisher eventPublisher, NotificationService notificationService) {
         this.walletRepository = walletRepository;
         this.transactionService = transactionService;
         this.eventPublisher = eventPublisher;

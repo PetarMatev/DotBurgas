@@ -1,0 +1,91 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.home-section {
+    padding: 20px;
+    max-width: 800px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+p {
+    color: #555;
+}
+
+/* Notification Details */
+.details-section {
+    margin: 15px 0;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 5px;
+}
+
+.details-section-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+strong {
+    color: #333;
+}
+
+/* Status indicators */
+.enabled-notification-status {
+    color: green;
+    font-weight: bold;
+}
+
+.disabled-notification-status {
+    color: red;
+    font-weight: bold;
+}
+
+/* Buttons */
+.profile-actions-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.profile-actions-button:hover {
+    background-color: #0056b3;
+}
+
+.disable-notifications {
+    background-color: #dc3545;
+}
+
+.disable-notifications:hover {
+    background-color: #b52a3a;
+}
+
+.enable-notifications {
+    background-color: #28a745;
+}
+
+.enable-notifications:hover {
+    background-color: #1f8a36;
+}
