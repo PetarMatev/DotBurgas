@@ -1,6 +1,7 @@
 package dotburgas.transaction.service;
 
 import dotburgas.notification.service.NotificationService;
+import dotburgas.reservation.model.Reservation;
 import dotburgas.shared.exception.DomainException;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.transaction.model.TransactionStatus;
@@ -47,7 +48,7 @@ public class TransactionService {
                 .createdOn(LocalDateTime.now())
                 .build();
 
-        String emailBody = "%s The Transaction was successfully processed for you with amount %.2f EUR!".formatted(transaction.getType(), transaction.getAmount());
+        String emailBody = "%s transaction was successfully processed for you with amount %.2f EUR!".formatted(transaction.getType(), transaction.getAmount());
         notificationService.sendNotification(transaction.getOwner().getId(), "New Transaction", emailBody);
 
         return transactionRepository.save(transaction);
@@ -56,7 +57,6 @@ public class TransactionService {
     public List<Transaction> getAllByOwnerId(UUID ownerId) {
         return transactionRepository.findAllByOwnerIdOrderByCreatedOnDesc(ownerId);
     }
-
 
     public Transaction getById(UUID id) {
         return transactionRepository

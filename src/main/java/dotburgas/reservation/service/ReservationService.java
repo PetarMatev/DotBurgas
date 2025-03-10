@@ -1,15 +1,16 @@
 package dotburgas.reservation.service;
 
 import dotburgas.apartment.model.Apartment;
-import dotburgas.reporting.Service.ReportingService;
 import dotburgas.apartment.service.ApartmentService;
+import dotburgas.reporting.service.ReportingService;
 import dotburgas.reservation.model.ConfirmationStatus;
 import dotburgas.reservation.model.PaymentStatus;
 import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.repository.ReservationRepository;
-import dotburgas.transaction.service.TransactionService;
+import dotburgas.transaction.model.Transaction;
+import dotburgas.transaction.model.TransactionStatus;
 import dotburgas.user.model.User;
-import dotburgas.user.service.UserService;
+import dotburgas.wallet.service.WalletService;
 import dotburgas.web.dto.ReservationRequest;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -31,21 +32,21 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ApartmentService apartmentService;
     private final MailSender mailSender;
+    private final WalletService walletService;
     private final ReportingService reportingService;
 
-
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository, TransactionService transactionService, UserService userService, ApartmentService apartmentService, MailSender mailSender, ReportingService reportingService) {
+    public ReservationService(ReservationRepository reservationRepository, ApartmentService apartmentService, MailSender mailSender, WalletService walletService, ReportingService reportingService) {
         this.reservationRepository = reservationRepository;
         this.apartmentService = apartmentService;
         this.mailSender = mailSender;
+        this.walletService = walletService;
         this.reportingService = reportingService;
     }
 
     public List<Reservation> getAllReservationsByApartment(UUID apartmentId) {
         return reservationRepository.findByApartmentId(apartmentId);
     }
-
 
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
@@ -73,8 +74,6 @@ public class ReservationService {
 
         sendReservationRequestEmail(user, apartmentId, reservationRequest, firstName, lastName, email);
         reservationRepository.save(reservation);
-
-        notifyAdminForApproval(reservation);
     }
 
     @Transactional
@@ -84,16 +83,33 @@ public class ReservationService {
 
         if (status == ConfirmationStatus.REJECTED) {
             reservation.setPaymentStatus(PaymentStatus.VOID);
+            log.info("Reservation with Id: %s has been %s by the admin.".formatted(reservationId, status));
+        } else if (status == ConfirmationStatus.CONFIRMED) {
+
+            // once reservation has been confirmed by the admin, then payment is automatically processed for this reservation
+            User user = reservation.getUser();
+            UUID walletId = user.getWallet().getId();
+            BigDecimal reservationTotalPrice = reservation.getTotalPrice();
+            String description = "Payment Reservation with Id: %s for EUR %.2f.".formatted(reservationId, reservation.getTotalPrice());
+
+            Transaction currentTransaction = walletService.charge(user, walletId, reservationTotalPrice, description);
+
+            reservationRepository.save(reservation);
+            log.info("Reservation with Id: %s has been %s by the admin.".formatted(reservationId, status));
+
+            // Payment logic after reservation has been authorised from an admin.
+
+            if (!currentTransaction.getStatus().equals(TransactionStatus.FAILED)) {
+                // once reservation has been approved by the admin then we can proceed to save the reservation details into reporting-svc.
+                reportingService.saveReservationDetails(reservation.getGuests(), reservation.getReservationLength(), reservation.getTotalPrice());
+
+                reservation.setPaymentStatus(PaymentStatus.PAID);
+                log.info("Payment of EUR %.2f for reservation with Id: %s has been successfully processed.".formatted(reservationTotalPrice, reservationId));
+            } else {
+                log.info("Payment of EUR %.2f for reservation with Id: %s has been rejected.".formatted(reservationTotalPrice, reservationId));
+            }
         }
-
-        reservationRepository.save(reservation);
-        // once reservation has been approved by the admin then we can proceed to save the reservation details into reporting-svc.
-        reportingService.saveReservationDetails(reservation.getGuests(), reservation.getReservationLength());
-
-        log.info("Reservation id: %s has been %s by the admin.".formatted(reservationId, status));
     }
-
-
 
     private long calculateDaysBetween(LocalDate checkInDate, LocalDate checkOutDate) {
         return ChronoUnit.DAYS.between(checkInDate, checkOutDate);
@@ -118,10 +134,6 @@ public class ReservationService {
 
     public List<Reservation> getPendingReservations() {
         return reservationRepository.findByConfirmationStatus(ConfirmationStatus.PENDING);
-    }
-
-    private void notifyAdminForApproval(Reservation reservation) {
-        // adminNotificationService.sendReservationApprovalRequest(reservation);
     }
 
     public void sendReservationRequestEmail(User user, UUID apartmentId, ReservationRequest reservationRequest, String firstName, String lastName, String email) {

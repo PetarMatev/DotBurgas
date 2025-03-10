@@ -1,6 +1,5 @@
 package dotburgas.wallet.service;
 
-import dotburgas.email.service.EmailService;
 import dotburgas.notification.service.NotificationService;
 import dotburgas.shared.exception.DomainException;
 import dotburgas.tracking.service.TrackingService;
@@ -36,7 +35,7 @@ public class WalletService {
 
 
     @Autowired
-    public WalletService(WalletRepository walletRepository, TransactionService transactionService, EmailService emailService, TrackingService trackingService, ApplicationEventPublisher eventPublisher, NotificationService notificationService) {
+    public WalletService(WalletRepository walletRepository, TransactionService transactionService, TrackingService trackingService, ApplicationEventPublisher eventPublisher, NotificationService notificationService) {
         this.walletRepository = walletRepository;
         this.transactionService = transactionService;
         this.eventPublisher = eventPublisher;
@@ -140,8 +139,10 @@ public class WalletService {
         Wallet wallet = getWalletByID(walletId);
 
         String failureReason = "Insufficient balance";
+
         // validation if the current balance is less than the amount
         if (wallet.getBalance().compareTo(amount) < 0) {
+
             return transactionService.createNewTransaction(
                     user,
                     wallet.getId().toString(),
@@ -154,7 +155,6 @@ public class WalletService {
                     description,
                     failureReason
             );
-
         }
 
         // if the user has sufficient funds, we subtract the amount.

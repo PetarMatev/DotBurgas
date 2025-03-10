@@ -23,7 +23,6 @@
         <thead>
         <tr>
             <th>Apartment Name</th>
-            <th>Apartment Description</th>
             <th>Apartment Location</th>
             <th>Check-in Date</th>
             <th>Check-out Date</th>
@@ -38,7 +37,6 @@
         <tbody>
         <tr th:each="reservation : ${reservations}">
             <td th:text="${reservation.apartment.name}"></td>
-            <td th:text="${reservation.apartment.description}"></td>
             <td th:text="${reservation.apartment.location}"></td>
             <td th:text="${reservation.checkInDate}"></td>
             <td th:text="${reservation.checkOutDate}"></td>
