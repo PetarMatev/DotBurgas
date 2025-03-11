@@ -3,13 +3,13 @@ package dotburgas.reporting.service;
 
 import dotburgas.reporting.client.ReportingClient;
 import dotburgas.reporting.client.dto.ReservationDetails;
+import dotburgas.reporting.client.dto.ReservationResponse;
 import dotburgas.reservation.model.Reservation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -23,12 +23,16 @@ public class ReportingService {
         this.reportingClient = reportingClient;
     }
 
-    public void saveReservationDetails(int guests, long reservationLength, BigDecimal totalPrice) {
+    public void saveReservationDetails(Reservation reservation) {
 
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .guests(guests)
-                .reservationLength(reservationLength)
-                .totalPrice(totalPrice)
+                .checkInDate(reservation.getCheckInDate())
+                .checkOutDate(reservation.getCheckOutDate())
+                .guests(reservation.getGuests())
+                .reservationLength(reservation.getReservationLength())
+                .totalPrice(reservation.getTotalPrice())
+                .user(reservation.getUser().getFirstName() + ' ' + reservation.getUser().getLastName())
+                .apartment(reservation.getApartment().getName())
                 .build();
 
         // Invoke Feign Client and execute the HTTP post Request:
@@ -39,8 +43,8 @@ public class ReportingService {
     }
 
 
-    public List<Reservation> getReservationHistory() {
-        ResponseEntity<List<Reservation>> httpResponse = reportingClient.getReservationHistory();
+    public List<ReservationResponse> getReservationHistory() {
+        ResponseEntity<List<ReservationResponse>> httpResponse = reportingClient.getReservationHistory();
         return httpResponse.getBody();
     }
 }

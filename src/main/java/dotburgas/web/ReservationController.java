@@ -1,6 +1,7 @@
 package dotburgas.web;
 
 import dotburgas.apartment.service.ApartmentService;
+import dotburgas.reporting.client.dto.ReservationResponse;
 import dotburgas.reporting.service.ReportingService;
 import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.service.ReservationService;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
 
 import java.util.List;
 import java.util.UUID;
@@ -96,7 +96,8 @@ public class ReservationController {
     public ModelAndView getReservationPage(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
         User user = userService.getById(authenticationUserDetails.getUserId());
-        List<Reservation> reservationHistory = reportingService.getReservationHistory();
+        List<ReservationResponse> reservationHistory = reportingService.getReservationHistory();
+        reservationHistory = reservationHistory.stream().limit(6).toList();
 
         ModelAndView modelAndView = new ModelAndView("reporting-svc");
         modelAndView.addObject("reservationHistory", reservationHistory);

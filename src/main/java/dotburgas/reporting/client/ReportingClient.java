@@ -1,6 +1,7 @@
 package dotburgas.reporting.client;
 
 import dotburgas.reporting.client.dto.ReservationDetails;
+import dotburgas.reporting.client.dto.ReservationResponse;
 import dotburgas.reservation.model.Reservation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -17,5 +18,5 @@ public interface ReportingClient {
     ResponseEntity<Void> recordReservationDetails(@RequestBody ReservationDetails reservationDetails);
 
     @GetMapping
-    ResponseEntity<List<Reservation>> getReservationHistory();
+    ResponseEntity<List<ReservationResponse>> getReservationHistory();
 }

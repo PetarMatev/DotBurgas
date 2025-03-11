@@ -101,7 +101,7 @@ public class ReservationService {
 
             if (!currentTransaction.getStatus().equals(TransactionStatus.FAILED)) {
                 // once reservation has been approved by the admin then we can proceed to save the reservation details into reporting-svc.
-                reportingService.saveReservationDetails(reservation.getGuests(), reservation.getReservationLength(), reservation.getTotalPrice());
+                reportingService.saveReservationDetails(reservation);
 
                 reservation.setPaymentStatus(PaymentStatus.PAID);
                 log.info("Payment of EUR %.2f for reservation with Id: %s has been successfully processed.".formatted(reservationTotalPrice, reservationId));
