@@ -1,6 +1,7 @@
 package dotburgas.web;
 
 import dotburgas.apartment.service.ApartmentService;
+import dotburgas.reporting.service.ReportingService;
 import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.service.ReservationService;
 import dotburgas.shared.security.AuthenticationUserDetails;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+
 import java.util.List;
 import java.util.UUID;
 
@@ -26,12 +28,14 @@ public class ReservationController {
     private final UserService userService;
     private final ApartmentService apartmentService;
     private final ReservationService reservationService;
+    private final ReportingService reportingService;
 
     @Autowired
-    public ReservationController(UserService userService, ApartmentService apartmentService, ReservationService reservationService) {
+    public ReservationController(UserService userService, ApartmentService apartmentService, ReservationService reservationService, ReportingService reportingService) {
         this.userService = userService;
         this.apartmentService = apartmentService;
         this.reservationService = reservationService;
+        this.reportingService = reportingService;
     }
 
     @GetMapping("/reservation-request")
@@ -84,6 +88,18 @@ public class ReservationController {
 
         ModelAndView modelAndView = new ModelAndView("user-reservations");
         modelAndView.addObject("reservations", reservations);
+
+        return modelAndView;
+    }
+
+    @GetMapping("/admin/reporting")
+    public ModelAndView getReservationPage(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
+
+        User user = userService.getById(authenticationUserDetails.getUserId());
+        List<Reservation> reservationHistory = reportingService.getReservationHistory();
+
+        ModelAndView modelAndView = new ModelAndView("reporting-svc");
+        modelAndView.addObject("reservationHistory", reservationHistory);
 
         return modelAndView;
     }

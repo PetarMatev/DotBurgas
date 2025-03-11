@@ -13,6 +13,6 @@ public class ReservationDetails {
 
     private long reservationLength;
 
-    private BigDecimal totalReservationPrice;
+    private BigDecimal totalPrice;
 
 }
