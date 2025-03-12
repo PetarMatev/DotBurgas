@@ -2,6 +2,7 @@ package dotburgas.reporting.client;
 
 import dotburgas.reporting.client.dto.ReservationDetails;
 import dotburgas.reporting.client.dto.ReservationResponse;
+import dotburgas.reporting.client.dto.ReservationStatsResponse;
 import dotburgas.reservation.model.Reservation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -19,4 +20,7 @@ public interface ReportingClient {
 
     @GetMapping
     ResponseEntity<List<ReservationResponse>> getReservationHistory();
+
+    @GetMapping("/stats")
+    ResponseEntity<List<ReservationStatsResponse>> getSummaryStatsPerApartment();
 }

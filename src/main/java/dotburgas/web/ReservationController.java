@@ -92,16 +92,4 @@ public class ReservationController {
         return modelAndView;
     }
 
-    @GetMapping("/admin/reporting")
-    public ModelAndView getReservationPage(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
-
-        User user = userService.getById(authenticationUserDetails.getUserId());
-        List<ReservationResponse> reservationHistory = reportingService.getReservationHistory();
-        reservationHistory = reservationHistory.stream().limit(6).toList();
-
-        ModelAndView modelAndView = new ModelAndView("reporting-svc");
-        modelAndView.addObject("reservationHistory", reservationHistory);
-
-        return modelAndView;
-    }
 }

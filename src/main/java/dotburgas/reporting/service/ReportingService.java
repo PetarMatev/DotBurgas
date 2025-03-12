@@ -4,6 +4,7 @@ package dotburgas.reporting.service;
 import dotburgas.reporting.client.ReportingClient;
 import dotburgas.reporting.client.dto.ReservationDetails;
 import dotburgas.reporting.client.dto.ReservationResponse;
+import dotburgas.reporting.client.dto.ReservationStatsResponse;
 import dotburgas.reservation.model.Reservation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +43,14 @@ public class ReportingService {
         }
     }
 
-
     public List<ReservationResponse> getReservationHistory() {
         ResponseEntity<List<ReservationResponse>> httpResponse = reportingClient.getReservationHistory();
+        return httpResponse.getBody();
+    }
+
+
+    public List<ReservationStatsResponse> getSummaryStatsPerApartment() {
+        ResponseEntity<List<ReservationStatsResponse>> httpResponse = reportingClient.getSummaryStatsPerApartment();
         return httpResponse.getBody();
     }
 }

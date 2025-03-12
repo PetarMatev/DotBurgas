@@ -46,6 +46,53 @@
         .table td {
             min-height: 50px !important;
         }
+
+        /* Style for the button container */
+        .small-table-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Style for the button */
+        .btn-analytics {
+            background-color: #ff4d4d; /* A nice blue */
+            color: white; /* White text */
+            font-size: 16px;
+            padding: 10px 20px; /* Adequate padding */
+            border: none;
+            border-radius: 5px; /* Slightly rounded corners */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-analytics:hover {
+            background-color: rgba(255, 77, 77, 0.8); /* Darker blue on hover */
+            transform: translateY(-2px); /* Button lift effect */
+        }
+
+        .btn-analytics:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Focus ring */
+        }
+
+        /* Optional: Animation effect */
+        @keyframes btn-hover-effect {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Applying animation */
+        .btn-analytics:active {
+            animation: btn-hover-effect 0.3s ease;
+        }
+
     </style>
 
 </head>
@@ -57,7 +104,6 @@
 <div class="wrapper">
     <div class="container">
         <h2>List of Last 6 Reservations</h2>
-
         <table class="table table-striped table-bordered">
             <thead class="table-dark">
             <tr>
@@ -69,7 +115,6 @@
                 <th>Reservation Length (days)</th>
                 <th>Currency</th>
                 <th>Total Reservation Price</th>
-
             </tr>
             </thead>
             <tbody>
@@ -85,8 +130,38 @@
             </tr>
             </tbody>
         </table>
+
+        <div class="d-flex justify-content-between">
+
+            <div class="small-table-container">
+                <form th:action="@{/admin/reporting/stats}" th:method="GET">
+                    <button class="btn-analytics" type="submit">Analytics</button>
+                </form>
+            </div>
+
+            <div class="small-table-container">
+                <h4>Upcoming Reservations</h4>
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Apartment</th>
+                        <th>User</th>
+                        <th>Check-In Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>PX</td>
+                        <td>PX</td>
+                        <td>PX</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
