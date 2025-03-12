@@ -53,9 +53,9 @@
             margin-top: 20px;
         }
 
-        /* Style for the button */
+        /* General button style */
         .btn-analytics {
-            background-color: #ff4d4d; /* A nice blue */
+            background-color: #ff4d4d; /* A nice red */
             color: white; /* White text */
             font-size: 16px;
             padding: 10px 20px; /* Adequate padding */
@@ -65,17 +65,19 @@
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
+        /* Button hover effect */
         .btn-analytics:hover {
-            background-color: rgba(255, 77, 77, 0.8); /* Darker blue on hover */
+            background-color: rgba(255, 77, 77, 0.8); /* Darker red on hover */
             transform: translateY(-2px); /* Button lift effect */
         }
 
+        /* Button focus effect */
         .btn-analytics:focus {
             outline: none;
             box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Focus ring */
         }
 
-        /* Optional: Animation effect */
+        /* Animation for button click effect */
         @keyframes btn-hover-effect {
             0% {
                 transform: scale(1);
@@ -88,10 +90,61 @@
             }
         }
 
-        /* Applying animation */
+        /* Button active effect */
         .btn-analytics:active {
             animation: btn-hover-effect 0.3s ease;
         }
+
+        /* Style for the input field */
+        .form-container .input-field {
+            background-color: white; /* White background for the input */
+            color: #333; /* Dark text color for readability */
+            font-size: 16px;
+            padding: 10px 20px;
+            border: 1px solid #ddd; /* Light border to match style */
+            border-radius: 5px; /* Rounded corners */
+            width: auto; /* Adjust width */
+            margin-left: 10px;
+            margin-top: 10px; /* Space between input and button */
+            display: inline-block; /* Ensure input aligns with button */
+        }
+
+        /* Ensure button and input field have the same height and appearance */
+        .form-container .input-field,
+        .form-container .btn-analytics {
+            height: 40px; /* Ensure both elements are of the same height */
+            line-height: 20px; /* Center text vertically */
+            font-size: 20px;
+        }
+
+        /* Make the input field readonly */
+        .form-container .input-field[readonly] {
+            background-color: #f0f0f0; /* Light gray background when readonly */
+            border-color: #ccc; /* Lighter border color */
+            cursor: not-allowed; /* Make it non-clickable */
+        }
+
+        /* Remove hover and active effects for the input field */
+        .form-container .input-field:hover,
+        .form-container .input-field:active {
+            background-color: white; /* Ensure no background color change */
+            transform: none; /* No transform effect */
+        }
+
+        /* Align both buttons and form fields to be the same distance from the table */
+        .d-flex {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px; /* Align buttons to be the same distance from the table */
+        }
+
+        .small-table-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 10px; /* Space out the buttons evenly */
+        }
+
 
     </style>
 
@@ -132,33 +185,33 @@
         </table>
 
         <div class="d-flex justify-content-between">
-
-            <div class="small-table-container">
+            <div class="form-container">
                 <form th:action="@{/admin/reporting/stats}" th:method="GET">
-                    <button class="btn-analytics" type="submit">Analytics</button>
+                    <table class="button-table">
+                        <tr>
+                            <td>
+                                <button class="btn-analytics" type="submit">Analytics</button>
+                            </td>
+                        </tr>
+                    </table>
                 </form>
             </div>
 
-            <div class="small-table-container">
-                <h4>Upcoming Reservations</h4>
-                <table class="table table-bordered">
-                    <thead class="table-dark">
+            <div class="form-container">
+                <form th:action="@{/admin/reporting/query}" th:method="GET">
+                    <table class="button-table">
                     <tr>
-                        <th>Apartment</th>
-                        <th>User</th>
-                        <th>Check-In Date</th>
+                        <td>
+                            <button class="btn-analytics" type="submit">Reservation Query</button>
+                            <input class="input-field" type="text" name="reservationId"
+                                   placeholder="Enter Reservation ID" required>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>PX</td>
-                        <td>PX</td>
-                        <td>PX</td>
-                    </tr>
-                    </tbody>
                 </table>
+                </form>
             </div>
         </div>
+
     </div>
 </div>
 
