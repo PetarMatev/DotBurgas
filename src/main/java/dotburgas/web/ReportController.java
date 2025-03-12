@@ -9,11 +9,11 @@ import dotburgas.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin/reporting")
@@ -42,14 +42,22 @@ public class ReportController {
     }
 
     @GetMapping("/stats")
-    public ModelAndView getStatsPage(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
+    public ModelAndView getStatsPage() {
 
-        User user = userService.getById(authenticationUserDetails.getUserId());
         List<ReservationStatsResponse> reservationStatsResponse = reportingService.getSummaryStatsPerApartment();
 
-        ModelAndView modelAndView = new ModelAndView("stats");
+        ModelAndView modelAndView = new ModelAndView("analytics");
         modelAndView.addObject("reservationStatsResponse", reservationStatsResponse);
 
+        return modelAndView;
+    }
+
+    @GetMapping("/query")
+    public ModelAndView retrieveReservationDetails(@RequestParam UUID reservationId) {
+        ReservationResponse reservationResponse = reportingService.getReservationDetails(reservationId);
+
+        ModelAndView modelAndView = new ModelAndView("query");
+        modelAndView.addObject("reservationResponse", reservationResponse);
         return modelAndView;
     }
 }

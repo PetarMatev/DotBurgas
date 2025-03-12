@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -27,6 +28,7 @@ public class ReportingService {
     public void saveReservationDetails(Reservation reservation) {
 
         ReservationDetails reservationDetails = ReservationDetails.builder()
+                .reservationId(reservation.getId())
                 .checkInDate(reservation.getCheckInDate())
                 .checkOutDate(reservation.getCheckOutDate())
                 .guests(reservation.getGuests())
@@ -52,5 +54,12 @@ public class ReportingService {
     public List<ReservationStatsResponse> getSummaryStatsPerApartment() {
         ResponseEntity<List<ReservationStatsResponse>> httpResponse = reportingClient.getSummaryStatsPerApartment();
         return httpResponse.getBody();
+    }
+
+    public ReservationResponse getReservationDetails(UUID reservationId) {
+
+        ResponseEntity<ReservationResponse> reservationResponse = reportingClient.getReservationDetails(reservationId.toString());
+
+        return reservationResponse.getBody();
     }
 }

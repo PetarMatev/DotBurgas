@@ -1,0 +1,116 @@
+.table {
+    background-color: white !important;
+}
+
+/* Override any existing styles from main.css */
+.table td, .table th {
+    text-align: center !important;
+    vertical-align: middle !important;
+    white-space: normal !important; /* Ensures text wraps */
+    word-wrap: break-word !important;
+    padding: 10px !important; /* Adds space inside cells */
+}
+
+/* Optional: Allow row height to adjust dynamically */
+.table td {
+    min-height: 50px !important;
+}
+
+/* Style for the button container */
+.small-table-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* General button style */
+.btn-analytics {
+    background-color: #ff4d4d; /* A nice red */
+    color: white; /* White text */
+    font-size: 16px;
+    padding: 10px 20px; /* Adequate padding */
+    border: none;
+    border-radius: 5px; /* Slightly rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Button hover effect */
+.btn-analytics:hover {
+    background-color: rgba(255, 77, 77, 0.8); /* Darker red on hover */
+    transform: translateY(-2px); /* Button lift effect */
+}
+
+/* Button focus effect */
+.btn-analytics:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Focus ring */
+}
+
+/* Animation for button click effect */
+@keyframes btn-hover-effect {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Button active effect */
+.btn-analytics:active {
+    animation: btn-hover-effect 0.3s ease;
+}
+
+/* Style for the input field */
+.form-container .input-field {
+    background-color: white; /* White background for the input */
+    color: #333; /* Dark text color for readability */
+    font-size: 16px;
+    padding: 10px 20px;
+    border: 1px solid #ddd; /* Light border to match style */
+    border-radius: 5px; /* Rounded corners */
+    width: auto; /* Adjust width */
+    margin-left: 10px;
+    margin-top: 10px; /* Space between input and button */
+    display: inline-block; /* Ensure input aligns with button */
+}
+
+/* Ensure button and input field have the same height and appearance */
+.form-container .input-field,
+.form-container .btn-analytics {
+    height: 40px; /* Ensure both elements are of the same height */
+    line-height: 20px; /* Center text vertically */
+    font-size: 20px;
+}
+
+/* Make the input field readonly */
+.form-container .input-field[readonly] {
+    background-color: #f0f0f0; /* Light gray background when readonly */
+    border-color: #ccc; /* Lighter border color */
+    cursor: not-allowed; /* Make it non-clickable */
+}
+
+/* Remove hover and active effects for the input field */
+.form-container .input-field:hover,
+.form-container .input-field:active {
+    background-color: white; /* Ensure no background color change */
+    transform: none; /* No transform effect */
+}
+
+/* Align both buttons and form fields to be the same distance from the table */
+.d-flex {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px; /* Align buttons to be the same distance from the table */
+}
+
+.small-table-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 10px; /* Space out the buttons evenly */
+}
+
