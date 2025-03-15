@@ -28,7 +28,12 @@ public class AdminController {
         this.userService = userService;
     }
 
+    // hasAnyRole - checking any of the given roles.
+    // hasRole - we are checking for one particular role
+    // hasAuthority - we are checking if in the collection of permission/roles has permission
+
     @GetMapping("/reservations/pending")
+    @PreAuthorize("hasRole('ADMIN')")
     public ModelAndView showPendingReservations() {
         ModelAndView modelAndView = new ModelAndView("pending-reservations");
         modelAndView.addObject("pendingReservations", reservationService.getPendingReservations());
@@ -36,23 +41,27 @@ public class AdminController {
     }
 
     @PostMapping("/reservations/approve")
+    @PreAuthorize("hasRole('ADMIN')")
     public String approveReservation(@RequestParam UUID reservationId) {
         reservationService.updateReservationStatus(reservationId, ConfirmationStatus.CONFIRMED);
         return "redirect:/admin/reservations/pending";
     }
 
     @PostMapping("/reservations/reject")
+    @PreAuthorize("hasRole('ADMIN')")
     public String rejectReservation(@RequestParam UUID reservationId) {
         reservationService.updateReservationStatus(reservationId, ConfirmationStatus.REJECTED);
         return "redirect:/admin/reservations/pending";
     }
 
     @GetMapping("/reports")
+    @PreAuthorize("hasRole('ADMIN')")
     public ModelAndView getReportsPage() {
         return new ModelAndView("reports");
     }
 
     @GetMapping("/reservation-history")
+    @PreAuthorize("hasRole('ADMIN')")
     public ModelAndView getReservationHistoryPage() {
         List<Reservation> reservations = reservationService.getAllReservations();
         ModelAndView modelAndView = new ModelAndView("reservation-history");
@@ -60,9 +69,6 @@ public class AdminController {
         return modelAndView;
     }
 
-    // hasAnyRole - checking any of the given roles.
-    // hasRole - we are checking for one particular role
-    // hasAuthority - we are checking if in the collection of permission/roles has permission
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
     public ModelAndView getAllUsers() {
@@ -73,10 +79,9 @@ public class AdminController {
     }
 
     @PutMapping("/users/{id}/role") // PUT /admin/users/{id}/role
+    @PreAuthorize("hasRole('ADMIN')")
     public String switchUserRole(@PathVariable UUID id) {
-
         userService.switchRole(id);
-
         return "redirect:/admin/users";
     }
 }
