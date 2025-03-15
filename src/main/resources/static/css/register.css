@@ -1,0 +1,63 @@
+/* Container Styling */
+.main-form {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 40%;
+    min-width: 320px;
+    margin: 20px auto;
+}
+
+/* Form Labels */
+.form-label {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Input Fields */
+.form-control {
+    border-radius: 5px;
+    width: 100%;
+}
+
+/* Error and Warning Messages */
+.text-danger, .text-warning {
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.text-warning {
+    color: orange;
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    width: 100%;
+    padding: 10px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Center Content */
+.text-center {
+    text-align: center;
+}
+
+/* Adjust spacing for better layout */
+.mb-3 {
+    margin-bottom: 15px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .main-form {
+        width: 90%;
+    }
+}

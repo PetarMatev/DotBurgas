@@ -5,8 +5,10 @@ import dotburgas.notification.client.dto.Notification;
 import dotburgas.notification.client.dto.NotificationPreference;
 import dotburgas.notification.client.dto.NotificationRequest;
 import dotburgas.notification.client.dto.UpsertNotificationPreference;
+import dotburgas.shared.exception.NotificationServiceFeignCallException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,12 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class NotificationService {
+
     private final NotificationClient notificationClient;
+
+    @Value("${notification-svc.failure-message.clear-history}")
+    private String clearHistoryFailedMessage;
+
 
     @Autowired
     public NotificationService(NotificationClient notificationClient) {
@@ -91,4 +98,23 @@ public class NotificationService {
         }
     }
 
+    public void clearHistory(UUID userId) {
+
+        try {
+            notificationClient.clearHistory(userId);
+        } catch (Exception e) {
+            log.error("Unable to call notification-svc for clear notification history.".formatted(userId));
+            throw new NotificationServiceFeignCallException(clearHistoryFailedMessage);
+        }
+    }
+
+    public void retryFailed(UUID userId) {
+
+        try {
+            notificationClient.retryFailedNotifications(userId);
+        } catch (Exception e) {
+            log.error("Unable to call notification-svc for clear notification history.".formatted(userId));
+            throw new NotificationServiceFeignCallException(clearHistoryFailedMessage);
+        }
+    }
 }

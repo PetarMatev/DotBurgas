@@ -28,4 +28,10 @@ public interface NotificationClient {
 
     @PostMapping
     ResponseEntity<Void> sendNotification(@RequestBody NotificationRequest notificationRequest);
+
+    @DeleteMapping
+    ResponseEntity<Void> clearHistory(@RequestParam(name="userId") UUID userId);
+
+    @PutMapping
+    ResponseEntity<Void> retryFailedNotifications(@RequestParam(name="userId") UUID userId);
 }

@@ -46,5 +46,7 @@ server:
 logging:
   level:
     org.springframework.web.filter.HiddenHttpMethodFilter: DEBUG
-
+notification-svc:
+  failure-message:
+    clear-history: Notification service is temporarily down! Please try again later!
 

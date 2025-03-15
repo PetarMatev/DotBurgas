@@ -1,6 +1,7 @@
 package dotburgas.web;
 
-import dotburgas.exception.UserAlreadyExistException;
+import dotburgas.shared.exception.NotificationServiceFeignCallException;
+import dotburgas.shared.exception.UsernameAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,57 +16,38 @@ import java.nio.file.AccessDeniedException;
 @ControllerAdvice
 public class ExceptionAdvice {
 
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(UserAlreadyExistException.class)
-//    public ModelAndView handleUsernameAlreadyExist() {
-//
-//        ModelAndView modelAndView = new ModelAndView();
-//
-//        modelAndView.setViewName("not-found");
-//
-//        return modelAndView;
-//    }
-//
-//    // 1. (First) POST HTTP Request -> /register -> redirect:/register
-//    // 2. (Second) GET HTTP Request -> /register -> register.html view
-//
-//    //    with redirect - we don't use @ResponseStatus(...)!!!
-//    @ExceptionHandler(UserAlreadyExistException.class)
-//    public String handleUsernameAlreadyExist(RedirectAttributes redirectAttributes) {
-//        redirectAttributes.addFlashAttribute("usernameAlreadyExistMessage", "This username is already in use!");
-//
-//        return "redirect:/register";
-//    }
-//
-//
-//    @ExceptionHandler(RuntimeException.class)
-//    public ModelAndView handleRuntimeException() {
-//
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("internal-server-error");
-//        return modelAndView;
-//    }
-//
-//
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    @ExceptionHandler({
-//            AccessDeniedException.class,
-//            NoResourceFoundException.class,
-//            MethodArgumentTypeMismatchException.class
-//    })
-//    public ModelAndView handleNotFoundExceptions() {
-//
-//        return new ModelAndView("not-found");
-//    }
-//
-//
-//    // To Handle any exception
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    @ExceptionHandler(Exception.class)
-//    public ModelAndView handleAnyException(Exception exception) {
-//        ModelAndView modelAndView = new ModelAndView("internal-server-error");
-//        modelAndView.addObject("errorMessage", exception.getClass().getSimpleName());
-//
-//        return modelAndView;
-//    }
+    @ExceptionHandler(UsernameAlreadyExistException.class)
+    public String handleUsernameAlreadyExist(RedirectAttributes redirectAttributes, UsernameAlreadyExistException exception) {
+        String message = exception.getMessage();
+        redirectAttributes.addFlashAttribute("usernameAlreadyExistException", message);
+        return "redirect:/register";
+    }
+
+    @ExceptionHandler(NotificationServiceFeignCallException.class)
+    public String handleNotificationFeignCallException(RedirectAttributes redirectAttributes, NotificationServiceFeignCallException exception) {
+        String message = exception.getMessage();
+        redirectAttributes.addFlashAttribute("clearHistoryErrorMessage", message);
+        return "redirect:/notifications";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler({
+            AccessDeniedException.class,
+            NoResourceFoundException.class,
+            MethodArgumentTypeMismatchException.class})
+    public ModelAndView handleNotFoundExceptions(Exception exception) {
+
+        return new ModelAndView("not-found");
+    }
+
+    // To Handle any exception that it is not caught above.
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleAnyException(Exception exception) {
+
+        ModelAndView modelAndView = new ModelAndView("internal-server-error");
+        modelAndView.addObject("errorMessage", exception.getClass().getSimpleName());
+
+        return modelAndView;
+    }
 }

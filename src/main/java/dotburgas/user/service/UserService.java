@@ -1,5 +1,6 @@
 package dotburgas.user.service;
 
+import dotburgas.shared.exception.UsernameAlreadyExistException;
 import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.service.LoyaltyService;
 import dotburgas.notification.service.NotificationService;
@@ -54,7 +55,7 @@ public class UserService implements UserDetailsService {
 
         Optional<User> optionalUser = userRepository.findByUsername(registerRequest.getUsername());
         if (optionalUser.isPresent()) {
-            throw new DomainException("Username [%s] already exists.".formatted(registerRequest.getUsername()));
+            throw new UsernameAlreadyExistException("Username [%s] already exists.".formatted(registerRequest.getUsername()));
         }
 
         User user = userRepository.save(initilizeUser(registerRequest));

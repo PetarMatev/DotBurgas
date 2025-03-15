@@ -7,15 +7,14 @@ import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/notifications")
@@ -59,4 +58,24 @@ public class NotificationController {
 
         return "redirect:/notifications";
     }
+
+    @DeleteMapping
+    public String deleteNotificationHistory(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
+
+        UUID userId = authenticationUserDetails.getUserId();
+        notificationService.clearHistory(userId);
+
+        return "redirect:/notifications";
+    }
+
+
+
+    @PutMapping
+    public String retryFailedNotifications(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
+        UUID userId = authenticationUserDetails.getUserId();
+        notificationService.retryFailed(userId);
+        return "redirect:/notifications";
+    }
+
+
 }
