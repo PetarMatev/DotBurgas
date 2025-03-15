@@ -72,6 +72,15 @@ h2 {
     font-weight: bold;
 }
 
+.status-paid {
+    background-color: green;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+
 .status-rejected {
     background-color: red;
     color: white;
@@ -81,17 +90,10 @@ h2 {
 }
 
 .status-void {
-    background-color: grey;
+    background-color: red;
     color: white;
     padding: 5px 10px;
     border-radius: 4px;
     font-weight: bold;
 }
 
-.status-paid {
-    background-color: green;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-weight: bold;
-}
