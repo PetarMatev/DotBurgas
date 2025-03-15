@@ -1,38 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us</title>
     <link rel="stylesheet" href="/css/reset-css.css"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/css/contact.css"/>
     <link rel="stylesheet" href="/css/main.css"/>
-    <link rel="stylesheet" href="/css/shared.css"/>
-    <script src="/js/jquery-3.5.1.slim.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-
+    <link rel="stylesheet" href="/css/contact.css"/>
 </head>
 <body>
 <header th:replace="~{fragments/header :: header}"></header>
 
-
-<div class="container">
+<div class="container contact-form">
     <h1>Contact Us</h1>
+    <p>Have questions? Fill out the form below, and we'll get back to you as soon as possible.</p>
+
     <form action="/submit-form" method="POST">
-        <label for="name">Full Name</label>
-        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+        <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" required>
+        </div>
 
-        <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email address" required>
+        </div>
 
-        <label for="subject">Subject</label>
-        <input type="text" id="subject" name="subject" placeholder="Subject of your message" required>
+        <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" class="form-control" placeholder="Subject of your message" required>
+        </div>
 
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="5" placeholder="Write your message here..." required></textarea>
-
-        <button type="submit">Send Message</button>
+        <div class="form-group">
+            <label for="message">Message <span id="charCount"></span></label>
+            <textarea id="message" name="message" class="form-control" rows="4" maxlength="200" placeholder="Write your message here..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Send Message</button>
     </form>
 </div>
 
