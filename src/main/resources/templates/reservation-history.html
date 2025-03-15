@@ -50,8 +50,17 @@
                 <td th:text="${reservation.reservationLength}"></td>
                 <td>EUR</td>
                 <td th:text="${reservation.totalPrice}"></td>
-                <td th:text="${reservation.confirmationStatus}" style="font-weight: bold; color: black;"></td>
-                <td th:text="${reservation.paymentStatus}" style="font-weight: bold; color: red;"></td>
+
+                <td th:text="${reservation.confirmationStatus}"
+                    th:style="|font-weight: bold; color: ${reservation.confirmationStatus == T(dotburgas.reservation.model.ConfirmationStatus).CONFIRMED ? 'green' :
+                                         (reservation.confirmationStatus == T(dotburgas.reservation.model.ConfirmationStatus).PENDING ? 'orange' : 'red')}|">
+                </td>
+
+                <td th:text="${reservation.paymentStatus}"
+                    th:style="|font-weight: bold; color: ${reservation.paymentStatus == T(dotburgas.reservation.model.PaymentStatus).PAID ? 'green' :
+                                         (reservation.paymentStatus == T(dotburgas.reservation.model.PaymentStatus).PENDING ? 'orange' : 'red')}|">
+                </td>
+
             </tr>
             </tbody>
         </table>
