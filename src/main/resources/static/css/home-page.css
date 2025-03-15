@@ -50,24 +50,36 @@ header h1 {
 /* Row to align the three sections */
 .row-content {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: flex-start;
     gap: 20px; /* Space between sections */
     width: 100%;
     flex-wrap: wrap; /* Ensures responsiveness */
     max-width: 1200px; /* Prevents overly stretched layout */
+    margin: 0 auto; /* Center the content */
 }
 
 /* Profile, Wallet, and Loyalty Sections */
 .profile, .wallet, .loyalty {
     flex: 1 1 30%; /* Equal space for each section */
-    max-width: 380px; /* Prevents them from stretching too much */
-    min-width: 300px; /* Ensures a good layout on smaller screens */
-    text-align: center;
+    max-width: 650px; /* Prevents them from stretching too much */
+    min-width: 280px; /* Ensures a good layout on smaller screens */
     background: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    height: 100%; /* Makes sure the sections are of equal height */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the content horizontally */
+    text-align: center; /* Center the text inside */
+}
+
+/* Title alignment */
+.profile h3, .wallet h3, .loyalty h3 {
+    text-align: center; /* Center-align the titles */
+    width: 100%; /* Ensures the header takes full width */
 }
 
 /* Profile Image */
@@ -84,6 +96,15 @@ header h1 {
 /* User Details */
 .profile h2, .profile p {
     margin: 10px 0;
+    width: 100%; /* Ensure text expands fully */
+    display: block;
+}
+
+/* Prevent line breaks on longer texts */
+.profile p span {
+    white-space: nowrap; /* Ensures text stays on a single line */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds ellipsis if the text overflows */
 }
 
 /* Buttons */
@@ -94,6 +115,8 @@ header h1 {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 10px;
+    width: 100%; /* Buttons now expand to full width */
 }
 
 /* Footer */
@@ -119,6 +142,36 @@ footer {
     font-weight: bold;
 }
 
+/* Form Fields */
+form {
+    width: 100%; /* Ensures the form takes up the full width of its container */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between fields */
+}
+
+form input, form select, form textarea {
+    width: 100%; /* Make input fields take full width */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+/* Form Labels */
+form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 1em;
+}
+
+/* Input Error Styling */
+form .alert-warning {
+    color: #f39c12;
+    font-size: 0.9em;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .row-content {
@@ -128,5 +181,11 @@ footer {
 
     .profile, .wallet, .loyalty {
         max-width: 100%; /* Take full width on small screens */
+        margin-bottom: 20px; /* Space between sections */
+    }
+
+    /* Ensure form fields are also full width on small screens */
+    form input, form select, form textarea {
+        width: 100%; /* Ensure full width on smaller screens */
     }
 }
