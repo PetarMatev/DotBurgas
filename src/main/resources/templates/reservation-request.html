@@ -10,6 +10,37 @@
     <link rel="stylesheet" href="/css/reservation-request.css"/>
     <script src="/js/jquery-3.5.1.slim.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+
+    <script>
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+            const checkinDateInput = document.getElementById('checkinDate');
+            const checkoutDateInput = document.getElementById('checkoutDate');
+
+            // Set the minimum date for check-in date to today
+            checkinDateInput.min = today;
+            checkinDateInput.value = today; // Set default check-in date to today
+
+            // Initially, set checkout date to check-in date + 1 day
+            const initialCheckoutDate = new Date();
+            initialCheckoutDate.setDate(initialCheckoutDate.getDate() + 1); // Check-in + 1 day
+            checkoutDateInput.value = initialCheckoutDate.toISOString().split('T')[0]; // Set default checkout date to check-in + 1 day
+
+            // Ensure checkout date is not smaller than check-in date + 1 day
+            checkinDateInput.addEventListener('change', function() {
+                const checkinDate = checkinDateInput.value;
+                const nextDay = new Date(checkinDate);
+                nextDay.setDate(nextDay.getDate() + 1); // Set the minimum checkout date to Check-in date + 1 day
+                checkoutDateInput.min = nextDay.toISOString().split('T')[0];
+
+                // If the current checkout date is less than the new minimum, return it to the next valid date
+                if (checkoutDateInput.value && checkoutDateInput.value < checkoutDateInput.min) {
+                    checkoutDateInput.value = checkoutDateInput.min;
+                }
+            });
+        };
+    </script>
+
 </head>
 <body>
 <header th:replace="~{fragments/header :: header}"></header>
@@ -55,6 +86,7 @@
                 <input type="date" id="checkoutDate" th:field="*{checkOutDate}" required>
                 <p class="alert-warning" th:if="${#fields.hasErrors('checkOutDate')}" th:errors="*{checkOutDate}"></p>
             </div>
+
 
             <div class="field">
                 <label for="guests">Guests</label>
