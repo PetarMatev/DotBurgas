@@ -28,6 +28,7 @@ body {
 }
 
 .profile-form {
+    margin-top: 60px;
     background: #fff;
     padding: 30px;
     border-radius: 8px;

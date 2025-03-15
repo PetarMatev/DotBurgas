@@ -9,6 +9,7 @@ body {
 
 /* Header */
 header {
+    margin-top: 60px;
     background-color: #24243e;
     color: #fff;
     padding: 15px 10px;
@@ -16,7 +17,7 @@ header {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1001; /* Ensure it stays above the sidebar */
+    z-index: 1001; /* Ensure it stays above other content */
 }
 
 header h1 {
@@ -24,17 +25,17 @@ header h1 {
     margin: 0;
 }
 
+/* Container */
 .container {
     display: flex;
-    flex: 1;
-    margin-top: 5px; /* Space for the fixed header */
-    flex-direction: column; /* Stack items vertically */
-    align-items: center; /* Center the content */
+    flex-direction: column;
+    align-items: center;
+    margin-top: 70px; /* Adjusted to accommodate fixed header */
+    width: 100%;
 }
 
+/* Content Layout */
 .content {
-    margin-left: 250px; /* Space for the fixed sidebar */
-    margin-top: 1px;
     padding: 30px;
     flex: 1;
     padding-top: 10px;
@@ -43,17 +44,33 @@ header h1 {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    width: 100%;
 }
 
+/* Row to align the three sections */
+.row-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px; /* Space between sections */
+    width: 100%;
+    flex-wrap: wrap; /* Ensures responsiveness */
+    max-width: 1200px; /* Prevents overly stretched layout */
+}
+
+/* Profile, Wallet, and Loyalty Sections */
 .profile, .wallet, .loyalty {
+    flex: 1 1 30%; /* Equal space for each section */
+    max-width: 380px; /* Prevents them from stretching too much */
+    min-width: 300px; /* Ensures a good layout on smaller screens */
+    text-align: center;
     background: #fff;
     padding: 20px;
-    margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
 }
 
+/* Profile Image */
 .profile img {
     width: 100px;
     height: 100px;
@@ -64,10 +81,12 @@ header h1 {
     margin-right: auto;
 }
 
+/* User Details */
 .profile h2, .profile p {
     margin: 10px 0;
 }
 
+/* Buttons */
 .wallet button, .loyalty button, .profile button {
     background-color: #4caf50;
     color: #fff;
@@ -89,24 +108,7 @@ footer {
     z-index: 1000;
 }
 
-.row-content {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-}
-
-.wallet, .loyalty {
-    flex: 1 1 45%; /* Allow them to take up 45% of the width */
-    margin: 0 10px; /* Add spacing between them */
-}
-
-@media (max-width: 768px) {
-    .wallet, .loyalty {
-        flex: 1 1 100%; /* Stack them on smaller screens */
-        margin: 10px 0; /* Add spacing between them */
-    }
-}
-
+/* User Role Styling */
 .role-user {
     color: blue;
     font-weight: bold;
@@ -115,4 +117,16 @@ footer {
 .role-admin {
     color: red;
     font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .row-content {
+        flex-direction: column; /* Stack elements on smaller screens */
+        align-items: center;
+    }
+
+    .profile, .wallet, .loyalty {
+        max-width: 100%; /* Take full width on small screens */
+    }
 }

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>DOTBurgas</title>
@@ -14,78 +13,72 @@
     <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
+
 <header th:replace="~{fragments/header :: header}"></header>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
 <div class="container">
     <div class="content">
+        <!-- Row content wraps all three sections side by side -->
+        <div class="row-content">
 
-        <div class="card profile">
-            <img th:src="${#strings.isEmpty(user.profilePicture) ? 'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg' : user.profilePicture}"
-                 alt="Profile Picture">
-            <h2 th:text="${user.getUsername()}"></h2>
-
-            <div class="details">
-                <p>
-                    <strong>User Role:</strong>
-                    <span th:text="${user.role}"
-                          th:class="${user.role == 'USER' ? 'role-user' : (user.role == 'ADMIN' ? 'role-admin' : '')}"></span>
-                </p>
-            </div>
-
-                <p th:if="${!#strings.isEmpty(user.firstName) || !#strings.isEmpty(user.lastName)}">
-                    <strong>Full Name:</strong>
-                    <span th:text="${user.firstName + ' ' + user.lastName}"></span>
-                </p>
-                <p><strong>User ID:</strong> <span th:text="${user.id}"></span></p>
-                <p th:if="${!#strings.isEmpty(user.email)}">
-                    <strong>Email:</strong>
-                    <span th:text="${user.email}"></span>
-                </p>
-                <p><strong>Joined:</strong> <span
-                        th:text="${#temporals.format(user.createdOn, 'dd MMM YYYY HH:mm')}"></span></p>
-                <p><strong>Country:</strong> <span th:text="${#strings.capitalize(#strings.toLowerCase(user.country))}">Unknown</span>
-                </p>
-
+            <!-- Profile Section -->
+            <div class="profile">
+                <img th:src="${#strings.isEmpty(user.profilePicture) ? 'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg' : user.profilePicture}"
+                     alt="Profile Picture">
+                <h2 th:text="${user.getUsername()}"></h2>
+                <div class="details">
+                    <p><strong>User Role:</strong>
+                        <span th:text="${user.role}"
+                              th:class="${user.role == 'USER' ? 'role-user' : (user.role == 'ADMIN' ? 'role-admin' : '')}"></span>
+                    </p>
+                    <p th:if="${!#strings.isEmpty(user.firstName) || !#strings.isEmpty(user.lastName)}">
+                        <strong>Full Name:</strong> <span th:text="${user.firstName + ' ' + user.lastName}"></span>
+                    </p>
+                    <p><strong>User ID:</strong> <span th:text="${user.id}"></span></p>
+                    <p th:if="${!#strings.isEmpty(user.email)}">
+                        <strong>Email:</strong> <span th:text="${user.email}"></span>
+                    </p>
+                    <p><strong>Joined:</strong> <span th:text="${#temporals.format(user.createdOn, 'dd MMM YYYY HH:mm')}"></span></p>
+                    <p><strong>Country:</strong> <span th:text="${#strings.capitalize(#strings.toLowerCase(user.country))}">Unknown</span></p>
+                </div>
                 <a class="profile-action-button" th:href="@{'users/' + ${user.id} + '/profile'}">
                     <button>Edit Profile</button>
                 </a>
             </div>
-        </div>
 
-        <div class="row-content">
+            <!-- Wallet Section -->
             <div class="wallet">
                 <div class="details">
                     <h3>Wallet</h3>
-                    <p><strong>Available Balance:</strong> <span
-                            th:text="${user.wallet.balance + ' ' + user.wallet.currency}"></span></p>
+                    <p><strong>Available Balance:</strong> <span th:text="${user.wallet.balance + ' ' + user.wallet.currency}"></span></p>
                     <p><strong>Wallet ID:</strong> <span th:text="${user.wallet.id}"></span></p>
-                    <p><strong>Last Transaction:</strong> <span
-                            th:text="${#temporals.format(user.wallet.updatedOn, 'dd MMM YYYY HH:mm')}"></span></p>
+                    <p><strong>Last Transaction:</strong> <span th:text="${#temporals.format(user.wallet.updatedOn, 'dd MMM YYYY HH:mm')}"></span></p>
                 </div>
                 <a class="profile-action-button" th:href="@{/wallet}">
                     <button>Open Wallet</button>
                 </a>
             </div>
 
+            <!-- Loyalty Section -->
             <div class="loyalty">
                 <div class="details">
                     <h3>Loyalty Program</h3>
-                    <p><strong>Loyalty id:</strong> <span th:text="${user.loyalty.id}"></span></p>
+                    <p><strong>Loyalty ID:</strong> <span th:text="${user.loyalty.id}"></span></p>
                     <p><strong>Loyalty Level:</strong> <span th:text="${user.loyalty.loyaltyTier}"></span></p>
-                    <p><strong>Created On:</strong> <span
-                            th:text="${#temporals.format(user.loyalty.createdOn, 'dd MMM YYYY HH:mm')}"></span></p>
-                    <p><strong>Updated On:</strong> <span
-                            th:text="${#temporals.format(user.loyalty.updatedOn, 'dd MMM YYYY HH:mm')}"></span></p>
+                    <p><strong>Created On:</strong> <span th:text="${#temporals.format(user.loyalty.createdOn, 'dd MMM YYYY HH:mm')}"></span></p>
+                    <p><strong>Updated On:</strong> <span th:text="${#temporals.format(user.loyalty.updatedOn, 'dd MMM YYYY HH:mm')}"></span></p>
                 </div>
                 <a class="profile-action-button" th:href="@{/loyalties}">
                     <button>Update Loyalty Subscription</button>
                 </a>
             </div>
+
         </div>
     </div>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+
 </body>
 </html>
