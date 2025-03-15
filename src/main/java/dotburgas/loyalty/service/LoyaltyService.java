@@ -5,6 +5,7 @@ import dotburgas.loyalty.model.LoyaltyTier;
 import dotburgas.loyalty.repository.LoyaltyRepository;
 import dotburgas.notification.service.NotificationService;
 import dotburgas.user.model.User;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,32 +27,28 @@ public class LoyaltyService {
     public Loyalty createDefaultLoyaltyProgram(User user) {
         Loyalty loyalty = loyaltyRepository.save(initializeLoyaltyProgram(user));
         log.info("Successfully created new LoyaltyProgram with id [%s] and loyaltyTier [%s]".formatted(loyalty.getId(), loyalty.getLoyaltyTier()));
-
         return loyalty;
     }
 
+    public void updatedLoyaltySubscription(UUID loyaltyId, LoyaltyTier updatedLoyaltyTier) {
 
-    private Loyalty initializeLoyaltyProgram(User user) {
-
-        LocalDateTime now = LocalDateTime.now();
-
-        return Loyalty.builder()
-                .owner(user)
-                .loyaltyTier(LoyaltyTier.LEVEL_01)
-                .createdOn(now)
-                .updatedOn(now)
-                .build();
-    }
-
-    public void updatedLoyaltySubscription(UUID loyaltyIdOfUser, LoyaltyTier updatedLoyaltyTier) {
-        Loyalty loyalty = loyaltyRepository.findById(loyaltyIdOfUser).orElseThrow(
-                () -> new IllegalArgumentException("Loyalty not found for ID: " + loyaltyIdOfUser));
+        Loyalty loyalty = loyaltyRepository.findById(loyaltyId).orElseThrow(() -> new EntityNotFoundException("Loyalty subscription not found for id: " + loyaltyId));
 
         loyalty.setLoyaltyTier(updatedLoyaltyTier);
         loyalty.setUpdatedOn(LocalDateTime.now());
         loyaltyRepository.save(loyalty);
 
-        log.info("Successfully updated LoyaltySubscription with id [%s] to loyaltyTier [%s]".formatted(loyalty.getId(), loyalty.getLoyaltyTier()));
+        log.info(String.format("Successfully updated LoyaltySubscription with id [%s] to loyaltyTier [%s]",
+                loyalty.getId(), loyalty.getLoyaltyTier()));
+    }
+
+    private Loyalty initializeLoyaltyProgram(User user) {
+        return Loyalty.builder()
+                .owner(user)
+                .loyaltyTier(LoyaltyTier.LEVEL_01)
+                .createdOn(LocalDateTime.now())
+                .updatedOn(LocalDateTime.now())
+                .build();
     }
 }
 

@@ -1,5 +1,6 @@
 package dotburgas.web;
 
+import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.model.LoyaltyTier;
 import dotburgas.loyalty.service.LoyaltyService;
 import dotburgas.shared.security.AuthenticationUserDetails;
