@@ -4,29 +4,73 @@ body {
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.home-section {
+main {
+    flex: 1;
+    margin-top: 100px;
+}
+
+/* Footer styles */
+.footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer p {
+    color: white;
+    margin: 0;
+}
+
+/* Notification container */
+.notification-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
-    max-width: 600px;
-    margin: 100px auto;
+}
+
+/* Notification boxes (Dashboard and History) */
+.notification-box {
+    flex: 1;
     background: white;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
 
-h2 {
-    text-align: center;
+.notification-box h1 {
+    font-size: 24px;
     color: #333;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
-p {
+.notification-box h3 {
+    font-size: 18px;
     color: #555;
+    margin-bottom: 15px;
 }
 
-/* Notification Details */
+.notification-box p {
+    font-size: 14px;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* Details section */
 .details-section {
-    margin: 15px 0;
+    margin: 10px 0;
     padding: 10px;
     background: #f9f9f9;
     border-radius: 5px;
@@ -38,8 +82,15 @@ p {
     align-items: center;
 }
 
-strong {
+.details-section-container strong {
+    font-size: 14px;
     color: #333;
+}
+
+.details-section-container p {
+    font-size: 14px;
+    color: #555;
+    margin: 0;
 }
 
 /* Status indicators */
@@ -88,4 +139,65 @@ strong {
 
 .enable-notifications:hover {
     background-color: #1f8a36;
+}
+
+/* Notification History Table */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 14px;
+}
+
+.styled-table th, .styled-table td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.styled-table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.styled-table td {
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+}
+
+.styled-table tr:nth-child(even) td {
+    background-color: #f1f1f1;
+}
+
+.styled-table tr:hover td {
+    background-color: #eaeaea;
+}
+
+/* Status indicators in table */
+.status {
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+
+.succeeded {
+    background-color: #28a745;
+    color: white;
+}
+
+.failed {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Empty state for no notifications */
+.empty-state {
+    text-align: center;
+    padding: 20px;
+    color: #aaa;
+    font-style: italic;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
 }
