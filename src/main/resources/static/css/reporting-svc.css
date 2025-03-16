@@ -64,6 +64,20 @@
     animation: btn-hover-effect 0.3s ease;
 }
 
+.wrapper {
+    margin-top: 100px; /* Ensures entire wrapper is pushed down */
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 100px; /* Ensures space from the top */
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
 /* Style for the input field */
 .form-container .input-field {
     background-color: white; /* White background for the input */

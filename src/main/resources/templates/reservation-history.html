@@ -5,68 +5,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservation History</title>
+
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Bootstrap and Custom CSS -->
     <link rel="stylesheet" href="/css/reset-css.css"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/sidebar.css"/>
-    <link rel="stylesheet" href="/css/reservation-history.css"/>
     <link rel="stylesheet" href="/css/main.css"/>
-    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <link rel="stylesheet" href="/css/reservation-history.css"/>
+
+    <!-- JS Files -->
+    <script src="/js/jquery-3.5.1.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
 </head>
 
 <body>
+<!-- Header -->
 <header th:replace="~{fragments/header :: header}"></header>
+
+<!-- Sidebar -->
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
 <div class="wrapper">
     <div class="container">
         <h2>Reservation History</h2>
 
-        <table>
-            <thead>
-            <tr>
-                <th>Apartment Name</th>
-                <th>Reservation ID</th>
-                <th>Full Name</th>
-                <th>Guests</th>
-                <th>Check-in Date</th>
-                <th>Check-out Date</th>
-                <th>Stay Length</th>
-                <th>Currency</th>
-                <th>Reservation Price</th>
-                <th>Reservation Status</th>
-                <th>Payment Status</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="reservation : ${reservations}">
-                <td th:text="${reservation.apartment.name}"></td>
-                <td th:text="${reservation.id}"></td>
-                <td th:text="${reservation.user.firstName + ' ' + reservation.user.lastName}"></td>
-                <td th:text="${reservation.guests}"></td>
-                <td th:text="${#temporals.format(reservation.checkInDate, 'dd MMM YYYY')}"></td>
-                <td th:text="${#temporals.format(reservation.checkOutDate, 'dd MMM YYYY')}"></td>
-                <td th:text="${reservation.reservationLength}"></td>
-                <td>EUR</td>
-                <td th:text="${reservation.totalPrice}"></td>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                <tr>
+                    <th>Apartment Name</th>
+                    <th>Reservation ID</th>
+                    <th>Full Name</th>
+                    <th>Guests</th>
+                    <th>Check-in Date</th>
+                    <th>Check-out Date</th>
+                    <th>Stay Length</th>
+                    <th>Currency</th>
+                    <th>Reservation Price</th>
+                    <th>Reservation Status</th>
+                    <th>Payment Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="reservation : ${reservations}">
+                    <td th:text="${reservation.apartment.name}"></td>
+                    <td th:text="${reservation.id}"></td>
+                    <td th:text="${reservation.user.firstName + ' ' + reservation.user.lastName}"></td>
+                    <td th:text="${reservation.guests}"></td>
+                    <td th:text="${#temporals.format(reservation.checkInDate, 'dd MMM yyyy')}"></td>
+                    <td th:text="${#temporals.format(reservation.checkOutDate, 'dd MMM yyyy')}"></td>
+                    <td th:text="${reservation.reservationLength}"></td>
+                    <td>EUR</td>
+                    <td th:text="${reservation.totalPrice}"></td>
 
-                <td th:text="${reservation.confirmationStatus}"
-                    th:style="|font-weight: bold; color: ${reservation.confirmationStatus == T(dotburgas.reservation.model.ConfirmationStatus).CONFIRMED ? 'green' :
-                                         (reservation.confirmationStatus == T(dotburgas.reservation.model.ConfirmationStatus).PENDING ? 'orange' : 'red')}|">
-                </td>
+                    <!-- Reservation Status -->
+                    <td th:text="${reservation.confirmationStatus}"
+                        th:style="|font-weight: bold; color: ${reservation.confirmationStatus == T(dotburgas.reservation.model.ConfirmationStatus).CONFIRMED ? 'green' :
+                                                    (reservation.confirmationStatus == T(dotburgas.reservation.model.ConfirmationStatus).PENDING ? 'orange' : 'red')}|">
+                    </td>
 
-                <td th:text="${reservation.paymentStatus}"
-                    th:style="|font-weight: bold; color: ${reservation.paymentStatus == T(dotburgas.reservation.model.PaymentStatus).PAID ? 'green' :
-                                         (reservation.paymentStatus == T(dotburgas.reservation.model.PaymentStatus).PENDING ? 'orange' : 'red')}|">
-                </td>
-
-            </tr>
-            </tbody>
-        </table>
+                    <!-- Payment Status -->
+                    <td th:text="${reservation.paymentStatus}"
+                        th:style="|font-weight: bold; color: ${reservation.paymentStatus == T(dotburgas.reservation.model.PaymentStatus).PAID ? 'green' :
+                                                    (reservation.paymentStatus == T(dotburgas.reservation.model.PaymentStatus).PENDING ? 'orange' : 'red')}|">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
+<!-- Footer -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>
