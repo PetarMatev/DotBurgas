@@ -32,8 +32,7 @@ public class TransferController {
 
         User user = userService.getById(authenticationUserDetails.getUserId());
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("transfer");
+        ModelAndView modelAndView = new ModelAndView("transfer");
         modelAndView.addObject("user", user);
         modelAndView.addObject("transferRequest", TransferRequest.builder().build());
 
@@ -46,8 +45,7 @@ public class TransferController {
         User user = userService.getById(authenticationUserDetails.getUserId());
 
         if (bindingResult.hasErrors()) {
-            ModelAndView modelAndView = new ModelAndView();
-            modelAndView.setViewName("transfer");
+            ModelAndView modelAndView = new ModelAndView("transfer");
             modelAndView.addObject("user", user);
             modelAndView.addObject("transferRequest", transferRequest);
 

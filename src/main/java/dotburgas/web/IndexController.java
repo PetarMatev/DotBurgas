@@ -31,8 +31,7 @@ public class IndexController {
     @GetMapping("/login")
     public ModelAndView getLoginPage(@RequestParam(value = "error", required = false) String errorParam) {
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("login");
+        ModelAndView modelAndView = new ModelAndView("login");
         // adding an empty DTO and setting up the attribute name.
         modelAndView.addObject("loginRequest", LoginRequest.builder().build());
 
@@ -46,8 +45,7 @@ public class IndexController {
     @GetMapping("/register")
     public ModelAndView getRegisterPage() {
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("register");
+        ModelAndView modelAndView = new ModelAndView("register");
         modelAndView.addObject("registerRequest", new RegisterRequest());
 
         return modelAndView;
