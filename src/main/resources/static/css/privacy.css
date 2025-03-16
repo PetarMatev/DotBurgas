@@ -6,13 +6,14 @@ body {
 }
 
 .container {
-    background-color: white; /* White background for the content */
+    background-color: white;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-top: 100px; /* Ensure content is below the navbar */
-    flex-grow: 1; /* Ensures the container expands to push the footer down */
+    margin-top: 100px;
+    flex-grow: 1;
     overflow-y: auto;
+    margin-bottom: 20px; /* Adds space between the content and the footer */
 }
 
 h1, h2 {
@@ -33,15 +34,13 @@ a:hover {
 }
 
 footer {
-    background-color: #343a40; /* Dark footer background */
+    background-color: #343a40;
     color: white;
     text-align: center;
     padding: 15px 10px;
-    position: fixed;
-    bottom: 0;
-    left: 0;
     width: 100%;
-    z-index: 1000; /* Ensures it sits above other elements */
+    z-index: 1000;
+    position: relative; /* Change from fixed to relative so it stays below the content */
 }
 
 footer a {
