@@ -35,7 +35,12 @@
                     <p th:if="${!#strings.isEmpty(user.firstName) || !#strings.isEmpty(user.lastName)}">
                         <strong>Full Name:</strong> <span th:text="${user.firstName + ' ' + user.lastName}"></span>
                     </p>
-                    <p><strong>User Id:</strong> <span th:text="${user.id}"></span></p>
+                    <p>
+                        <span class="no-wrap">
+                            <strong>User Id:</strong> <span th:text="${user.id}"></span>
+                        </span>
+                    </p>
+
                     <p th:if="${!#strings.isEmpty(user.email)}">
                         <strong>Email:</strong> <span th:text="${user.email}"></span>
                     </p>
@@ -50,8 +55,13 @@
             <div class="wallet">
                 <div class="details">
                     <h3>Wallet</h3>
-                    <img src="/img/wallet.jpg" alt="Profile Picture">                    <p><strong>Available Balance:</strong> <span th:text="${user.wallet.balance + ' ' + user.wallet.currency}"></span></p>
-                    <p><strong>Wallet ID:</strong> <span th:text="${user.wallet.id}"></span></p>
+                    <img src="/img/wallet.jpg" alt="Profile Picture">
+                    <p><strong>Available Balance:</strong> <span th:text="${user.wallet.balance + ' ' + user.wallet.currency}"></span></p>
+                    <p>
+                        <span class="no-wrap">
+                            <strong>Wallet ID:</strong> <span th:text="${user.wallet.id}"></span>
+                        </span>
+                    </p>
                     <p><strong>Last Transaction:</strong> <span th:text="${#temporals.format(user.wallet.updatedOn, 'dd MMM YYYY HH:mm')}"></span></p>
                 </div>
                 <a class="profile-action-button" th:href="@{/wallet}">
@@ -63,7 +73,11 @@
                 <div class="details">
                     <h3>Loyalty Program</h3>
                     <img src="/img/loyalty.jpg" alt="Profile Picture">
-                    <p><strong>Loyalty ID:</strong> <span th:text="${user.loyalty.id}"></span></p>
+                    <p>
+                        <span class="no-wrap">
+                            <strong>Loyalty ID:</strong> <span th:text="${user.loyalty.id}"></span>
+                        </span>
+                    </p>
                     <p><strong>Loyalty Level:</strong> <span th:text="${user.loyalty.loyaltyTier}"></span></p>
                     <p><strong>Created On:</strong> <span th:text="${#temporals.format(user.loyalty.createdOn, 'dd MMM YYYY HH:mm')}"></span></p>
                     <p><strong>Updated On:</strong> <span th:text="${#temporals.format(user.loyalty.updatedOn, 'dd MMM YYYY HH:mm')}"></span></p>

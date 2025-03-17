@@ -23,7 +23,7 @@ body {
 
 /* Move the "Welcome to DOT Burgas!" text higher */
 .container-fluid h5.text-center {
-    margin-top: 3.5rem !important; /* Adjust this value as needed */
+    margin-top: 75px; !important; /* Adjust this value as needed */
     font-size: 3rem;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);

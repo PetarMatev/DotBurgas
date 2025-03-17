@@ -49,7 +49,7 @@ public class UserInit implements CommandLineRunner {
             user.setFirstName("Petar");
             user.setLastName("Matev");
             user.setEmail("petargmatev@gmail.com");
-            user.setProfilePicture("https://lh3.googleusercontent.com/a/ACg8ocJL23ZsaVEEUqk2IE8cJXksIDtBmOhQI__3vC7W_I4Lli0W6Tej=s288-c-no");
+            user.setProfilePicture("static/img/admin-photo.jpg");
             userRepository.save(user);
         } else {
             throw new IllegalArgumentException("Default admin user could not be found after registration.");

@@ -7,7 +7,6 @@ import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +33,13 @@ public class NotificationController {
     public ModelAndView getNotificationPage(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
 
         User user = userService.getById(authenticationUserDetails.getUserId());
-
         NotificationPreference notificationPreference = notificationService.getNotificationPreference(user.getId());
+
         List<Notification> notificationHistory = notificationService.getNotificationHistory(user.getId());
+
         long succeededNotificationsNumber = notificationHistory.stream().filter(notification -> notification.getStatus().equals("SUCCEEDED")).count();
         long failedNotificationsNumber = notificationHistory.stream().filter(notification -> notification.getStatus().equals("FAILED")).count();
+
         notificationHistory = notificationHistory.stream().limit(5).toList();
 
         ModelAndView modelAndView = new ModelAndView("notifications");
@@ -53,22 +54,17 @@ public class NotificationController {
 
     @PutMapping("/user-preference")
     public String updateUserPreference(@RequestParam(name = "enabled") boolean enabled, @AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
-
-        notificationService.updateNotificationPreference(authenticationUserDetails.getUserId(), enabled);
-
+        UUID userId = authenticationUserDetails.getUserId();
+        notificationService.updateNotificationPreference(userId, enabled);
         return "redirect:/notifications";
     }
 
     @DeleteMapping
     public String deleteNotificationHistory(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
-
         UUID userId = authenticationUserDetails.getUserId();
         notificationService.clearHistory(userId);
-
         return "redirect:/notifications";
     }
-
-
 
     @PutMapping
     public String retryFailedNotifications(@AuthenticationPrincipal AuthenticationUserDetails authenticationUserDetails) {
@@ -76,6 +72,4 @@ public class NotificationController {
         notificationService.retryFailed(userId);
         return "redirect:/notifications";
     }
-
-
 }
