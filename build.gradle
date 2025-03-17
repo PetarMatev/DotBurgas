@@ -1,7 +1,8 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.0'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'war'
+	id 'org.springframework.boot' version '3.4.3'
+	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 java {
@@ -27,10 +28,26 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok:1.18.32'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Test dependencies
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Includes JUnit 5, Spring Test, etc.
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+	testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.8.2'
 }
 
+springBoot {
+	mainClass = 'dotburgas.Application'  // Fully qualified name of your main class
+}
 
-
+bootJar {
+	archiveBaseName = 'dotburgas'  // Specify the name of your .jar file
+	version = '1.0.0'  // Optional: Specify the version
+}
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+test {
+	useJUnitPlatform() // Ensures JUnit 5 tests are recognized
 }

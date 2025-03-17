@@ -28,6 +28,9 @@ spring:
     url: jdbc:mysql://localhost:3306/dotburgas?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
     username: root
     password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: HikariCP
   jpa:
     defer-datasource-initialization: true
     properties:

@@ -172,6 +172,12 @@ form .alert-warning {
     font-size: 0.9em;
 }
 
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1800px; /* Increase the max-width */
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .row-content {
@@ -188,4 +194,11 @@ form .alert-warning {
     form input, form select, form textarea {
         width: 100%; /* Ensure full width on smaller screens */
     }
+}
+
+.no-wrap {
+    white-space: nowrap; /* Ensures text stays on a single line */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds ellipsis if the text overflows */
+    color: #000; /* Set text color to black (or any desired color) */
 }
