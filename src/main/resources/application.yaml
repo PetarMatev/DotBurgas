@@ -1,4 +1,9 @@
 spring:
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.MySQL8Dialect  # Use the correct dialect for MySQL 8
+      ddl-auto: update  # Automatically update the database schema
+      format_sql: true
   security:
     user:
       name: Petar123
@@ -31,14 +36,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       pool-name: HikariCP
-  jpa:
-    defer-datasource-initialization: true
-    properties:
-      hibernate:
-        format_sql: true
-    hibernate:
-      ddl-auto: update
-    open-in-view: false
   sql:
     init:
       mode: never
