@@ -53,7 +53,9 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User register(RegisterRequest registerRequest) {
 
+        // Test whenOptionalOfUserIsPresent_thenThrowNewUsernameAlreadyExistException
         Optional<User> optionalUser = userRepository.findByUsername(registerRequest.getUsername());
+
         if (optionalUser.isPresent()) {
             throw new UsernameAlreadyExistException("Username [%s] already exists.".formatted(registerRequest.getUsername()));
         }
@@ -74,41 +76,23 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-
     @CacheEvict(value = "users", allEntries = true)
     public void editUserDetails(UUID userId, UserEditRequest userEditRequest) {
 
         User user = getById(userId);
-
-        // if user has so far had email and decided to remove it, then we disable notifications
-        if (userEditRequest.getEmail().isBlank()) {
-            notificationService.saveNotificationPreference(userId, false, null);
-        }
 
         user.setFirstName(userEditRequest.getFirstName());
         user.setLastName(userEditRequest.getLastName());
         user.setEmail(userEditRequest.getEmail());
         user.setProfilePicture(userEditRequest.getProfilePicture());
 
-        // if the user has added his email, we automatically enable notifications.
-        if (!userEditRequest.getEmail().isBlank()) {
+        // if user has so far had email and decided to remove it, then we disable notifications
+        if (userEditRequest.getEmail().isBlank()) {
+            notificationService.saveNotificationPreference(userId, false, null);
+        } else {
             notificationService.saveNotificationPreference(userId, true, userEditRequest.getEmail());
         }
-
         userRepository.save(user);
-    }
-
-
-    private User initilizeUser(RegisterRequest registerRequest) {
-        return User.builder()
-                .username(registerRequest.getUsername())
-                .password(registerRequest.getPassword())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .country(registerRequest.getCountry())
-                .role(UserRole.USER)
-                .createdOn(LocalDateTime.now())
-                .updatedOn(LocalDateTime.now())
-                .build();
     }
 
     // initial call on the method saves the result in a cache but every other time it is called still involk the original data saved in the cahe
@@ -118,15 +102,14 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+    // Everytime user logs in, spring security will call this method to get the details of the user with this username.
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-    public User getById(UUID id) {
-        return userRepository.findById(id).orElseThrow(() -> new DomainException("User with id [%s] does not exist.".formatted(id)));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new DomainException("user with this username does not exist"));
+
+        return new AuthenticationUserDetails(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
     }
-
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new DomainException("User with username [%d] does not exist.".formatted(username)));
-    }
-
 
     @CacheEvict(value = "users", allEntries = true)
     public void switchRole(UUID userId) {
@@ -143,13 +126,22 @@ public class UserService implements UserDetailsService {
         log.info("The User Role for Username: %s with Id: %s has been amended to %s".formatted(user.getUsername(), user.getId(), user.getRole().name()));
     }
 
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new DomainException("User with username [%s] does not exist.".formatted(username)));
+    }
 
-    // Everytime user logs in, spring security will call this method to get the details of the user with this username.
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    private User initilizeUser(RegisterRequest registerRequest) {
+        return User.builder()
+                .username(registerRequest.getUsername())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .country(registerRequest.getCountry())
+                .role(UserRole.USER)
+                .createdOn(LocalDateTime.now())
+                .updatedOn(LocalDateTime.now())
+                .build();
+    }
 
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new DomainException("user with this username does not exist"));
-
-        return new AuthenticationUserDetails(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
+    public User getById(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> new DomainException("User with id [%s] does not exist.".formatted(id)));
     }
 }
