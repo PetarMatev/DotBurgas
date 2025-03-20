@@ -30,19 +30,16 @@ public class TransactionController {
 
         List<Transaction> transactions = transactionService.getAllByOwnerId(authenticationUserDetails.getUserId());
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("transactions");
+        ModelAndView modelAndView = new ModelAndView("transactions");
         modelAndView.addObject("transactions", transactions);
 
         return modelAndView;
     }
 
-
     @GetMapping("/{id}")
     public ModelAndView getTransactionById(@PathVariable UUID id) {
         Transaction transaction = transactionService.getById(id);
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("transaction-result");
+        ModelAndView modelAndView = new ModelAndView("transaction-result");
         modelAndView.addObject("transaction", transaction);
 
         return modelAndView;
