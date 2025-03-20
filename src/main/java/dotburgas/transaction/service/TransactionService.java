@@ -1,7 +1,6 @@
 package dotburgas.transaction.service;
 
 import dotburgas.notification.service.NotificationService;
-import dotburgas.reservation.model.Reservation;
 import dotburgas.shared.exception.DomainException;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.transaction.model.TransactionStatus;
@@ -33,6 +32,26 @@ public class TransactionService {
         this.notificationService = notificationService;
     }
 
+    public Transaction getById(UUID id) {
+        return transactionRepository
+                .findById(id)
+                .orElseThrow(() -> new DomainException("Transaction with id [%s] does not exist.".formatted(id)));
+    }
+
+    public List<Transaction> getAllByOwnerId(UUID ownerId) {
+        return transactionRepository.findAllByOwnerIdOrderByCreatedOnDesc(ownerId);
+    }
+
+    public List<Transaction> getLastFiveTransactionsByWallet(Wallet wallet) {
+
+        return transactionRepository.findAllBySenderOrReceiverOrderByCreatedOnDesc(wallet.getId().toString(), wallet.getId().toString())
+                .stream()
+                .filter(t -> t.getOwner().getId().equals(wallet.getOwner().getId()))
+                .filter(t -> t.getStatus().equals(TransactionStatus.SUCCEEDED))
+                .limit(5)
+                .collect(Collectors.toList());
+    }
+
     public Transaction createNewTransaction(User owner, String sender, String receiver, BigDecimal transactionAmount, BigDecimal balanceLeft, Currency currency, TransactionType type, TransactionStatus status, String transactionDescription, String failureReason) {
         Transaction transaction = Transaction.builder()
                 .owner(owner)
@@ -54,25 +73,5 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    public List<Transaction> getAllByOwnerId(UUID ownerId) {
-        return transactionRepository.findAllByOwnerIdOrderByCreatedOnDesc(ownerId);
-    }
 
-    public Transaction getById(UUID id) {
-        return transactionRepository
-                .findById(id)
-                .orElseThrow(() -> new DomainException("Transaction with id [%s] does not exist.".formatted(id)));
-    }
-
-    public List<Transaction> getLastFiveTransactionsByWallet(Wallet wallet) {
-
-        List<Transaction> lastFiveTransactions = transactionRepository.findAllBySenderOrReceiverOrderByCreatedOnDesc(wallet.getId().toString(), wallet.getId().toString())
-                .stream()
-                .filter(t -> t.getOwner().getId().equals(wallet.getOwner().getId()))
-                .filter(t -> t.getStatus().equals(TransactionStatus.SUCCEEDED))
-                .limit(5)
-                .collect(Collectors.toList());
-
-        return lastFiveTransactions;
-    }
 }
