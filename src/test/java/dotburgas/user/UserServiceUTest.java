@@ -186,7 +186,6 @@ public class UserServiceUTest {
         verify(userRepository, times(1)).save(user);
     }
 
-
     @ParameterizedTest
     @MethodSource("userRolesArguments")
     void whenChangeUserRole_thenCorrectRoleIsAssigned(UserRole currentUserRole, UserRole expectedUserRole) {
@@ -390,15 +389,6 @@ public class UserServiceUTest {
         assertNotNull(registeredUser.getLoyalty());
         assertNotNull(registeredUser.getWallet());
     }
-
-
-    // 08. getById
-
-    // Given
-
-    // When
-
-    // Then
 
     // 08. getById
     @Test
