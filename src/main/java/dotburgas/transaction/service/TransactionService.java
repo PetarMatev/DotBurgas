@@ -33,9 +33,7 @@ public class TransactionService {
     }
 
     public Transaction getById(UUID id) {
-        return transactionRepository
-                .findById(id)
-                .orElseThrow(() -> new DomainException("Transaction with id [%s] does not exist.".formatted(id)));
+        return transactionRepository.findById(id).orElseThrow(() -> new DomainException("Transaction with id [%s] does not exist.".formatted(id)));
     }
 
     public List<Transaction> getAllByOwnerId(UUID ownerId) {
