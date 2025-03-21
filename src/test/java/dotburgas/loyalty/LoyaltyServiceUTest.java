@@ -16,8 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,7 +72,6 @@ public class LoyaltyServiceUTest {
     void givenLoyaltyThatDoesNotExistInDatabase_thenReturnsLoyaltyEntity() {
 
         // Given
-
         User user = User.builder()
                 .id(UUID.randomUUID())
                 .username("Petar123")
@@ -87,24 +85,53 @@ public class LoyaltyServiceUTest {
                 .owner(user)
                 .updatedOn(LocalDateTime.now())
                 .build();
+
+        LoyaltyTier updatedLoyaltyTier = LoyaltyTier.LEVEL_03;
+
         when(loyaltyRepository.findById(loyaltyId)).thenReturn(Optional.of(loyalty));
 
         // When
-        Loyalty returnedLoyalty = loyaltyRepository.findById(loyaltyId).get();
-
-        LoyaltyTier updatedLoyaltyTier = LoyaltyTier.LEVEL_03;
-        returnedLoyalty.setLoyaltyTier(updatedLoyaltyTier);
-        returnedLoyalty.setUpdatedOn(LocalDateTime.now());
-
-        when(loyaltyRepository.save(returnedLoyalty)).thenReturn(returnedLoyalty);
-        Loyalty updatedLoyalty = loyaltyRepository.save(returnedLoyalty);
+        loyaltyService.updatedLoyaltySubscription(loyaltyId, updatedLoyaltyTier);
 
         // Then
-        assertEquals(user.getUsername(), updatedLoyalty.getOwner().getUsername());
-        assertEquals(loyaltyId, updatedLoyalty.getId());
-        assertEquals(updatedLoyaltyTier, updatedLoyalty.getLoyaltyTier());
+        assertEquals(updatedLoyaltyTier, loyalty.getLoyaltyTier());
+        assertNotNull(loyalty.getUpdatedOn());
         verify(loyaltyRepository, times(1)).findById(loyaltyId);
-        verify(loyaltyRepository, times(1)).save(returnedLoyalty);
+        verify(loyaltyRepository, times(1)).save(loyalty);
+    }
 
+
+    @Test
+    void givenLoyaltyThatDoesNotExistInDatabase_thenUpdateLoyaltyDetails() {
+
+        // Given
+        User user = User.builder()
+                .id(UUID.randomUUID())
+                .username("Petar123")
+                .build();
+
+        UUID loyaltyId = UUID.randomUUID();
+        LoyaltyTier loyaltyTier = LoyaltyTier.LEVEL_02;
+
+        Loyalty loyalty = Loyalty.builder()
+                .Id(loyaltyId)
+                .loyaltyTier(loyaltyTier)
+                .owner(user)
+                .updatedOn(LocalDateTime.now())
+                .build();
+
+        LoyaltyTier updatedLoyaltyTier = LoyaltyTier.LEVEL_03;
+
+        when(loyaltyRepository.findById(loyaltyId)).thenReturn(Optional.of(loyalty));
+        when(loyaltyRepository.save(any(Loyalty.class))).thenReturn(loyalty);
+
+        // When
+        loyaltyService.updatedLoyaltySubscription(loyaltyId, updatedLoyaltyTier);
+
+        // Then
+        assertEquals(updatedLoyaltyTier, loyalty.getLoyaltyTier());
+        assertNotNull(loyalty.getUpdatedOn());
+        verify(loyaltyRepository, times(1)).findById(loyaltyId);
+        verify(loyaltyRepository, times(1)).save(loyalty);
     }
 }
