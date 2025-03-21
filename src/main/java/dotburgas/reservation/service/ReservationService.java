@@ -52,6 +52,14 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
+    public List<Reservation> getReservationsByUser(User user) {
+        return reservationRepository.findByUser(user);
+    }
+
+    public List<Reservation> getPendingReservations() {
+        return reservationRepository.findByConfirmationStatus(ConfirmationStatus.PENDING);
+    }
+
     public void createReservation(User user, UUID apartmentId, ReservationRequest reservationRequest, String firstName, String lastName, String email) {
 
         Apartment apartment = apartmentService.getById(apartmentId);
@@ -111,31 +119,6 @@ public class ReservationService {
         }
     }
 
-    private long calculateDaysBetween(LocalDate checkInDate, LocalDate checkOutDate) {
-        return ChronoUnit.DAYS.between(checkInDate, checkOutDate);
-    }
-
-    public List<Reservation> getReservationsByUser(User user) {
-        return reservationRepository.findByUser(user);
-    }
-
-    private BigDecimal calculateReservationPrice(BigDecimal pricePerNight, int guests, long lengthOfStay) {
-        BigDecimal totalPrice;
-        BigDecimal extraCharge = BigDecimal.valueOf(40.00);
-
-        if (guests <= 2) {
-            totalPrice = pricePerNight.multiply(BigDecimal.valueOf(lengthOfStay));
-        } else {
-            totalPrice = pricePerNight.add(extraCharge).multiply(BigDecimal.valueOf(lengthOfStay));
-        }
-
-        return totalPrice;
-    }
-
-    public List<Reservation> getPendingReservations() {
-        return reservationRepository.findByConfirmationStatus(ConfirmationStatus.PENDING);
-    }
-
     public void sendReservationRequestEmail(User user, UUID apartmentId, ReservationRequest reservationRequest, String firstName, String lastName, String email) {
         SimpleMailMessage message = new SimpleMailMessage();
 
@@ -174,5 +157,22 @@ public class ReservationService {
         } catch (Exception e) {
             log.warn("There was an issue sending an email to %s due to %s.".formatted(reservationRequest.getEmail(), e.getMessage()));
         }
+    }
+
+    private BigDecimal calculateReservationPrice(BigDecimal pricePerNight, int guests, long lengthOfStay) {
+        BigDecimal totalPrice;
+        BigDecimal extraCharge = BigDecimal.valueOf(40.00);
+
+        if (guests <= 2) {
+            totalPrice = pricePerNight.multiply(BigDecimal.valueOf(lengthOfStay));
+        } else {
+            totalPrice = pricePerNight.add(extraCharge).multiply(BigDecimal.valueOf(lengthOfStay));
+        }
+
+        return totalPrice;
+    }
+
+    private long calculateDaysBetween(LocalDate checkInDate, LocalDate checkOutDate) {
+        return ChronoUnit.DAYS.between(checkInDate, checkOutDate);
     }
 }
