@@ -69,7 +69,7 @@ public class ReservationService {
 
         Reservation reservation = Reservation.builder()
                 .user(user)
-                .apartment(apartmentService.getById(apartmentId))
+                .apartment(apartment)
                 .checkInDate(reservationRequest.getCheckInDate())
                 .checkOutDate(reservationRequest.getCheckOutDate())
                 .guests(reservationRequest.getGuests())
