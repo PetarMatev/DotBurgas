@@ -25,6 +25,23 @@ public class ReportingService {
         this.reportingClient = reportingClient;
     }
 
+    public ReservationResponse getReservationDetails(UUID reservationId) {
+
+        ResponseEntity<ReservationResponse> reservationResponse = reportingClient.getReservationDetails(reservationId.toString());
+
+        return reservationResponse.getBody();
+    }
+
+    public List<ReservationStatsResponse> getSummaryStatsPerApartment() {
+        ResponseEntity<List<ReservationStatsResponse>> httpResponse = reportingClient.getSummaryStatsPerApartment();
+        return httpResponse.getBody();
+    }
+
+    public List<ReservationResponse> getReservationHistory() {
+        ResponseEntity<List<ReservationResponse>> httpResponse = reportingClient.getReservationHistory();
+        return httpResponse.getBody();
+    }
+
     public void saveReservationDetails(Reservation reservation) {
 
         ReservationDetails reservationDetails = ReservationDetails.builder()
@@ -43,23 +60,5 @@ public class ReportingService {
         if (!httpResponse.getStatusCode().is2xxSuccessful()) {
             log.error("[Feign call to reporting-svc failed] Can't save reservation details");
         }
-    }
-
-    public List<ReservationResponse> getReservationHistory() {
-        ResponseEntity<List<ReservationResponse>> httpResponse = reportingClient.getReservationHistory();
-        return httpResponse.getBody();
-    }
-
-
-    public List<ReservationStatsResponse> getSummaryStatsPerApartment() {
-        ResponseEntity<List<ReservationStatsResponse>> httpResponse = reportingClient.getSummaryStatsPerApartment();
-        return httpResponse.getBody();
-    }
-
-    public ReservationResponse getReservationDetails(UUID reservationId) {
-
-        ResponseEntity<ReservationResponse> reservationResponse = reportingClient.getReservationDetails(reservationId.toString());
-
-        return reservationResponse.getBody();
     }
 }
