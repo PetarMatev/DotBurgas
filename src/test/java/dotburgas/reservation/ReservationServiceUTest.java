@@ -11,6 +11,7 @@ import dotburgas.reservation.service.ReservationService;
 import dotburgas.user.model.User;
 import dotburgas.wallet.service.WalletService;
 import dotburgas.web.dto.ReservationRequest;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,9 +24,11 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -190,6 +193,30 @@ public class ReservationServiceUTest {
     }
 
     // 06. updateReservationStatus
+    @Test
+    void givenReservationIdThatIsNotInTheDatabase_thenThrowException() {
+
+        UUID reservationId = UUID.randomUUID();
+        ConfirmationStatus confirmationStatus = ConfirmationStatus.PENDING;
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(EntityNotFoundException.class, () -> reservationService.updateReservationStatus(reservationId, confirmationStatus));
+        verify(reservationRepository, times(1)).findById(reservationId);
+    }
+
+    @Test
+    void givenReservationIdThatIsInTheDatabaseAndConfirmationStatus_thenUpdateReservationStatus() {
+
+        // Given
+        UUID reservationId = UUID.randomUUID();
+        ConfirmationStatus confirmationStatus = ConfirmationStatus.REJECTED;
+        Reservation reservation = Reservation.builder().build();
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
+
+        // When & Then
+        reservationService.updateReservationStatus(reservationId, confirmationStatus);
+    }
 
     // 07. sendReservationRequestEmail
 }

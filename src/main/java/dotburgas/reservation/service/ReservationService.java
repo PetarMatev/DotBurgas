@@ -92,6 +92,7 @@ public class ReservationService {
         if (status == ConfirmationStatus.REJECTED) {
             reservation.setPaymentStatus(PaymentStatus.VOID);
             log.info("Reservation with Id: %s has been %s by the admin.".formatted(reservationId, status));
+            reservationRepository.save(reservation);
         } else if (status == ConfirmationStatus.CONFIRMED) {
 
             // once reservation has been confirmed by the admin, then payment is automatically processed for this reservation
