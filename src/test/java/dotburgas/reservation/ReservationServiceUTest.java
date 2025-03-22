@@ -2,7 +2,6 @@ package dotburgas.reservation;
 
 import dotburgas.apartment.model.Apartment;
 import dotburgas.apartment.service.ApartmentService;
-import dotburgas.loyalty.model.Loyalty;
 import dotburgas.reporting.service.ReportingService;
 import dotburgas.reservation.model.ConfirmationStatus;
 import dotburgas.reservation.model.PaymentStatus;
@@ -11,8 +10,6 @@ import dotburgas.reservation.repository.ReservationRepository;
 import dotburgas.reservation.service.ReservationService;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.transaction.model.TransactionStatus;
-import dotburgas.transaction.model.TransactionType;
-import dotburgas.user.model.Country;
 import dotburgas.user.model.User;
 import dotburgas.wallet.model.Wallet;
 import dotburgas.wallet.service.WalletService;
@@ -20,14 +17,16 @@ import dotburgas.web.dto.ReservationRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.Currency;
@@ -54,6 +53,48 @@ public class ReservationServiceUTest {
 
     @InjectMocks
     private ReservationService reservationService;
+
+    @Test
+    void givenReservationEntity_whenCreatedWithNoArgsConstructor_thenObjectIsInstantiated() {
+        // Given
+        Reservation reservation = new Reservation();
+
+        // Then
+        assertNotNull(reservation);
+        assertNull(reservation.getId());
+        assertNull(reservation.getCheckInDate());
+        assertNull(reservation.getCheckOutDate());
+        assertNull(reservation.getConfirmationStatus());
+        assertNull(reservation.getPaymentStatus());
+    }
+
+    @Test
+    void givenReservationEntity_whenFieldsAreSet_thenGettersReturnCorrectValues() {
+        // Given
+        Reservation reservation = new Reservation();
+        UUID id = UUID.randomUUID();
+        LocalDate checkInDate = LocalDate.now();
+        LocalDate checkOutDate = LocalDate.now().plusDays(3);
+        int guests = 2;
+        ConfirmationStatus confirmationStatus = ConfirmationStatus.PENDING;
+        PaymentStatus paymentStatus = PaymentStatus.PENDING;
+
+        // When
+        reservation.setId(id);
+        reservation.setCheckInDate(checkInDate);
+        reservation.setCheckOutDate(checkOutDate);
+        reservation.setGuests(guests);
+        reservation.setConfirmationStatus(confirmationStatus);
+        reservation.setPaymentStatus(paymentStatus);
+
+        // Then
+        assertEquals(id, reservation.getId());
+        assertEquals(checkInDate, reservation.getCheckInDate());
+        assertEquals(checkOutDate, reservation.getCheckOutDate());
+        assertEquals(guests, reservation.getGuests());
+        assertEquals(confirmationStatus, reservation.getConfirmationStatus());
+        assertEquals(paymentStatus, reservation.getPaymentStatus());
+    }
 
     // 01. getAllReservationsByApartment
     @Test
@@ -347,6 +388,169 @@ public class ReservationServiceUTest {
     }
 
     // 07. sendReservationRequestEmail
+    @Test
+    void givenInformationDetails_thenSendEmailSuccessfully() {
+        // Given
+        String adminEmail = "petar_matev@yahoo.co.uk";
+        String subject = "Reservation Request";
+        UUID apartmentId = UUID.randomUUID();
+        String firstName = "Petar";
+        String lastName = "Matev";
+        String email = "petar_matev@yahoo.co.uk";
+        String apartmentName = "Sea View Apartment";
+
+        User user = User.builder().build();
+
+        LocalDate checkInDate = LocalDate.now();
+        LocalDate checkOutDate = checkInDate.plusDays(3);
+
+        ReservationRequest reservationRequest = ReservationRequest.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .checkInDate(checkInDate)
+                .checkOutDate(checkOutDate)
+                .guests(3)
+                .build();
+
+        when(apartmentService.findApartmentNameByID(apartmentId)).thenReturn(apartmentName);
+
+        // When
+        reservationService.sendReservationRequestEmail(user, apartmentId, reservationRequest, firstName, lastName, email);
+
+        // Then
+        ArgumentCaptor<SimpleMailMessage> messageCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(mailSender, times(1)).send(messageCaptor.capture());
+
+        SimpleMailMessage sentMessage = messageCaptor.getValue();
+
+        assertNotNull(sentMessage);
+        assertEquals(adminEmail, sentMessage.getTo()[0]);
+        assertEquals(subject, sentMessage.getSubject());
+        assertTrue(sentMessage.getText().contains(firstName));
+        assertTrue(sentMessage.getText().contains(lastName));
+        assertTrue(sentMessage.getText().contains(apartmentName));
+        assertTrue(sentMessage.getText().contains(checkInDate.toString()));
+        assertTrue(sentMessage.getText().contains(checkOutDate.toString()));
+    }
+
+    @Test
+    void givenInformationDetails_whenEmailFails_thenLogWarning() {
+        // Given
+        UUID apartmentId = UUID.randomUUID();
+        String firstName = "Petar";
+        String lastName = "Matev";
+        String email = "petar_matev@yahoo.co.uk";
+        String apartmentName = "Sea View Apartment";
+
+        User user = User.builder().build();
+
+        LocalDate checkInDate = LocalDate.now();
+        LocalDate checkOutDate = checkInDate.plusDays(3);
+
+        ReservationRequest reservationRequest = ReservationRequest.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .checkInDate(checkInDate)
+                .checkOutDate(checkOutDate)
+                .guests(3)
+                .build();
+
+        when(apartmentService.findApartmentNameByID(apartmentId)).thenReturn(apartmentName);
+
+        doThrow(new MailException("Email error!") {
+        }).when(mailSender).send(any(SimpleMailMessage.class));
+
+        // When
+        reservationService.sendReservationRequestEmail(user, apartmentId, reservationRequest, firstName, lastName, email);
+
+        // Then
+        verify(mailSender, times(1)).send(any(SimpleMailMessage.class));
+    }
+
+    @Test
+    void givenReservationRequestWithGuestsLessThanOrEqualToTwo_thenCalculateTotalPriceWithoutExtraCharge() {
+
+        // Given
+        UUID apartmentId = UUID.randomUUID();
+        User user = User.builder().id(UUID.randomUUID()).build();
+
+        Apartment apartment = Apartment.builder()
+                .id(apartmentId)
+                .pricePerNight(BigDecimal.valueOf(100))
+                .build();
+
+        LocalDate checkInDate = LocalDate.now();
+        LocalDate checkOutDate = checkInDate.plusDays(3);
+        int lengthOfStay = (int) ChronoUnit.DAYS.between(checkInDate, checkOutDate);
+
+        ReservationRequest reservationRequest = ReservationRequest.builder()
+                .firstName("Petar")
+                .lastName("Matev")
+                .email("petar_matev@yahoo.co.uk")
+                .checkInDate(checkInDate)
+                .checkOutDate(checkOutDate)
+                .guests(2)
+                .build();
+
+        BigDecimal expectedTotalPrice = apartment.getPricePerNight().multiply(BigDecimal.valueOf(lengthOfStay));
+
+        when(apartmentService.getById(apartmentId)).thenReturn(apartment);
+        when(reservationRepository.save(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        reservationService.createReservation(user, apartmentId, reservationRequest, reservationRequest.getFirstName(),
+                reservationRequest.getLastName(), reservationRequest.getEmail());
+
+        // Then
+        verify(reservationRepository, times(1))
+                .save(argThat(savedReservation ->
+                        savedReservation.getTotalPrice().compareTo(expectedTotalPrice) == 0
+                ));
+    }
+
+    @Test
+    void givenReservationRequestWithGuestsGreaterThanTwo_thenCalculateTotalPriceWithExtraCharge() {
+
+        // Given
+        UUID apartmentId = UUID.randomUUID();
+        User user = User.builder().id(UUID.randomUUID()).build();
+
+        Apartment apartment = Apartment.builder()
+                .id(apartmentId)
+                .pricePerNight(BigDecimal.valueOf(100))
+                .build();
+
+        LocalDate checkInDate = LocalDate.now();
+        LocalDate checkOutDate = checkInDate.plusDays(3);
+        int lengthOfStay = (int) ChronoUnit.DAYS.between(checkInDate, checkOutDate);
+
+        ReservationRequest reservationRequest = ReservationRequest.builder()
+                .firstName("Petar")
+                .lastName("Matev")
+                .email("petar_matev@yahoo.co.uk")
+                .checkInDate(checkInDate)
+                .checkOutDate(checkOutDate)
+                .guests(3) // Guests > 2
+                .build();
+
+        BigDecimal extraCharge = BigDecimal.valueOf(40.00);
+        BigDecimal expectedTotalPrice = apartment.getPricePerNight().add(extraCharge).multiply(BigDecimal.valueOf(lengthOfStay));
+
+        when(apartmentService.getById(apartmentId)).thenReturn(apartment);
+        when(reservationRepository.save(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        reservationService.createReservation(user, apartmentId, reservationRequest, reservationRequest.getFirstName(),
+                reservationRequest.getLastName(), reservationRequest.getEmail());
+
+        // Then
+        verify(reservationRepository, times(1))
+                .save(argThat(savedReservation ->
+                        savedReservation.getTotalPrice().compareTo(expectedTotalPrice) == 0
+                ));
+    }
 }
 
 
