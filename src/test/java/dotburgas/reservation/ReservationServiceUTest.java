@@ -2,13 +2,19 @@ package dotburgas.reservation;
 
 import dotburgas.apartment.model.Apartment;
 import dotburgas.apartment.service.ApartmentService;
+import dotburgas.loyalty.model.Loyalty;
 import dotburgas.reporting.service.ReportingService;
 import dotburgas.reservation.model.ConfirmationStatus;
 import dotburgas.reservation.model.PaymentStatus;
 import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.repository.ReservationRepository;
 import dotburgas.reservation.service.ReservationService;
+import dotburgas.transaction.model.Transaction;
+import dotburgas.transaction.model.TransactionStatus;
+import dotburgas.transaction.model.TransactionType;
+import dotburgas.user.model.Country;
 import dotburgas.user.model.User;
+import dotburgas.wallet.model.Wallet;
 import dotburgas.wallet.service.WalletService;
 import dotburgas.web.dto.ReservationRequest;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,14 +27,15 @@ import org.springframework.mail.MailSender;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -194,28 +201,149 @@ public class ReservationServiceUTest {
 
     // 06. updateReservationStatus
     @Test
-    void givenReservationIdThatIsNotInTheDatabase_thenThrowException() {
-
-        UUID reservationId = UUID.randomUUID();
-        ConfirmationStatus confirmationStatus = ConfirmationStatus.PENDING;
-        when(reservationRepository.findById(reservationId)).thenReturn(Optional.empty());
-
-        // When & Then
-        assertThrows(EntityNotFoundException.class, () -> reservationService.updateReservationStatus(reservationId, confirmationStatus));
-        verify(reservationRepository, times(1)).findById(reservationId);
-    }
-
-    @Test
-    void givenReservationIdThatIsInTheDatabaseAndConfirmationStatus_thenUpdateReservationStatus() {
-
+    void givenReservationIdThatIsInTheDatabaseAndConfirmationStatus_thenUpdateConfirmationStatusToRejectedAndPaymentStatusToVoid() {
         // Given
         UUID reservationId = UUID.randomUUID();
         ConfirmationStatus confirmationStatus = ConfirmationStatus.REJECTED;
-        Reservation reservation = Reservation.builder().build();
+        Reservation reservation = Reservation.builder()
+                .confirmationStatus(ConfirmationStatus.PENDING)
+                .paymentStatus(PaymentStatus.PENDING)
+                .build();
+
         when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
 
-        // When & Then
+        // When
         reservationService.updateReservationStatus(reservationId, confirmationStatus);
+
+        // Then
+        assertEquals(confirmationStatus, reservation.getConfirmationStatus());
+        assertEquals(PaymentStatus.VOID, reservation.getPaymentStatus());
+        verify(reservationRepository, times(1)).save(reservation);
+        verifyNoInteractions(walletService, reportingService);
+    }
+
+    @Test
+    void givenReservationIdThatIsInTheDatabaseAndConfirmationStatus_thenUpdateConfirmationStatusToConfirmedAndPaymentStatusToPaid() {
+        // Given
+        UUID reservationId = UUID.randomUUID();
+        UUID walletId = UUID.randomUUID();
+        BigDecimal totalReservationPrice = BigDecimal.valueOf(150.00);
+
+        Wallet wallet = Wallet.builder()
+                .id(walletId)
+                .balance(BigDecimal.valueOf(1000.00))
+                .currency(Currency.getInstance("EUR"))
+                .build();
+
+        User user = User.builder()
+                .wallet(wallet)
+                .build();
+
+        Reservation reservation = Reservation.builder()
+                .user(user)
+                .totalPrice(totalReservationPrice)
+                .confirmationStatus(ConfirmationStatus.PENDING)
+                .paymentStatus(PaymentStatus.PENDING)
+                .build();
+
+        Transaction transaction = Transaction.builder()
+                .status(TransactionStatus.SUCCEEDED)
+                .build();
+
+        String description = "Payment for reservation Id: %s of EUR %.2f.".formatted(reservationId, totalReservationPrice);
+
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
+        when(walletService.charge(user, walletId, totalReservationPrice, description)).thenReturn(transaction);
+
+        // When
+        reservationService.updateReservationStatus(reservationId, ConfirmationStatus.CONFIRMED);
+
+        // Then
+        assertEquals(ConfirmationStatus.CONFIRMED, reservation.getConfirmationStatus());
+        assertEquals(PaymentStatus.PAID, reservation.getPaymentStatus());
+        verify(reservationRepository, times(1)).save(reservation);
+        verify(walletService, times(1)).charge(user, walletId, totalReservationPrice, description);
+        verify(reportingService, times(1)).saveReservationDetails(reservation);
+    }
+
+    @Test
+    void givenReservationIdThatIsInTheDatabaseAndConfirmationStatusToConfirmedButPaymentFails_thenPaymentStatusShouldNotBePaid() {
+        // Given
+        UUID reservationId = UUID.randomUUID();
+        UUID walletId = UUID.randomUUID();
+        BigDecimal totalReservationPrice = BigDecimal.valueOf(150.00);
+
+        Wallet wallet = Wallet.builder()
+                .id(walletId)
+                .balance(BigDecimal.valueOf(100.00))
+                .currency(Currency.getInstance("EUR"))
+                .build();
+
+        User user = User.builder()
+                .wallet(wallet)
+                .build();
+
+        Reservation reservation = Reservation.builder()
+                .user(user)
+                .totalPrice(totalReservationPrice)
+                .confirmationStatus(ConfirmationStatus.PENDING)
+                .paymentStatus(PaymentStatus.PENDING)
+                .build();
+
+        Transaction transaction = Transaction.builder()
+                .status(TransactionStatus.FAILED)
+                .build();
+
+        String description = "Payment for reservation Id: %s of EUR %.2f.".formatted(reservationId, totalReservationPrice);
+
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
+        when(walletService.charge(user, walletId, totalReservationPrice, description)).thenReturn(transaction);
+
+        // When
+        reservationService.updateReservationStatus(reservationId, ConfirmationStatus.CONFIRMED);
+
+        // Then
+        assertEquals(ConfirmationStatus.CONFIRMED, reservation.getConfirmationStatus());
+        assertNotEquals(PaymentStatus.PAID, reservation.getPaymentStatus());
+        verify(reservationRepository, times(1)).save(reservation);
+        verify(walletService, times(1)).charge(user, walletId, totalReservationPrice, description);
+        verifyNoInteractions(reportingService); // No reporting if payment fails
+    }
+
+    @Test
+    void givenReservationIdThatDoesNotExist_thenThrowEntityNotFoundException() {
+        // Given
+        UUID reservationId = UUID.randomUUID();
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(EntityNotFoundException.class, () ->
+                reservationService.updateReservationStatus(reservationId, ConfirmationStatus.CONFIRMED));
+
+        verify(reservationRepository, times(1)).findById(reservationId);
+        verifyNoInteractions(walletService, reportingService);
+    }
+
+    @Test
+    void givenReservationIdThatIsInTheDatabase_whenConfirmationStatusIsNotChanged_thenSaveAndNoFurtherAction() {
+        // Given
+        UUID reservationId = UUID.randomUUID();
+        ConfirmationStatus initialStatus = ConfirmationStatus.PENDING;
+
+        Reservation reservation = Reservation.builder()
+                .confirmationStatus(initialStatus)
+                .paymentStatus(PaymentStatus.PENDING)
+                .build();
+
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
+
+        // When
+        reservationService.updateReservationStatus(reservationId, initialStatus);
+
+        // Then
+        assertEquals(initialStatus, reservation.getConfirmationStatus());
+        verify(reservationRepository, times(1)).save(reservation);
+        verifyNoInteractions(walletService, reportingService);
     }
 
     // 07. sendReservationRequestEmail

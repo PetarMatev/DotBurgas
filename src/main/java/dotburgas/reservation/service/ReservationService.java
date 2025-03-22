@@ -86,37 +86,46 @@ public class ReservationService {
 
     @Transactional
     public void updateReservationStatus(UUID reservationId, ConfirmationStatus status) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
+
         reservation.setConfirmationStatus(status);
 
         if (status == ConfirmationStatus.REJECTED) {
-            reservation.setPaymentStatus(PaymentStatus.VOID);
-            log.info("Reservation with Id: %s has been %s by the admin.".formatted(reservationId, status));
-            reservationRepository.save(reservation);
+            handleRejectedReservation(reservation, reservationId);
         } else if (status == ConfirmationStatus.CONFIRMED) {
+            handleConfirmedReservation(reservation, reservationId);
+        }
 
-            // once reservation has been confirmed by the admin, then payment is automatically processed for this reservation
-            User user = reservation.getUser();
-            UUID walletId = user.getWallet().getId();
-            BigDecimal reservationTotalPrice = reservation.getTotalPrice();
-            String description = "Payment Reservation with Id: %s for EUR %.2f.".formatted(reservationId, reservation.getTotalPrice());
+        // Consolidated save after modifications
+        reservationRepository.save(reservation);
+        log.info("Reservation with Id: %s has been %s by the admin.".formatted(reservationId, status));
+    }
 
-            Transaction currentTransaction = walletService.charge(user, walletId, reservationTotalPrice, description);
+    // Handle REJECTED reservation
+    private void handleRejectedReservation(Reservation reservation, UUID reservationId) {
+        reservation.setPaymentStatus(PaymentStatus.VOID);
+        log.info("Payment for reservation with Id: %s has been voided.".formatted(reservationId));
+    }
 
-            reservationRepository.save(reservation);
-            log.info("Reservation with Id: %s has been %s by the admin.".formatted(reservationId, status));
+    // Handle CONFIRMED reservation
+    private void handleConfirmedReservation(Reservation reservation, UUID reservationId) {
+        User user = reservation.getUser();
+        UUID walletId = user.getWallet().getId();
+        BigDecimal reservationTotalPrice = reservation.getTotalPrice();
+        String description = "Payment for reservation Id: %s of EUR %.2f.".formatted(reservationId, reservationTotalPrice);
 
-            // Payment logic after reservation has been authorised from an admin.
+        // Process payment
+        Transaction currentTransaction = walletService.charge(user, walletId, reservationTotalPrice, description);
 
-            if (!currentTransaction.getStatus().equals(TransactionStatus.FAILED)) {
-                // once reservation has been approved by the admin then we can proceed to save the reservation details into reporting-svc.
-                reportingService.saveReservationDetails(reservation);
+        if (currentTransaction.getStatus().equals(TransactionStatus.FAILED)) {
+            log.info("Payment of EUR %.2f for reservation with Id: %s has failed.".formatted(reservationTotalPrice, reservationId));
+        } else {
+            reservation.setPaymentStatus(PaymentStatus.PAID);
+            log.info("Payment of EUR %.2f for reservation with Id: %s was successfully processed.".formatted(reservationTotalPrice, reservationId));
 
-                reservation.setPaymentStatus(PaymentStatus.PAID);
-                log.info("Payment of EUR %.2f for reservation with Id: %s has been successfully processed.".formatted(reservationTotalPrice, reservationId));
-            } else {
-                log.info("Payment of EUR %.2f for reservation with Id: %s has been rejected.".formatted(reservationTotalPrice, reservationId));
-            }
+            // Save to reporting-svc after successful payment
+            reportingService.saveReservationDetails(reservation);
         }
     }
 

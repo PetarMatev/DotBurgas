@@ -1,5 +1,6 @@
 spring:
   jpa:
+    open-in-view: false
     hibernate:
       dialect: org.hibernate.dialect.MySQL8Dialect  # Use the correct dialect for MySQL 8
       ddl-auto: update  # Automatically update the database schema
@@ -45,7 +46,8 @@ server:
   port: 8080
 logging:
   level:
-    org.springframework.web.filter.HiddenHttpMethodFilter: DEBUG
+    org.hibernate.orm.connections.pooling: warn
+    com.zaxxer.hikari: warn
 notification-svc:
   failure-message:
     clear-history: Notification service is temporarily down! Please try again later!

@@ -19,7 +19,7 @@ public class Wallet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID Id;
+    private UUID id;
 
     @Column(nullable = false)
     private BigDecimal balance;

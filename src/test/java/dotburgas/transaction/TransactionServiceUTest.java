@@ -96,7 +96,7 @@ public class TransactionServiceUTest {
         BigDecimal balance = BigDecimal.ONE;
 
         Wallet wallet = Wallet.builder()
-                .Id(walletId)
+                .id(walletId)
                 .balance(balance)
                 .owner(user)
                 .createdOn(LocalDateTime.now())
@@ -162,7 +162,7 @@ public class TransactionServiceUTest {
         BigDecimal balance = BigDecimal.ONE;
 
         Wallet wallet = Wallet.builder()
-                .Id(walletId)
+                .id(walletId)
                 .balance(balance)
                 .owner(user)
                 .createdOn(LocalDateTime.now())
