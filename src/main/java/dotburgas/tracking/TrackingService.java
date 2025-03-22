@@ -1,4 +1,4 @@
-package dotburgas.tracking.service;
+package dotburgas.tracking;
 
 import dotburgas.web.dto.PaymentNotificationEvent;
 import lombok.extern.slf4j.Slf4j;

@@ -2,7 +2,7 @@ package dotburgas.wallet.service;
 
 import dotburgas.notification.service.NotificationService;
 import dotburgas.shared.exception.DomainException;
-import dotburgas.tracking.service.TrackingService;
+import dotburgas.tracking.TrackingService;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.transaction.model.TransactionStatus;
 import dotburgas.transaction.model.TransactionType;
