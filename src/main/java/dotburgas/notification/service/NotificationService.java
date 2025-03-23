@@ -24,27 +24,9 @@ public class NotificationService {
     @Value("${notification-svc.failure-message.clear-history}")
     private String clearHistoryFailedMessage;
 
-
     @Autowired
     public NotificationService(NotificationClient notificationClient) {
         this.notificationClient = notificationClient;
-    }
-
-    public void saveNotificationPreference(UUID userId, boolean isEmailEnabled, String email) {
-
-        UpsertNotificationPreference upsertNotificationPreference = UpsertNotificationPreference.builder()
-                .userId(userId)
-                .contactInfo(email)
-                .type("EMAIL")
-                .notificationEnabled(isEmailEnabled)
-                .build();
-
-
-        // Invoke Feign client and execute HTTP post Request.
-        ResponseEntity<Void> httpResponse = notificationClient.upsertNotificationPreference(upsertNotificationPreference);
-        if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-            log.error("[Feign call to notification-svc failed] Can't save user preference for user with id = [%s]".formatted(userId));
-        }
     }
 
     public NotificationPreference getNotificationPreference(UUID userId) {
@@ -82,11 +64,28 @@ public class NotificationService {
             httpResponse = notificationClient.sendNotification(notificationRequest);
 
             if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-                log.error("[Feign call to notification-svc failed] Can't send email to user with id = [%s]".formatted(userId));
+                log.warn("[Feign call to notification-svc failed] Can't send email to user with id = [%s]".formatted(userId));
             }
 
         } catch (Exception e) {
             log.warn("Can't send email to user with id = [%s] due to 500 Internal Server Error".formatted(userId));
+        }
+    }
+
+    public void saveNotificationPreference(UUID userId, boolean isEmailEnabled, String email) {
+
+        UpsertNotificationPreference upsertNotificationPreference = UpsertNotificationPreference.builder()
+                .userId(userId)
+                .contactInfo(email)
+                .type("EMAIL")
+                .notificationEnabled(isEmailEnabled)
+                .build();
+
+
+        // Invoke Feign client and execute HTTP post Request.
+        ResponseEntity<Void> httpResponse = notificationClient.upsertNotificationPreference(upsertNotificationPreference);
+        if (!httpResponse.getStatusCode().is2xxSuccessful()) {
+            log.error("[Feign call to notification-svc failed] Can't save user preference for user with id = [%s]".formatted(userId));
         }
     }
 
@@ -95,6 +94,7 @@ public class NotificationService {
             notificationClient.updateNotificationPreference(userId, enabled);
         } catch (Exception e) {
             log.warn("Can't update notification preferences for user with id = [%s].".formatted(userId));
+            throw new NotificationServiceFeignCallException("Failed to update notification preferences for user with ID: " + userId);
         }
     }
 
@@ -103,7 +103,7 @@ public class NotificationService {
         try {
             notificationClient.clearHistory(userId);
         } catch (Exception e) {
-            log.error("Unable to call notification-svc for clear notification history.".formatted(userId));
+            log.error("Unable to call notification-svc for clear notification history.");
             throw new NotificationServiceFeignCallException(clearHistoryFailedMessage);
         }
     }
@@ -113,7 +113,7 @@ public class NotificationService {
         try {
             notificationClient.retryFailedNotifications(userId);
         } catch (Exception e) {
-            log.error("Unable to call notification-svc for clear notification history.".formatted(userId));
+            log.error("Unable to call notification-svc for retry Failed notifications.");
             throw new NotificationServiceFeignCallException(clearHistoryFailedMessage);
         }
     }
