@@ -1,6 +1,8 @@
 package dotburgas.notification;
 
 import dotburgas.notification.client.NotificationClient;
+import dotburgas.notification.client.dto.Notification;
+import dotburgas.notification.client.dto.NotificationPreference;
 import dotburgas.notification.client.dto.NotificationRequest;
 import dotburgas.notification.client.dto.UpsertNotificationPreference;
 import dotburgas.notification.service.NotificationService;
@@ -13,9 +15,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +33,77 @@ public class NotificationServiceUTest {
 
     // 01. getNotificationPreference
 
+    @Test
+    void givenInvalidUserId_whenGetNotificationPreference_thenThrowException() {
+
+        // Given
+        UUID userId = UUID.randomUUID();
+        when(notificationClient.getUserPreference(userId)).thenReturn(ResponseEntity.notFound().build());
+
+        // When & Then
+        assertThrows(RuntimeException.class, () -> notificationService.getNotificationPreference(userId));
+        verify(notificationClient, times(1)).getUserPreference(userId);
+    }
+
+    @Test
+    void givenUserIdWhichIsValidInTheDatabase_thenReturnNotificationPreference() {
+        // Given
+        UUID userId = UUID.randomUUID();
+
+        NotificationPreference notificationPreference = NotificationPreference.builder()
+                .enabled(true)
+                .type("Email")
+                .contactInfo("petar_matev@yahoo.co.uk")
+                .build();
+
+        when(notificationClient.getUserPreference(userId)).thenReturn(ResponseEntity.ok().body(notificationPreference));
+
+        // When
+        NotificationPreference returnedNotificationPreference = notificationService.getNotificationPreference(userId);
+
+        // Then
+        assertTrue(returnedNotificationPreference.isEnabled());
+        assertEquals("Email", returnedNotificationPreference.getType());
+        assertEquals("petar_matev@yahoo.co.uk", returnedNotificationPreference.getContactInfo());
+        verify(notificationClient, times(1)).getUserPreference(userId);
+
+    }
+
     // 02. getNotificationHistory
+    @Test
+    void givenCorrectUserIdThatExistInTheDatabase_ThenReturnListOfNotifications() {
+
+        // Given
+        UUID userId = UUID.randomUUID();
+
+        Notification notification = Notification.builder()
+                .subject("Payment")
+                .createdOn(LocalDateTime.now())
+                .status("Completed")
+                .type("Email")
+                .build();
+
+        Notification notification2 = Notification.builder()
+                .subject("Withdrawal")
+                .createdOn(LocalDateTime.now())
+                .status("Pending")
+                .type("Email")
+                .build();
+
+        List<Notification> notificationList = List.of(notification, notification2);
+
+        when(notificationClient.getNotificationHistory(userId)).thenReturn(ResponseEntity.ok().body(notificationList));
+
+        // When
+        List<Notification> returnedNotificationHistory = notificationService.getNotificationHistory(userId);
+
+        // Then
+        assertEquals(notification.getSubject(), returnedNotificationHistory.getFirst().getSubject());
+        assertEquals(notification.getCreatedOn(), returnedNotificationHistory.getFirst().getCreatedOn());
+        assertEquals(notification.getStatus(), returnedNotificationHistory.getFirst().getStatus());
+        assertEquals(notification.getType(), returnedNotificationHistory.getFirst().getType());
+        verify(notificationClient, times(1)).getNotificationHistory(userId);
+    }
 
     // 03. sendNotification
     @Test
@@ -96,7 +170,6 @@ public class NotificationServiceUTest {
                 .body(emailBody)
                 .build();
 
-        // Simulate an exception when calling the Feign client
         when(notificationClient.sendNotification(notificationRequest)).thenThrow(new RuntimeException("Feign error"));
 
         // When
