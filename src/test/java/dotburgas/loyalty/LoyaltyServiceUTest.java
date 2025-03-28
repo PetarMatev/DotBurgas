@@ -39,7 +39,7 @@ public class LoyaltyServiceUTest {
                 .build();
 
         Loyalty loyalty = Loyalty.builder()
-                .Id(UUID.randomUUID())
+                .id(UUID.randomUUID())
                 .loyaltyTier(LoyaltyTier.LEVEL_01)
                 .owner(user)
                 .build();
@@ -80,7 +80,7 @@ public class LoyaltyServiceUTest {
         UUID loyaltyId = UUID.randomUUID();
         LoyaltyTier loyaltyTier = LoyaltyTier.LEVEL_02;
         Loyalty loyalty = Loyalty.builder()
-                .Id(loyaltyId)
+                .id(loyaltyId)
                 .loyaltyTier(loyaltyTier)
                 .owner(user)
                 .updatedOn(LocalDateTime.now())
@@ -114,7 +114,7 @@ public class LoyaltyServiceUTest {
         LoyaltyTier loyaltyTier = LoyaltyTier.LEVEL_02;
 
         Loyalty loyalty = Loyalty.builder()
-                .Id(loyaltyId)
+                .id(loyaltyId)
                 .loyaltyTier(loyaltyTier)
                 .owner(user)
                 .updatedOn(LocalDateTime.now())

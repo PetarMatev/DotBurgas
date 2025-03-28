@@ -59,6 +59,7 @@ public class IndexController {
         }
 
         userService.register(registerRequest);
+
         return new ModelAndView("redirect:/login");
     }
 
@@ -70,10 +71,6 @@ public class IndexController {
         return modelAndView;
     }
 
-    @GetMapping("about")
-    public String getAboutPage() {
-        return "about";
-    }
 
     @GetMapping("accommodation")
     public ModelAndView getAccommodationPage() {
@@ -100,5 +97,10 @@ public class IndexController {
     @GetMapping("/")
     public String getIndexPage() {
         return "index";
+    }
+
+    @GetMapping("about")
+    public String getAboutPage() {
+        return "about";
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.MissingRequestValueException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -32,9 +33,11 @@ public class ExceptionAdvice {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({
-            AccessDeniedException.class,
-            NoResourceFoundException.class,
-            MethodArgumentTypeMismatchException.class})
+            AccessDeniedException.class, // Когато се опитва да достъпи ендпойнт, до който не му е позволено/нямам достъп
+            NoResourceFoundException.class, // Когато се опитва да достъпи невалиден ендпойнт
+            MethodArgumentTypeMismatchException.class,
+            MissingRequestValueException.class
+    })
     public ModelAndView handleNotFoundExceptions(Exception exception) {
 
         return new ModelAndView("not-found");

@@ -17,11 +17,7 @@ public class Loyalty {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID Id;
-
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User owner;
+    private UUID id;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -32,4 +28,8 @@ public class Loyalty {
 
     @Column(nullable = false)
     private LocalDateTime updatedOn;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User owner;
 }

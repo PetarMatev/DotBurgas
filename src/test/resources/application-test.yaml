@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: dotburgas-test
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MYSQL
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+  h2:
+    console:
+      enabled: true
+#      path: /h2-console
+  security:
+    user:
+      name: 111
+      password: 123123
+
+  output:
+    ansi:
+      enabled: always
+notification-svc:
+  base-url: http://localhost:8081/api/v1/notifications
+  failure-message:
+    clear-history: Notification service is temporarily down! Please try again later!
+
