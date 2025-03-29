@@ -25,8 +25,8 @@
             <h2>Profile Form</h2>
 
             <div>
-                <img th:src="${#strings.isEmpty(user.profilePicture) ?  'resources/static/img/avatar.jpg' : user.profilePicture}"
-                     alt="Profile Picture">
+                <img th:src="${user != null && !#strings.isEmpty(user.profilePicture) ? user.profilePicture : '/resources/static/img/avatar.jpg'}" />
+                alt="Profile Picture">
             </div>
 
             <div>

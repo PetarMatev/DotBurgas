@@ -54,12 +54,6 @@ public class AdminController {
         return "redirect:/admin/reservations/pending";
     }
 
-    @GetMapping("/reports")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ModelAndView getReportsPage() {
-        return new ModelAndView("reports");
-    }
-
     @GetMapping("/reservation-history")
     @PreAuthorize("hasRole('ADMIN')")
     public ModelAndView getReservationHistoryPage() {
