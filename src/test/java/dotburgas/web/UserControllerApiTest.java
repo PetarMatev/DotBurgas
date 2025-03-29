@@ -40,7 +40,8 @@ public class UserControllerApiTest {
    // 01. getProfileMenu
    @Test
    void getProfileMenu_shouldReturnUserProfile() throws Exception {
-      // 1. Build Mock User
+
+      // 01. Build Request
       UUID userId = UUID.randomUUID();
       User mockUser = User.builder()
               .firstName("Test")
