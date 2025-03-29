@@ -1,26 +1,25 @@
-/* Ensures the page fills the screen */
 html, body {
      height: 100%;
      margin: 0;
+     padding: 0;
+     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-/* Main body container */
 body {
      display: flex;
      flex-direction: column;
      background-image: url('/img/cover-photo.jpg');
+     background-size: cover;
      background-position: center center;
      background-repeat: no-repeat;
      background-attachment: fixed;
-     background-size: cover;
-     background-color: #464646;
+     width: 100vw;
+     min-height: 100vh;
 }
 
-
-
-/* Content area should expand to take available space */
 .container-fluid {
      flex-grow: 1;
+     min-height: 100vh;
 }
 
 .container-fluid h5.text-center {

@@ -4,10 +4,12 @@
     margin-bottom: 10px;
     overflow-x: auto;
     flex-wrap: nowrap;
+    max-width: 100%; /* Ensures container does not overflow */
 }
 
 .photos img {
-    width: 342px;
+    width: 100%; /* Makes the image responsive */
+    max-width: 342px; /* Ensures the image keeps its original size */
     height: 300px;
     object-fit: cover;
     border-radius: 5px;
@@ -19,6 +21,8 @@
     margin-bottom: 75px;
     border-radius: 5px;
     padding: 15px;
+    max-width: 100%;
+    margin: 0 auto; /* Centers the content */
 }
 
 .apartment h2 {
@@ -46,4 +50,34 @@
 .calendar-link:hover {
     background-color: #0056b3;
     text-decoration: underline;
+}
+
+/* Clearfix to prevent container collapse */
+.apartment::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+/* Responsive tweaks for smaller screens */
+@media (max-width: 768px) {
+    .photos {
+        flex-wrap: wrap; /* Allow images to wrap on smaller screens */
+        justify-content: center;
+    }
+
+    .photos img {
+        width: 100%;
+        max-width: 100%; /* Ensures images resize correctly */
+        height: auto;
+    }
+
+    .apartment {
+        padding: 10px;
+    }
+
+    .calendar-link {
+        width: 100%;
+        text-align: center;
+    }
 }
