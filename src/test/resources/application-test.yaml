@@ -17,12 +17,10 @@ spring:
   h2:
     console:
       enabled: true
-#      path: /h2-console
   security:
     user:
       name: 111
       password: 123123
-
   output:
     ansi:
       enabled: always

@@ -11,5 +11,5 @@ import java.util.UUID;
 
 @Repository
 public interface LoyaltyRepository extends JpaRepository<Loyalty, UUID> {
-    Optional<Loyalty> findByLoyaltyTierAndOwner(LoyaltyTier loyaltyTier, User registeredUser);
+    Optional<Loyalty> findByLoyaltyTierAndOwner_Id(LoyaltyTier loyaltyTier, UUID ownerId);
 }

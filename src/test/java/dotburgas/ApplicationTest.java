@@ -2,9 +2,11 @@ package dotburgas;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-//@SpringBootTest
-class DotBurgasApplicationTests {
+@ActiveProfiles("test")
+@SpringBootTest
+class ApplicationTest {
 
 	@Test
 	void contextLoads() {
