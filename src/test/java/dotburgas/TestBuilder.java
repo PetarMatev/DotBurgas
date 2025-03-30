@@ -107,4 +107,27 @@ public class TestBuilder {
                 .totalGuestsVisited("35")
                 .build();
     }
+
+    public static Loyalty aRandomLoyalty () {
+
+        User user = User.builder()
+                .id(UUID.randomUUID())
+                .username("User")
+                .password("123123")
+                .role(UserRole.USER)
+                .country(Country.BULGARIA)
+                .createdOn(LocalDateTime.now())
+                .updatedOn(LocalDateTime.now())
+                .build();
+
+        Loyalty loyalty = Loyalty.builder()
+                .id(UUID.randomUUID())
+                .loyaltyTier(LoyaltyTier.LEVEL_01)
+                .createdOn(LocalDateTime.now())
+                .updatedOn(LocalDateTime.now())
+                .owner(user)
+                .build();
+
+        return loyalty;
+    }
 }

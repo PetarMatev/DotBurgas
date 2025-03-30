@@ -33,8 +33,10 @@ public class LoyaltyController {
 
     @GetMapping("/loyalties")
     public ModelAndView getUpgradePage(LoyaltySubscriptionEditRequest loyaltySubscriptionEditRequest) {
+
         ModelAndView modelAndView = new ModelAndView("loyalties");
         modelAndView.addObject("loyaltySubscriptionEditRequest", loyaltySubscriptionEditRequest);
+
         return modelAndView;
     }
 
