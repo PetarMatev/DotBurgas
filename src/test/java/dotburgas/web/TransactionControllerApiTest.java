@@ -51,7 +51,7 @@ public class TransactionControllerApiTest {
 
         // 2. Send Request
         mockMvc.perform(get("/transactions")
-                        .with(user(principal))) // Add proper authentication
+                        .with(user(principal)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("transactions"))
                 .andExpect(model().attributeExists("transactions"));
@@ -74,7 +74,7 @@ public class TransactionControllerApiTest {
 
         // 2. Send Request
         mockMvc.perform(get("/transactions/{id}", transactionId)
-                        .with(user(principal))) // Add proper authentication
+                        .with(user(principal)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("transaction-result"))
                 .andExpect(model().attributeExists("transaction"));

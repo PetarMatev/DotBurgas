@@ -133,6 +133,13 @@ public class TransferControllerApiTest {
         mockedUser.setId(userId);
         when(userService.getById(userId)).thenReturn(mockedUser);
 
+        AuthenticationUserDetails principal = new AuthenticationUserDetails(
+                userId,
+                "User123",
+                "123123",
+                UserRole.USER
+        );
+
         // 2. Send Request
         mockMvc.perform(post("/transfers")
                         .param("fromWalletId", UUID.randomUUID().toString())
@@ -140,11 +147,7 @@ public class TransferControllerApiTest {
                         .param("amount", "-100")
                         .param("description", "Test transfer")
                         .with(csrf())
-                        .with(user(new AuthenticationUserDetails(
-                                userId,
-                                "testuser",
-                                "password",
-                                UserRole.USER)))
+                        .with(user(principal))
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("transfer"))

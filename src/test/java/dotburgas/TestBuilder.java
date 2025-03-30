@@ -2,6 +2,8 @@ package dotburgas;
 
 import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.model.LoyaltyTier;
+import dotburgas.reporting.client.dto.ReservationResponse;
+import dotburgas.reporting.client.dto.ReservationStatsResponse;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.transaction.model.TransactionStatus;
 import dotburgas.transaction.model.TransactionType;
@@ -12,6 +14,7 @@ import dotburgas.wallet.model.Wallet;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.UUID;
@@ -78,6 +81,30 @@ public class TestBuilder {
                 .status(TransactionStatus.SUCCEEDED)
                 .description("Funds transfer")
                 .createdOn(LocalDateTime.now())
+                .build();
+    }
+
+    public static ReservationResponse aRandomReservationResponse() {
+
+        return ReservationResponse.builder()
+                .reservationId(UUID.randomUUID())
+                .checkInDate(LocalDate.now())
+                .checkOutDate(LocalDate.now().plusDays(3))
+                .guests(3)
+                .reservationLength(3)
+                .totalPrice(BigDecimal.TEN)
+                .user("TestUser")
+                .apartment("Apartment 1")
+                .build();
+    }
+
+    public static ReservationStatsResponse aRandomReservationStatsResponse() {
+
+        return ReservationStatsResponse.builder()
+                .apartment("Apartment 1")
+                .totalRevenue(BigDecimal.valueOf(500).toString())
+                .totalBookedDays("50")
+                .totalGuestsVisited("35")
                 .build();
     }
 }
