@@ -2,6 +2,9 @@ package dotburgas;
 
 import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.model.LoyaltyTier;
+import dotburgas.transaction.model.Transaction;
+import dotburgas.transaction.model.TransactionStatus;
+import dotburgas.transaction.model.TransactionType;
 import dotburgas.user.model.Country;
 import dotburgas.user.model.User;
 import dotburgas.user.model.UserRole;
@@ -49,5 +52,32 @@ public class TestBuilder {
         user.setWallet(wallet);
 
         return user;
+    }
+
+    public static Transaction aRandomTransaction() {
+
+        User user = User.builder()
+                .id(UUID.randomUUID())
+                .username("User")
+                .password("123123")
+                .role(UserRole.USER)
+                .country(Country.BULGARIA)
+                .createdOn(LocalDateTime.now())
+                .updatedOn(LocalDateTime.now())
+                .build();
+
+        return Transaction.builder()
+                .id(UUID.randomUUID())
+                .owner(user)
+                .sender("SenderName")
+                .receiver("Petar123")
+                .amount(BigDecimal.TEN)
+                .balanceLeft(new BigDecimal("100.00"))
+                .currency(Currency.getInstance("USD"))
+                .type(TransactionType.DEPOSIT)
+                .status(TransactionStatus.SUCCEEDED)
+                .description("Funds transfer")
+                .createdOn(LocalDateTime.now())
+                .build();
     }
 }
