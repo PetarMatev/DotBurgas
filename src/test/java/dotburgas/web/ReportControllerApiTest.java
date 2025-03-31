@@ -1,4 +1,4 @@
-package dotburgas.web.mapper;
+package dotburgas.web;
 
 import dotburgas.reporting.client.dto.ReservationResponse;
 import dotburgas.reporting.client.dto.ReservationStatsResponse;
@@ -7,7 +7,6 @@ import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.user.model.User;
 import dotburgas.user.model.UserRole;
 import dotburgas.user.service.UserService;
-import dotburgas.web.ReportController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
