@@ -1,9 +1,15 @@
 package dotburgas;
 
+import dotburgas.apartment.model.Apartment;
 import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.model.LoyaltyTier;
+import dotburgas.notification.client.dto.Notification;
+import dotburgas.notification.client.dto.NotificationPreference;
 import dotburgas.reporting.client.dto.ReservationResponse;
 import dotburgas.reporting.client.dto.ReservationStatsResponse;
+import dotburgas.reservation.model.ConfirmationStatus;
+import dotburgas.reservation.model.PaymentStatus;
+import dotburgas.reservation.model.Reservation;
 import dotburgas.transaction.model.Transaction;
 import dotburgas.transaction.model.TransactionStatus;
 import dotburgas.transaction.model.TransactionType;
@@ -130,4 +136,43 @@ public class TestBuilder {
 
         return loyalty;
     }
+
+    public static NotificationPreference aRandomNotificationPreference () {
+        return NotificationPreference.builder()
+                .enabled(true)
+                .type("Email")
+                .contactInfo("test@abv.bg")
+                .build();
+    }
+
+    public static Notification aRandomnotification() {
+        return Notification.builder()
+                .subject("successful")
+                .createdOn(LocalDateTime.now())
+                .status("SUCCESSFUL")
+                .type("Email")
+                .build();
+    }
+
+    public static Reservation aRandomReservation() {
+
+        return Reservation.builder()
+                .checkInDate(LocalDate.of(2023, 6, 15))
+                .checkOutDate(LocalDate.of(2023, 6, 20))
+                .guests(2)
+                .reservationLength(5) // matches checkOutDate - checkInDate
+                .confirmationStatus(ConfirmationStatus.CONFIRMED)
+                .paymentStatus(PaymentStatus.PAID)
+                .pricerPerNight(BigDecimal.valueOf(100.00))
+                .totalPrice(BigDecimal.valueOf(500.00)) // 5 nights × 100
+                .user(aRandomUser()) // basic user
+                .apartment(new Apartment()) // basic apartment
+                .build();
+    }
+
+    public static Apartment aRandomApartment() {
+
+        return Apartment.builder().build();
+    }
+
 }
