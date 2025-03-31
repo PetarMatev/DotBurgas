@@ -4,6 +4,8 @@ import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.model.LoyaltyTier;
 import dotburgas.loyalty.repository.LoyaltyRepository;
 import dotburgas.loyalty.service.LoyaltyService;
+import dotburgas.notification.client.dto.Notification;
+import dotburgas.notification.service.NotificationService;
 import dotburgas.user.model.Country;
 import dotburgas.user.model.User;
 import dotburgas.user.model.UserRole;
@@ -13,20 +15,31 @@ import dotburgas.web.dto.RegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 
 @ActiveProfiles("test")
+@AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 public class LoyaltyITest {
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @Autowired
     private UserService userService;
@@ -40,11 +53,25 @@ public class LoyaltyITest {
     @Autowired
     private UserRepository userRepository;
 
+    @MockitoBean
+    private NotificationService notificationService;
+
     @BeforeEach
     void clean() {
         loyaltyRepository.deleteAll();
         userRepository.deleteAll();
+
+        Notification mockNotification1 = Notification.builder()
+                .subject("hello")
+                .build();
+
+        Notification mockNotification2 = Notification.builder()
+                .subject("baa")
+                .build();
+        when(notificationService.getNotificationHistory(any()))
+                .thenReturn(List.of(mockNotification1, mockNotification2));
     }
+
 
     @Test
     void whenUpdateLoyaltySubscription_thenLoyaltyTierIsUpdated() {
@@ -76,6 +103,7 @@ public class LoyaltyITest {
 
     @Test
     void createDefaultLoyaltyProgram_shouldCreateLoyaltyWithDefaultValues() {
+
         // Given
         User testUser = createTestUser("testUser1");
 
@@ -91,7 +119,6 @@ public class LoyaltyITest {
         assertNotNull(createdLoyalty.getCreatedOn(), "Created timestamp should be set");
         assertNotNull(createdLoyalty.getUpdatedOn(), "Updated timestamp should be set");
 
-        // Verify the bidirectional relationship
         User userFromDb = userRepository.findById(testUser.getId()).orElseThrow();
         assertNotNull(userFromDb.getLoyalty(), "User should reference the loyalty");
         assertEquals(createdLoyalty.getId(), userFromDb.getLoyalty().getId(),
@@ -113,6 +140,7 @@ public class LoyaltyITest {
 
     @Test
     void createDefaultLoyaltyProgram_shouldPersistCorrectlyInDatabase() {
+
         // Given
         User testUser = createTestUser("testUser3");
 

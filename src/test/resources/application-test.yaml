@@ -24,8 +24,8 @@ spring:
   output:
     ansi:
       enabled: always
+
 notification-svc:
   base-url: http://localhost:8081/api/v1/notifications
   failure-message:
     clear-history: Notification service is temporarily down! Please try again later!
-

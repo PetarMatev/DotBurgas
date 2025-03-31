@@ -7,9 +7,13 @@ import dotburgas.user.repository.UserRepository;
 import dotburgas.web.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!test")
+@ConditionalOnProperty(value = "user.init.enabled", havingValue = "true")
 public class UserInit implements CommandLineRunner {
 
     private final UserService userService;
