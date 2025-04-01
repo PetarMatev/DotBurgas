@@ -35,8 +35,11 @@ public class AdminController {
     @GetMapping("/reservations/pending")
     @PreAuthorize("hasRole('ADMIN')")
     public ModelAndView showPendingReservations() {
+
+        List<Reservation> pendingReservations = reservationService.getPendingReservations();
+
         ModelAndView modelAndView = new ModelAndView("pending-reservations");
-        modelAndView.addObject("pendingReservations", reservationService.getPendingReservations());
+        modelAndView.addObject("pendingReservations", pendingReservations);
         return modelAndView;
     }
 

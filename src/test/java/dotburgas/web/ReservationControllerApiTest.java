@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,10 +21,10 @@ import java.util.UUID;
 
 import static dotburgas.TestBuilder.aRandomReservation;
 import static dotburgas.TestBuilder.aRandomUser;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -92,56 +91,11 @@ public class ReservationControllerApiTest {
                 .andExpect(model().attribute("reservationRequest", hasProperty("email", is("petar.matev@gmail.com"))));
     }
 
-
     // 2. submitReservationRequest
-
-//    @Test
-//    void submitReservationRequest_shouldCreateReservationAndRedirect() throws Exception {
-//        // 1. Setup test data
-//        UUID apartmentId = UUID.randomUUID();
-//        UUID userId = UUID.randomUUID();
-//
-//        AuthenticationUserDetails principal = new AuthenticationUserDetails(
-//                userId,
-//                "user123",
-//                "password123",
-//                UserRole.USER
-//        );
-//
-//        User mockUser = aRandomUser();
-//        mockUser.setId(userId);
-//
-//        // Valid request parameters
-//        String firstName = "John";
-//        String lastName = "Doe";
-//        String email = "john.doe@example.com";
-//
-//        ReservationRequest validRequest = new ReservationRequest();
-//        validRequest.setCheckInDate(LocalDate.now().plusDays(1));
-//        validRequest.setCheckOutDate(LocalDate.now().plusDays(3));
-//        validRequest.setGuests(2);
-//
-//        // 2. Mock service calls
-//        when(userService.getById(userId)).thenReturn(mockUser);
-//        doNothing().when(reservationService)
-//                .createReservation(mockUser, apartmentId, validRequest, firstName, lastName, email);
-//
-//        // 3. Execute and verify
-//        mockMvc.perform(post("/reservation-request")
-//                .param("apartmentId", apartmentId.toString())
-//                .param("firstName", firstName)
-//                .param("lastName", lastName)
-//                .param("email", email)
-//                .flashAttr("reservationRequest", validRequest)
-//                .with(user(principal))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(redirectedUrl("/user-reservations")));
-//    }
-
     @Test
-    void submitReservationRequest_shouldReturnErrorsWhenInvalid() throws Exception {
+    void submitReservationRequest_shouldCreateReservationAndRedirect() throws Exception {
 
-        // 1. Setup test data
+        // 1. Build Request
         UUID apartmentId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
 
@@ -152,20 +106,68 @@ public class ReservationControllerApiTest {
                 UserRole.USER
         );
 
-        ReservationRequest invalidRequest = new ReservationRequest();
+        User mockUser = aRandomUser();
+        mockUser.setId(userId);
 
-        // 2. Execute and verify
-        MvcResult result = mockMvc.perform(post("/reservation-request")
+        String firstName = "Petar";
+        String lastName = "Matev";
+        String email = "petar.matev@abv.bg";
+
+        ReservationRequest validRequest = new ReservationRequest();
+        validRequest.setCheckInDate(LocalDate.now().plusDays(1));
+        validRequest.setCheckOutDate(LocalDate.now().plusDays(3));
+        validRequest.setGuests(2);
+
+        when(userService.getById(userId)).thenReturn(mockUser);
+        doNothing().when(reservationService)
+                .createReservation(mockUser, apartmentId, validRequest, firstName, lastName, email);
+
+        // 2. Send Request
+        mockMvc.perform(post("/reservation-request")
+                        .param("apartmentId", apartmentId.toString())
+                        .param("firstName", firstName)
+                        .param("lastName", lastName)
+                        .param("email", email)
+                        .flashAttr("reservationRequest", validRequest)
+                        .with(user(principal))
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/user-reservations"));
+    }
+
+
+    @Test
+    void submitReservationRequest_shouldReturnErrorsWhenInvalid() throws Exception {
+
+        // 1. Build Request
+        UUID apartmentId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+
+        AuthenticationUserDetails principal = new AuthenticationUserDetails(
+                userId,
+                "user123",
+                "password123",
+                UserRole.USER
+        );
+
+        // 2. Send Request
+        mockMvc.perform(post("/reservation-request")
                         .param("apartmentId", apartmentId.toString())
                         .param("firstName", "")
                         .param("lastName", "")
                         .param("email", "invalid-email")
-                        .flashAttr("reservationRequest", invalidRequest)
-                        .with(user(principal)))
+                        .param("checkInDate", LocalDate.now().toString())
+                        .param("checkOutDate", LocalDate.now().plusDays(1).toString())
+                        .param("guests", "1")
+                        .with(user(principal))
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("reservation-request"))
+                .andExpect(model().attributeHasFieldErrors(
+                        "reservationRequest",
+                        "firstName", "lastName", "email"))
                 .andExpect(model().attributeExists("errors"))
-                .andReturn();
+                .andExpect(model().attribute("errors", hasSize(greaterThan(0))));
     }
 
     // 3. getUserReservations

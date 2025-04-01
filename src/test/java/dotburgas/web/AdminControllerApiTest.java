@@ -1,5 +1,6 @@
 package dotburgas.web;
 
+import dotburgas.reservation.model.Reservation;
 import dotburgas.reservation.service.ReservationService;
 import dotburgas.shared.security.AuthenticationUserDetails;
 import dotburgas.transaction.service.TransactionService;
@@ -12,11 +13,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
+import static dotburgas.TestBuilder.aRandomReservation;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -36,6 +39,38 @@ public class AdminControllerApiTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+
+    // 01. showPendingReservations
+    @Test
+    void showPendingReservations_shouldReturnViewWithPendingReservations() throws Exception {
+
+        // 1. Build Request
+        UUID apartmentId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+
+        Reservation reservationOne = aRandomReservation();
+        Reservation reservationTwo = aRandomReservation();
+
+        List<Reservation> pendingReservations = List.of(reservationOne, reservationTwo);
+
+        AuthenticationUserDetails principal = new AuthenticationUserDetails(
+                userId,
+                "user123",
+                "password123",
+                UserRole.ADMIN
+        );
+        when(reservationService.getPendingReservations()).thenReturn(pendingReservations);
+
+        // 2. Send Request
+        mockMvc.perform(get("/admin/reservations/pending")
+                        .with(user(principal))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("pending-reservations"))
+                .andExpect(model().attributeExists("pendingReservations"));
+    }
+
 
     // 02. approveReservation
     @Test

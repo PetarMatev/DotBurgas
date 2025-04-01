@@ -17,6 +17,7 @@ import dotburgas.user.model.Country;
 import dotburgas.user.model.User;
 import dotburgas.user.model.UserRole;
 import dotburgas.wallet.model.Wallet;
+import dotburgas.web.dto.ReservationRequest;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
@@ -174,5 +175,4 @@ public class TestBuilder {
 
         return Apartment.builder().build();
     }
-
 }
