@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -241,7 +242,7 @@ public class UserServiceUTest {
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(DomainException.class, () -> userService.loadUserByUsername(username));
+        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(username));
     }
 
     // Test 2: When user exist - then return new AuthenticationUserDetails
@@ -318,7 +319,7 @@ public class UserServiceUTest {
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(DomainException.class, () -> userService.getUserByUsername(username));
+        assertThrows(UsernameNotFoundException.class, () -> userService.getUserByUsername(username));
     }
 
     @Test
