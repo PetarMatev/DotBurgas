@@ -106,7 +106,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new DomainException("user with this username does not exist"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user with this username does not exist"));
 
         return new AuthenticationUserDetails(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
     }
@@ -127,7 +127,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new DomainException("User with username [%s] does not exist.".formatted(username)));
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User with username [%s] does not exist.".formatted(username)));
     }
 
     private User initilizeUser(RegisterRequest registerRequest) {

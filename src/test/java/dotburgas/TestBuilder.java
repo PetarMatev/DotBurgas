@@ -172,7 +172,22 @@ public class TestBuilder {
     }
 
     public static Apartment aRandomApartment() {
+        return Apartment.builder()
+                .name("Test Apartment")
+                .location("Test Location")
+                .description("Test Description")
+                .pricePerNight(BigDecimal.valueOf(100))
+                .build();
+    }
 
-        return Apartment.builder().build();
+    public static ReservationRequest aRandomReservationRequest() {
+        return ReservationRequest.builder()
+                .firstName("Petar")
+                .lastName("Matev")
+                .email("petar.matev@abv.bg")
+                .checkInDate(LocalDate.now().plusDays(1))
+                .checkOutDate(LocalDate.now().plusDays(3))
+                .guests(2)
+                .build();
     }
 }
