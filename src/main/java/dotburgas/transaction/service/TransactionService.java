@@ -51,6 +51,7 @@ public class TransactionService {
     }
 
     public Transaction createNewTransaction(User owner, String sender, String receiver, BigDecimal transactionAmount, BigDecimal balanceLeft, Currency currency, TransactionType type, TransactionStatus status, String transactionDescription, String failureReason) {
+
         Transaction transaction = Transaction.builder()
                 .owner(owner)
                 .sender(sender)
@@ -65,9 +66,19 @@ public class TransactionService {
                 .createdOn(LocalDateTime.now())
                 .build();
 
-        String emailBody = "%s transaction was successfully processed for you with amount %.2f EUR!".formatted(transaction.getType(), transaction.getAmount());
-        notificationService.sendNotification(transaction.getOwner().getId(), "New Transaction", emailBody);
+        String emailBody = transaction.getStatus() == TransactionStatus.FAILED
+                ? String.format("Your %s transaction of %.2f %s failed. Reason: %s",
+                transaction.getType(),
+                transaction.getAmount(),
+                transaction.getCurrency(),
+                transaction.getFailureReason())
+                : String.format("%s transaction of %.2f %s was processed successfully",
+                transaction.getType(),
+                transaction.getAmount(),
+                transaction.getCurrency());
 
+        String notificationTitle = "New Transaction";
+        notificationService.sendNotification(transaction.getOwner().getId(), notificationTitle, emailBody);
         return transactionRepository.save(transaction);
     }
 }

@@ -55,9 +55,7 @@ public class NotificationService {
                 .body(emailBody)
                 .build();
 
-
         // Service to Service Call
-
         ResponseEntity<Void> httpResponse;
 
         try {
