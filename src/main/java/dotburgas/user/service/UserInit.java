@@ -22,6 +22,10 @@ public class UserInit implements CommandLineRunner {
     private final UserRepository userRepository;
     private static final String DEFAULT_ADMIN_USERNAME = "Petar123";
     private static final String DEFAULT_ADMIN_PASSWORD = "123123";
+    private static final String DEFAULT_ADMIN_FIRST_NAME = "Petar";
+    private static final String DEFAULT_ADMIN_LAST_NAME = "Matev";
+    private static final String DEFAULT_ADMIN_EMAIL = "petargmatev@gmail.com";
+    private static final String DEFAULT_ADMIN_PHOTO = "/img/admin-photo.jpg";
 
 
     @Autowired
@@ -56,10 +60,10 @@ public class UserInit implements CommandLineRunner {
         User user = userService.getUserByUsername(DEFAULT_ADMIN_USERNAME);
         if (user != null) {
             user.setRole(UserRole.ADMIN);
-            user.setFirstName("Petar");
-            user.setLastName("Matev");
-            user.setEmail("petargmatev@gmail.com");
-            user.setProfilePicture("/img/admin-photo.jpg");
+            user.setFirstName(DEFAULT_ADMIN_FIRST_NAME);
+            user.setLastName(DEFAULT_ADMIN_LAST_NAME);
+            user.setEmail(DEFAULT_ADMIN_EMAIL);
+            user.setProfilePicture(DEFAULT_ADMIN_PHOTO);
             userRepository.save(user);
         } else {
             throw new IllegalArgumentException("Default admin user could not be found after registration.");

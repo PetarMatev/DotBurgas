@@ -1,5 +1,6 @@
 package dotburgas.user.service;
 
+import dotburgas.shared.exception.NotificationServiceFeignCallException;
 import dotburgas.shared.exception.UsernameAlreadyExistException;
 import dotburgas.loyalty.model.Loyalty;
 import dotburgas.loyalty.service.LoyaltyService;
@@ -13,6 +14,7 @@ import dotburgas.wallet.model.Wallet;
 import dotburgas.wallet.service.WalletService;
 import dotburgas.web.dto.RegisterRequest;
 import dotburgas.web.dto.UserEditRequest;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -68,8 +70,12 @@ public class UserService implements UserDetailsService {
         Wallet defaultWallet = walletService.createNewWallet(user);
         user.setWallet(defaultWallet);
 
-        // Persist new notification preference with isEnabled = false
-        notificationService.saveNotificationPreference(user.getId(), false, null);
+        try {
+            // Wrap in try-catch to make notification preference optional
+            notificationService.saveNotificationPreference(user.getId(), false, null);
+        } catch (Exception e) {
+            log.warn("Could not set notification preferences for user {}, continuing without them", user.getId(), e);
+        }
 
         log.info("Successfully create new user account for username [%s] and id [%s]".formatted(user.getUsername(), user.getId()));
 
@@ -86,13 +92,20 @@ public class UserService implements UserDetailsService {
         user.setEmail(userEditRequest.getEmail());
         user.setProfilePicture(userEditRequest.getProfilePicture());
 
-        // if user has so far had email and decided to remove it, then we disable notifications
-        if (userEditRequest.getEmail().isBlank()) {
-            notificationService.saveNotificationPreference(userId, false, null);
-        } else {
-            notificationService.saveNotificationPreference(userId, true, userEditRequest.getEmail());
-        }
         userRepository.save(user);
+
+        try {
+            if (userEditRequest.getEmail().isBlank()) {
+                notificationService.saveNotificationPreference(userId, false, null);
+            } else {
+                notificationService.saveNotificationPreference(userId, true, userEditRequest.getEmail());
+            }
+        } catch (FeignException e) {
+            log.warn("Failed to update notification preferences for user {}: {}", userId, e.getMessage());
+            throw new NotificationServiceFeignCallException(
+                    "Your profile was updated successfully, but we couldn't update notification preferences. Please try updating them again later."
+            );
+        }
     }
 
     // initial call on the method saves the result in a cache but every other time it is called still involk the original data saved in the cahe
