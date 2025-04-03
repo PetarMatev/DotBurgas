@@ -55,9 +55,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User register(RegisterRequest registerRequest) {
 
-        // Test whenOptionalOfUserIsPresent_thenThrowNewUsernameAlreadyExistException
         Optional<User> optionalUser = userRepository.findByUsername(registerRequest.getUsername());
-
         if (optionalUser.isPresent()) {
             throw new UsernameAlreadyExistException("Username [%s] already exists.".formatted(registerRequest.getUsername()));
         }
@@ -71,14 +69,11 @@ public class UserService implements UserDetailsService {
         user.setWallet(defaultWallet);
 
         try {
-            // Wrap in try-catch to make notification preference optional
             notificationService.saveNotificationPreference(user.getId(), false, null);
         } catch (Exception e) {
-            log.warn("Could not set notification preferences for user {}, continuing without them", user.getId(), e);
+            log.warn("Could not set notification preferences for user {}, proceed without notification preferences", user.getId(), e);
         }
-
         log.info("Successfully create new user account for username [%s] and id [%s]".formatted(user.getUsername(), user.getId()));
-
         return user;
     }
 
