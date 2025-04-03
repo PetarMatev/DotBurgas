@@ -17,15 +17,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserInitUTest {
+class UserInitUTest {
 
     @Mock
     private UserService userService;
@@ -37,112 +38,105 @@ public class UserInitUTest {
     private UserInit userInit;
 
     private static final String DEFAULT_ADMIN_USERNAME = "Petar123";
-    private static final User DEFAULT_ADMIN_USER = User.builder()
-            .id(UUID.randomUUID())
-            .username(DEFAULT_ADMIN_USERNAME)
-            .password("123123")
-            .country(Country.BULGARIA)
-            .firstName("Petar")
-            .lastName("Matev")
-            .email("petar_matev@yahoo.co.uk")
-            .role(UserRole.ADMIN)
-            .profilePicture("www.abc.com")
-            .createdOn(LocalDateTime.now())
-            .updatedOn(LocalDateTime.now())
-            .wallet(Wallet.builder().build())
-            .loyalty(Loyalty.builder().build())
-            .build();
+    private static final String DEFAULT_ADMIN_PASSWORD = "123123";
+
+    private User defaultAdminUser;
 
     @BeforeEach
     void setUp() {
-        DEFAULT_ADMIN_USER.setRole(UserRole.ADMIN);
+        defaultAdminUser = User.builder()
+                .id(UUID.randomUUID())
+                .username(DEFAULT_ADMIN_USERNAME)
+                .password(DEFAULT_ADMIN_PASSWORD)
+                .country(Country.BULGARIA)
+                .firstName("Petar")
+                .lastName("Matev")
+                .email("petar_matev@yahoo.co.uk")
+                .role(UserRole.ADMIN)
+                .profilePicture("www.abc.com")
+                .createdOn(LocalDateTime.now())
+                .updatedOn(LocalDateTime.now())
+                .wallet(Wallet.builder().build())
+                .loyalty(Loyalty.builder().build())
+                .build();
     }
 
     @Test
     void run_ShouldDoNothing_WhenUsersExist() throws Exception {
 
         // Given
-        User existingUser = User.builder()
-                .id(UUID.randomUUID())
-                .username(DEFAULT_ADMIN_USERNAME)
-                .password("123123")
-                .country(Country.BULGARIA)
-                .firstName("Petar")
-                .lastName("Matev")
-                .email("petar_matev@yahoo.co.uk")
-                .role(UserRole.ADMIN)
-                .profilePicture("www.abc.com")
-                .createdOn(LocalDateTime.now())
-                .updatedOn(LocalDateTime.now())
-                .wallet(Wallet.builder().build())
-                .loyalty(Loyalty.builder().build())
-                .build();
-
-        when(userService.getAllUsers()).thenReturn(List.of(existingUser));
+        when(userRepository.findByUsername(DEFAULT_ADMIN_USERNAME))
+                .thenReturn(java.util.Optional.of(defaultAdminUser));
 
         // When
         userInit.run();
 
         // Then
-        verify(userService, never()).register(any(RegisterRequest.class));
+        verify(userService, never()).register(any());
     }
 
     @Test
     void run_ShouldCreateNewUser_WhenNoUsersExist() throws Exception {
 
         // Given
-        User existingUser = User.builder()
-                .id(UUID.randomUUID())
+        when(userRepository.findByUsername(DEFAULT_ADMIN_USERNAME))
+                .thenReturn(Optional.empty());
+
+
+        User mockUser = User.builder()
                 .username(DEFAULT_ADMIN_USERNAME)
-                .password("123123")
-                .country(Country.BULGARIA)
-                .firstName("Petar")
-                .lastName("Matev")
-                .email("petar_matev@yahoo.co.uk")
-                .role(UserRole.ADMIN)
-                .profilePicture("www.abc.com")
-                .createdOn(LocalDateTime.now())
-                .updatedOn(LocalDateTime.now())
-                .wallet(Wallet.builder().build())
-                .loyalty(Loyalty.builder().build())
                 .build();
 
-        when(userService.getAllUsers()).thenReturn(List.of());
-        when(userService.getUserByUsername(DEFAULT_ADMIN_USERNAME)).thenReturn(existingUser);
+        when(userService.register(any(RegisterRequest.class)))
+                .thenReturn(mockUser);
+
+        when(userService.getUserByUsername(DEFAULT_ADMIN_USERNAME))
+                .thenReturn(mockUser);
 
         // When
         userInit.run();
 
         // Then
-        verify(userService).register(any(RegisterRequest.class));
-        verify(userRepository).save(any(User.class));
+        verify(userService).register(argThat(request ->
+                request.getUsername().equals(DEFAULT_ADMIN_USERNAME) &&
+                        request.getPassword().equals(DEFAULT_ADMIN_PASSWORD) &&
+                        request.getCountry() == Country.BULGARIA
+        ));
+        verify(userRepository).save(mockUser);
     }
 
     @Test
     void setDefaultAdmin_ShouldUpdateUserDetails_WhenUserExists() {
+
         // Given
-        when(userService.getUserByUsername(DEFAULT_ADMIN_USERNAME)).thenReturn(DEFAULT_ADMIN_USER);
+        when(userService.getUserByUsername(DEFAULT_ADMIN_USERNAME))
+                .thenReturn(defaultAdminUser);
 
         // When
         userInit.setDefaultAdmin();
 
         // Then
-        assertEquals(UserRole.ADMIN, DEFAULT_ADMIN_USER.getRole());
-        assertEquals("Petar", DEFAULT_ADMIN_USER.getFirstName());
-        assertEquals("Matev", DEFAULT_ADMIN_USER.getLastName());
-        assertEquals("petargmatev@gmail.com", DEFAULT_ADMIN_USER.getEmail());
-        assertEquals("/img/admin-photo.jpg", DEFAULT_ADMIN_USER.getProfilePicture());
-        verify(userRepository).save(DEFAULT_ADMIN_USER);
+        verify(userRepository).save(defaultAdminUser);
+        assertEquals(UserRole.ADMIN, defaultAdminUser.getRole());
+        assertEquals("Petar", defaultAdminUser.getFirstName());
+        assertEquals("Matev", defaultAdminUser.getLastName());
+        assertEquals("petargmatev@gmail.com", defaultAdminUser.getEmail());
+        assertEquals("/img/admin-photo.jpg", defaultAdminUser.getProfilePicture());
     }
 
     @Test
     void setDefaultAdmin_ShouldThrowException_WhenUserDoesNotExist() {
 
         // Given
-        when(userService.getUserByUsername(DEFAULT_ADMIN_USERNAME)).thenReturn(null);
+        when(userService.getUserByUsername(DEFAULT_ADMIN_USERNAME))
+                .thenReturn(null);
 
         // When & Then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> userInit.setDefaultAdmin());
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> userInit.setDefaultAdmin()
+        );
         assertEquals("Default admin user could not be found after registration.", exception.getMessage());
+        verify(userService).getUserByUsername(DEFAULT_ADMIN_USERNAME);
     }
 }
